@@ -85,6 +85,11 @@ For each Change in the work item:
 
 ### For 🟡 Directed WIs (intent + files + constraints):
 
+> **Your autonomy is in the HOW, not the WHAT.**
+> If the WI says "add pagination," you decide HOW to paginate.
+> You cannot change the goal, skip the feature, or redesign the approach.
+> Architectural decisions belong to the planner.
+
 1. Read ALL target files listed in the WI
 2. Understand the intent and constraints
 3. **Design your implementation** — you decide the HOW

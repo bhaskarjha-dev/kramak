@@ -223,16 +223,17 @@ Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/PLAN
 
 ### 3c. Size the batch
 
-**Target: 10-20 WIs across 3-4 Stories, producing 3-5 execution sessions.**
+**Target: 8-15 WIs across 3-4 Stories, producing 2-4 execution sessions.**
 
-The planner's job is to collapse ambiguity, not write code. One planning session should fuel multiple execution sessions.
+The planner's job is to collapse ambiguity, not write code. Quality over quantity — 8 well-specified WIs beats 15 vague ones.
 
 | Metric | Target |
 |--------|--------|
-| WIs per batch | 10-20 |
+| WIs per batch | 8-15 |
 | Stories per batch | 3-4 |
-| Execution sessions per planning session | 3-5 |
-| Planning:Execution time ratio | ~1:4 |
+| Execution sessions per planning session | 2-4 |
+
+**Ratio heuristic:** One planning session should produce at least 2 execution sessions of work. If execution finishes faster than planning took, you're either over-specifying or under-batching. If you can only produce 6 high-quality WIs, that's acceptable.
 
 ### Sizing rules:
 - **Dependencies first** — schema before code that uses it, backend before frontend
@@ -368,7 +369,12 @@ The planner describes WHAT the executor should build, lists the files involved, 
 
 ## Key Context
 [Important type signatures, interfaces, or patterns the executor needs to know.
- NOT full BEFORE/AFTER — just the "shape" of what exists.]
+ NOT full BEFORE/AFTER — but GROUNDED in the actual files you read, not assumed.]
+
+> **Grounding requirement:** You must still READ the target files and describe what
+> currently exists here. Don't hallucinate types or interfaces. The difference from
+> Guided mode: you describe the SHAPE (types, patterns) rather than quoting exact
+> BEFORE/AFTER line replacements.
 
 ```typescript
 // The endpoint should match this shape:
@@ -431,7 +437,7 @@ After writing ALL work items for this batch, perform a self-audit:
 
 1. **Batch Plan exists?** Did you write PLAN-batch-XX.md with Stories and strategic intent?
 
-2. **WI count:** Do you have 10-20 WIs? If fewer than 8, you're under-planning — are there more Stories to cover?
+2. **WI count:** Do you have 8-15 WIs? If fewer than 6, are there more Stories to cover? If you produced 6 high-quality WIs, that's acceptable — quality over quantity.
 
 3. **Risk distribution:** Are most WIs 🟡 Directed or 🟢 Outcome? If >50% are 🔴 Guided, you're over-specifying.
 
@@ -542,6 +548,8 @@ After an execution batch finishes, you audit what was built.
 | Minor issues | Write fix WIs → `queue/`, set `phase: "executing"` |
 | Major architectural problem | Fix it yourself directly, or write detailed WIs |
 | Executor went off-script | Strengthen DO NOT sections in future WIs |
+| Executor made architectural decisions in Directed/Outcome WIs | This is a planner responsibility. Revert and rewrite as Guided WI. |
+| Directed/Outcome WI result doesn't match project conventions | Strengthen constraints in future WIs. Consider upgrading risk level. |
 | Docs are outdated | Update them directly (you have absolute permission) |
 | Pipeline process needs improvement | Update pipeline files directly |
 

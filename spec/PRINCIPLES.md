@@ -169,21 +169,23 @@ SECRETS AND API KEYS:
 
 ### Planning-to-Execution Ratio
 
-One planning session should produce enough work for 3-5 execution sessions. If planning and execution take equal time, the pipeline is over-planning.
+One planning session should produce enough work for at least 2 execution sessions. If planning and execution take equal time, the pipeline is over-planning. Quality over quantity.
 
 ```
 THE RATIO PRINCIPLE:
 
 1. The planner's job is to COLLAPSE AMBIGUITY, not write code.
 2. Once ambiguity is collapsed, even a less capable model can execute.
-3. Target: 10-20 WIs per planning session, organized into 3-4 Stories.
+3. Target: 8-15 WIs per planning session, organized into 3-4 Stories.
+   If you can only produce 6 high-quality WIs, that's acceptable.
 4. Spec detail scales with risk:
    - 🔴 Critical (auth, security, schema): Full BEFORE/AFTER, Grounded Verification
-   - 🟡 Medium (features, APIs): Intent + files + constraints
+   - 🟡 Medium (features, APIs): Intent + files + constraints (GROUNDED — read files first)
    - 🟢 Low (docs, config, new files): Goal + acceptance criteria only
 5. Most WIs should be 🟡 or 🟢. If >50% are 🔴, you're over-specifying.
 6. Under-planning is MORE expensive than over-planning — executors that lack
    direction consume far more tokens than executors with clear specs.
+7. The ratio depends on project phase: early architecture → more 🔴, late polish → more 🟢.
 ```
 
 ### Depth Over Speed
