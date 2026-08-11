@@ -63,7 +63,8 @@ Read files in priority order. Stop reading when you have enough context to plan.
 ### Process INBOX items
 
 For each unprocessed item in INBOX.md:
-- **bug** → Create a WI or add to existing batch
+- **bug** → During BUILD/SHIP: only create WI if it's security or build-blocking. Otherwise note for ITERATE.
+  During ITERATE: create a WI.
 - **insight** → Update relevant project docs
 - **credential** → Mark corresponding HUMAN-TASKS item as done
 - **direction** → Re-evaluate priorities, potentially restructure roadmap
@@ -108,6 +109,20 @@ Move processed items to the "Processed" section with a note on action taken.
 ### The Role Cycle
 
 Cycle through these lenses. For each, ask the question and answer it honestly from the ACTUAL code, not from docs.
+
+**How much time to spend per role depends on `productPhase`:**
+
+| Role | BUILD | SHIP | ITERATE |
+|------|-------|------|---------|
+| 🏗️ Foundation | Quick check ✓ | **Deep dive** 🔍 | Quick check ✓ |
+| 🐛 Stability | Quick check ✓ | **Deep dive** 🔍 | **Deep dive** 🔍 |
+| 🧱 Architecture | **Deep dive** 🔍 | Quick check ✓ | Quick check ✓ |
+| 🎯 Value | **Deep dive** 🔍 | Skip (features wait) | **Deep dive** 🔍 |
+| 📋 Completeness | **Deep dive** 🔍 | Skip (ship what exists) | Quick check ✓ |
+| 🔒 Safety | Quick check ✓ | **Deep dive** 🔍 | Quick check ✓ |
+| 🛠️ DX | Quick check ✓ | Quick check ✓ | Quick check ✓ |
+
+*Quick check = 1-2 lines of assessment. Deep dive = read code, run commands, think deeply.*
 
 #### 🏗️ Foundation (DevOps/Infra)
 > "Can this project build, run, and deploy right now?"
