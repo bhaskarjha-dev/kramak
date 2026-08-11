@@ -169,23 +169,26 @@ SECRETS AND API KEYS:
 
 ### Planning-to-Execution Ratio
 
-One planning session should produce enough work for at least 2 execution sessions. If planning and execution take equal time, the pipeline is over-planning. Quality over quantity.
+Plan quality matters more than plan volume. A well-planned batch of 6 WIs with 0% re-planning need is worth more than 15 WIs where 40% fail.
 
 ```
-THE RATIO PRINCIPLE:
+THE RATIO PRINCIPLE (research-grounded):
 
 1. The planner's job is to COLLAPSE AMBIGUITY, not write code.
 2. Once ambiguity is collapsed, even a less capable model can execute.
-3. Target: 8-15 WIs per planning session, organized into 3-4 Stories.
-   If you can only produce 6 high-quality WIs, that's acceptable.
-4. Spec detail scales with risk:
-   - 🔴 Critical (auth, security, schema): Full BEFORE/AFTER, Grounded Verification
-   - 🟡 Medium (features, APIs): Intent + files + constraints (GROUNDED — read files first)
-   - 🟢 Low (docs, config, new files): Goal + acceptance criteria only
+3. Produce independently-verifiable WIs until context fatigue degrades quality.
+   Each WI ≤2 hours human-equivalent work (METR: 80% success horizon = 3-4 hours).
+   Typical healthy range: 6-15 WIs. No fixed target — quality is the metric.
+4. Spec detail scales with risk (SDD Goldilocks Rule):
+   - 🔴 Critical: Full BEFORE/AFTER, Grounded Verification
+   - 🟡 Medium: Intent + files + constraints (GROUNDED — read files first)
+   - 🟢 Low: Goal + acceptance criteria only
+   Over-specification causes model degradation. Under-specification: 70-95% failure.
 5. Most WIs should be 🟡 or 🟢. If >50% are 🔴, you're over-specifying.
-6. Under-planning is MORE expensive than over-planning — executors that lack
-   direction consume far more tokens than executors with clear specs.
-7. The ratio depends on project phase: early architecture → more 🔴, late polish → more 🟢.
+6. Under-planning IS more expensive (Cursor: fewer planning tokens → workers needed
+   several times more → total cost higher). But over-planning also degrades
+   (Anthropic: plans misaligned with executor reasoning reduce performance).
+7. Phase-dependent: early architecture → more 🔴, late polish → more 🟢.
 ```
 
 ### Depth Over Speed

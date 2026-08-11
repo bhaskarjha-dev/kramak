@@ -223,17 +223,17 @@ Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/PLAN
 
 ### 3c. Size the batch
 
-**Target: 8-15 WIs across 3-4 Stories, producing 2-4 execution sessions.**
+**Produce independently-verifiable WIs until context fatigue degrades your output quality.**
 
-The planner's job is to collapse ambiguity, not write code. Quality over quantity — 8 well-specified WIs beats 15 vague ones.
+Each WI should represent ≤2 hours of human-equivalent work (METR research shows the 80% success horizon is ~3-4 hours; staying under 2 hours keeps each WI well within reliable execution range). Typical healthy range: 6-15 WIs.
 
-| Metric | Target |
-|--------|--------|
-| WIs per batch | 8-15 |
-| Stories per batch | 3-4 |
-| Execution sessions per planning session | 2-4 |
+| Principle | Rationale |
+|-----------|----------|
+| WI independence matters more than count | METR: errors compound exponentially across dependent steps (pⁿ). Independent WIs reset the clock. |
+| Quality > volume | Anthropic: over-specified plans that misalign with executor reasoning DEGRADE performance |
+| Stop when context fatigues | LLM quality degrades at ~40-50% context capacity ("Lost in the Middle" effect) |
 
-**Ratio heuristic:** One planning session should produce at least 2 execution sessions of work. If execution finishes faster than planning took, you're either over-specifying or under-batching. If you can only produce 6 high-quality WIs, that's acceptable.
+**The quality test:** A well-planned batch of 6 WIs with 0% re-planning need is worth more than 15 WIs where 40% fail. Plan quality matters more than plan volume.
 
 ### Sizing rules:
 - **Dependencies first** — schema before code that uses it, backend before frontend
@@ -277,6 +277,11 @@ For each task, create a file in `.agents/pipeline/queue/` named `WI-XXX.md`.
 > Spend your tokens on WHAT and WHY, not on quoting every line of existing code.
 
 ### Spec Detail Scaling — Choose by Risk
+
+> **The Goldilocks Rule (SDD Research, 2026):** A spec must define outcomes, scope boundaries,
+> constraints, and verification criteria — but be concise enough to fit within the LLM's
+> "attention budget." Over-engineering into RFC-level detail causes model degradation.
+> Under-specification causes 70-95% failure rate. Risk tiering is the solution.
 
 | Risk | Mode | Planner effort | Executor freedom |
 |------|------|---------------|------------------|
@@ -437,7 +442,7 @@ After writing ALL work items for this batch, perform a self-audit:
 
 1. **Batch Plan exists?** Did you write PLAN-batch-XX.md with Stories and strategic intent?
 
-2. **WI count:** Do you have 8-15 WIs? If fewer than 6, are there more Stories to cover? If you produced 6 high-quality WIs, that's acceptable — quality over quantity.
+2. **WI quality:** Is each WI independently verifiable and ≤2 hours human-equivalent work? Quality > volume — 6 excellent WIs beats 15 vague ones.
 
 3. **Risk distribution:** Are most WIs 🟡 Directed or 🟢 Outcome? If >50% are 🔴 Guided, you're over-specifying.
 

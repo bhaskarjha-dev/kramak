@@ -96,7 +96,7 @@ For each Change in the work item:
 4. If something is unclear → web search for the API/pattern rather than guessing
 5. Implement the changes across the listed files
 6. Stay within the listed files and constraints
-7. Run verification after each significant change
+7. **Run verification after EACH change, not just at the end** — research shows 20-40% hallucination rate in multi-step workflows (catching errors early prevents compounding)
 
 ### For 🟢 Outcome WIs (goal + acceptance criteria):
 
