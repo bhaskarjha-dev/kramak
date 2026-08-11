@@ -114,6 +114,20 @@ For each Change in the work item:
 - For 🟢 Outcome: broader scope is acceptable as long as it serves the goal
 - Any import added that isn't required by the changes → revert it
 
+### Neighborhood Cleanup (do this for EVERY WI)
+
+> **"Leave every file better than you found it."**
+>
+> While implementing a WI, if you notice issues in the files you're ALREADY editing:
+> - **Fix obvious bugs** you encounter (null checks, wrong types, broken logic)
+> - **Clean up lint warnings** in the same file (unused imports, unused vars)
+> - **Fix formatting** if the file has inconsistent style
+> - **Update stale comments** that no longer match the code
+>
+> This is NOT scope creep — it's professional craftsmanship.
+> Do NOT open new files just to fix lint. Only clean up what you're already touching.
+> Do NOT create separate WIs for these — they're part of building properly.
+
 ---
 
 ## STEP 4: VERIFY

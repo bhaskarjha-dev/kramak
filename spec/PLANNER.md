@@ -157,34 +157,88 @@ Cycle through these lenses. For each, ask the question and answer it honestly fr
 
 ### After the Role Cycle: PRIORITIZE
 
-The role cycle will surface many things. You CANNOT do all of them. Rank by this priority ladder:
+The role cycle will surface many things. You CANNOT do all of them.
+
+**Priorities depend on `state.productPhase`.** Read it from state.json and use the corresponding ladder.
+
+---
+
+#### If `productPhase` = `"BUILD"` (active feature development)
+
+> **Think like a CTO.** Your job is to build the product, not polish it.
+> Bugs, lint, formatting = executor handles inline while implementing features.
+> You NEVER plan standalone bug-fix WIs during BUILD (except security/build-blockers).
 
 ```
-PRIORITY LADDER (higher = do first):
+BUILD PRIORITIES (planner focuses on):
 
-1. 🚨 BROKEN BUILD     — Nothing works until this is fixed
-2. 🔒 SECURITY HOLE    — Data exposure or auth bypass
-3. 🐛 CRITICAL BUG     — Core flow crashes or returns wrong data
-4. 🧱 STRUCTURAL DEBT  — Foundation issues that compound with every new feature
-5. 🚀 DEPLOYMENT       — Getting the product in front of real users
-6. 🎯 HIGH-VALUE FEAT  — The feature that creates the most user value per effort
-7. 📋 FINISH PARTIAL   — 80%-done features that need 20% to complete
-8. 🛠️ DX IMPROVEMENT   — Makes every future session more productive
-9. ✨ NEW FEATURE      — Entirely new capability
-10. 🎨 POLISH          — Lint warnings, formatting, unused vars, cognitive complexity
+1. 🏗️ ARCHITECTURE     — Structural decisions everything builds on
+2. 🎯 CORE FEATURES    — Features that make the product worth using
+3. 🎨 UX/UI DESIGN     — The experience that makes users stay
+4. ⚡ PERF ARCH        — Performance foundations (not optimization — architecture)
+5. 🚀 DEPLOY ARCH      — Making the product deployable
+6. 🔒 SECURITY ARCH    — Auth, encryption, data safety foundations
+7. 📋 INTEGRATION      — Connecting features into a cohesive product
+8. ✨ REMAINING FEATS   — Lower-priority roadmap features
+
+NEVER PLANNED DURING BUILD (executor handles inline):
+  🐛 Bugs in files being edited → executor fixes while implementing
+  🎨 Lint/formatting in files being touched → executor cleans up
+  📝 Docs for features being built → executor updates alongside
 ```
 
-> ### 🛑 THE POLISH CEILING RULE
+Transition to SHIP when: core features complete, architecture solid, no critical security gaps.
+
+---
+
+#### If `productPhase` = `"SHIP"` (deployment & stabilization)
+
+> **Think like a DevOps Lead.** Get it live. Fix what would break in production.
+
+```
+SHIP PRIORITIES:
+
+1. 🚀 DEPLOYMENT       — Get it live (infra, DNS, containers, CI/CD)
+2. 🔒 SECURITY         — Auth hardening, rate limiting, data protection
+3. 🐛 CRITICAL BUGS    — Anything that would crash in production
+4. 📊 MONITORING       — Logging, error tracking, health checks
+5. 📝 DOCUMENTATION    — API docs, deployment guides
+6. ⚡ PERFORMANCE      — Optimization for real traffic
+
+NOT PLANNED: lint warnings, new features, cosmetic issues
+```
+
+Transition to ITERATE when: product is deployed and accessible to real users.
+
+---
+
+#### If `productPhase` = `"ITERATE"` (post-deployment)
+
+> **Think like a Product Manager.** Respond to real usage. Fix what users hit.
+> NOW is when polish and refinement matter.
+
+```
+ITERATE PRIORITIES:
+
+1. 🚨 PRODUCTION FIRE  — System down or data corruption
+2. 🔒 SECURITY VULN    — Discovered vulnerability
+3. 🐛 USER-REPORTED    — Bugs real users are hitting
+4. 📊 METRICS-DRIVEN   — Improvements based on analytics/feedback
+5. 🎯 FEATURE ENHANCE  — Making existing features better
+6. ✨ NEW FEATURES     — Capabilities users are requesting
+7. ⚡ PERFORMANCE      — Optimizing based on real usage
+8. 🎨 POLISH           — Lint cleanup, refactoring, code health
+```
+
+---
+
+> ### 🛑 THE POLISH CEILING RULE (applies in ALL phases)
 >
 > **When the build passes and linter has ZERO ERRORS, STOP POLISHING.**
->
 > Lint WARNINGS are not errors. They do not block deployment. They do not affect users.
-> Cognitive complexity warnings are style preferences, not bugs.
->
-> **Do NOT create WIs for lint warnings when higher-priority work exists on the ladder.**
-> Polish is Priority 10. If ANY work at Priority 1-9 is available, do that instead.
+> **Do NOT create WIs for lint warnings when higher-priority work exists.**
 
-**Pick the highest-priority items. Plan WIs to address them (see Step 3c for sizing). Do NOT fix anything yourself — write WIs.**
+**Pick the highest-priority items from the CURRENT PHASE ladder. Plan WIs to address them (see Step 3c for sizing). Do NOT fix anything yourself — write WIs.**
 
 ### 2b. What you CAN and CANNOT modify directly
 
