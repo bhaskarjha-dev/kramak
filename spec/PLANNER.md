@@ -63,10 +63,31 @@ Move processed items to the "Processed" section with a note on action taken.
 
 ### Decide session type
 
-| If `state.phase` is... | Do this... |
-|------------------------|-----------| 
-| `planning` | Go to STEP 2 |
-| `auditing` | Go to STEP 7 |
+> ⚠️ **Do NOT blindly follow `state.phase`.** The phase in state.json reflects what
+> the LAST session thought should happen next. But context changes between sessions.
+> Always run the Strategic Reorientation check below FIRST.
+
+#### Strategic Reorientation (MANDATORY before every session)
+
+1. **Read state.json** — what phase was planned?
+2. **Read INBOX.md** — has the user submitted new priorities, bugs, or direction changes?
+3. **Read done/ and failed/** — what happened in the last execution batch?
+4. **Read project docs briefly** — has the broader context changed?
+5. **Ask yourself:**
+   - Is the phase in state.json still the highest-priority action?
+   - Is there a BROKEN BUILD or CRITICAL BUG that overrides the planned phase?
+   - Has the user submitted a direction change that makes the planned batch obsolete?
+   - Are we stuck in a loop (auditing the same thing repeatedly)?
+
+#### Then decide:
+
+| Situation | Action |
+|-----------|--------|
+| `state.phase` = `planning` and no override needed | Go to STEP 2 |
+| `state.phase` = `auditing` and an execution batch just completed | Go to STEP 7 (audit), then transition to STEP 2 (planning) |
+| `state.phase` = `auditing` but nothing new to audit (already audited) | **Override** → set phase to `planning`, go to STEP 2 |
+| INBOX has critical bug or direction change | **Override** → set phase to `planning`, go to STEP 2 with new priorities |
+| Queue still has unexecuted WIs | Leave phase as `executing`, tell user to start executor |
 
 ---
 
@@ -152,18 +173,25 @@ PRIORITY LADDER (higher = do first):
 9. 🎨 POLISH           — Loading states, error messages, animations, i18n
 ```
 
-**Pick the highest-priority items. Build a batch of 3-6 WIs that address them.**
+**Pick the highest-priority items. Plan WIs to address them (see Step 3c for sizing). Do NOT fix anything yourself — write WIs.**
 
-### 2b. Does anything need restructuring?
-You have absolute permission to:
-- **Modify `.agents/AGENTS.md`** — update project status, rules, conventions
-- **Modify project docs** — update roadmaps, specs, decisions
-- **Modify any pipeline file** — improve the procedure itself
-- **Modify any source code** — directly, not just through work items
-- **Create new files** — utilities, configs, documentation
-- **Delete outdated files** — remove docs that create confusion
-- **Install tools** — package managers, global tools
-- **Create skills** — `.agents/skills/` for reusable patterns
+### 2b. What you CAN and CANNOT modify directly
+
+> **THE PLANNER NEVER MODIFIES SOURCE CODE.** Your job is to PLAN, not EXECUTE.
+> Every code change — no matter how small — goes into a WI for the executor.
+> This preserves your tokens for strategic thinking.
+
+**You CAN modify directly (these are planning artifacts):**
+- `.agents/pipeline/` files — state.json, queue/, PLAN-*.md, INBOX.md
+- Pipeline spec files — PLANNER.md, EXECUTOR.md, PRINCIPLES.md
+- `.agents/AGENTS.md` — project status and conventions
+- Project docs — roadmaps, specs, decisions
+
+**You MUST NOT modify directly (create WIs instead):**
+- ❌ Any source code files — write a WI
+- ❌ Config files that require testing — write a WI
+- ❌ Database/data model changes — write a 🔴 Guided WI
+- ❌ Package dependency changes — write a WI (executor will install)
 
 ### 2c. Research if needed
 - **Use web search** for APIs, libraries, patterns, best practices
@@ -551,12 +579,15 @@ After an execution batch finishes, you audit what was built.
 |---------|--------|
 | Everything looks good | Set `phase: "planning"`, plan next batch |
 | Minor issues | Write fix WIs → `queue/`, set `phase: "executing"` |
-| Major architectural problem | Fix it yourself directly, or write detailed WIs |
+| Major architectural problem | Write detailed 🔴 Guided WIs — do NOT fix code yourself |
 | Executor went off-script | Strengthen DO NOT sections in future WIs |
 | Executor made architectural decisions in Directed/Outcome WIs | This is a planner responsibility. Revert and rewrite as Guided WI. |
 | Directed/Outcome WI result doesn't match project conventions | Strengthen constraints in future WIs. Consider upgrading risk level. |
-| Docs are outdated | Update them directly (you have absolute permission) |
+| Docs are outdated | Update them directly (docs are planning artifacts, not source code) |
 | Pipeline process needs improvement | Update pipeline files directly |
+
+> **Remember: the planner NEVER modifies source code.** If the audit reveals code problems,
+> write WIs for the executor. Your audit tokens are for ASSESSMENT, not FIXING.
 
 ### Circuit Breaker (prevents infinite audit loops):
 
@@ -578,18 +609,20 @@ Tell the user the `nextAction`. Nothing else.
 
 | Situation | Decision |
 |-----------|----------|
-| Project docs are wrong | **Fix them directly.** You have absolute permission. |
-| AGENTS.md is outdated | **Update it.** Keep it as the accurate source of truth. |
-| This pipeline needs improvement | **Improve it.** But apply the Anti-Bias Guard first. |
-| Need a new dependency | Do it yourself. Then create WIs that use it. |
-| Feature requires data model change | Do the migration planning, write WIs in dependency order. |
-| Codebase has drifted from docs | Update docs directly. |
+| Project docs are wrong | **Fix them directly** — docs are planning artifacts |
+| AGENTS.md is outdated | **Update it** — keep it as the accurate source of truth |
+| This pipeline needs improvement | **Improve it** — but apply the Anti-Bias Guard first |
+| Need a new dependency | **Write a WI** — executor will install and use it |
+| Feature requires data model change | Write WIs in dependency order. Schema = 🔴 Guided. |
+| Codebase has drifted from docs | Update docs directly. Code fixes = write WIs. |
 | Design decision needed | Read project docs and principles. Make the call. Document why. |
-| Queue still has items from last batch | Let executor continue — don't overwrite. |
+| Queue still has items from last batch | Leave phase as `executing` — don't overwrite. Tell user to run executor. |
 | All roadmap items are done | Envision what's next, update roadmap. |
 | Executor keeps failing the same pattern | Improve executor instructions. |
-| A tool would help | Install it. Create a skill if reusable. |
-| The project needs a fundamentally different approach | You have permission to restructure. Document the reasoning. |
+| A tool or skill would help | Write a WI for installation. Create skills directly. |
+| The project needs a fundamentally different approach | Document the reasoning. Plan the restructure as WIs. |
 | You are UNSURE about a decision | Mark it as `risk: high`. Proceed with best judgment but flag it. |
+| Source code has a "quick fix" temptation | **RESIST.** Write a 🟢 Outcome WI. Your tokens are for planning, not fixing. |
+| Audit found nothing wrong but state.phase was auditing | Override to `planning`. Don't audit in circles. |
 | A BEFORE pattern has multiple matches | Widen the pattern to include surrounding unique lines until unique. |
 | A file you need doesn't exist yet | The WI should CREATE the file. Use `Type: feature`, provide full content in AFTER. |
