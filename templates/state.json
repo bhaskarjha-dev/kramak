@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "phase": "planning",
+  "nextAction": "Start new session with strong reasoning capability and say Start.",
+  "roadmapPhase": "",
+  "currentBranch": "main",
+  "batchNumber": 0,
+  "queue": [],
+  "active": null,
+  "completed": [],
+  "failed": [],
+  "humanTasksPending": false,
+  "toolchain": {
+    "packageManager": "",
+    "buildCommand": "",
+    "checkCommands": [],
+    "devCommand": "",
+    "detected": false
+  },
+  "lastSession": {
+    "model": "",
+    "timestamp": "",
+    "summary": "Pipeline initialized via Kramak bootstrap."
+  },
+  "metrics": {
+    "totalCompleted": 0,
+    "totalFailed": 0
+  }
+}

@@ -1,0 +1,47 @@
+#!/bin/sh
+# Kramak pre-commit hook
+# Prevents commits that fail build/check commands.
+# Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+# Read check commands from state.json if it exists
+STATE_FILE=".agents/pipeline/state.json"
+
+if [ -f "$STATE_FILE" ]; then
+  # Try to extract check commands (requires jq or python)
+  if command -v jq &> /dev/null; then
+    COMMANDS=$(jq -r '.toolchain.checkCommands[]' "$STATE_FILE" 2>/dev/null)
+  elif command -v python3 &> /dev/null; then
+    COMMANDS=$(python3 -c "import json; [print(c) for c in json.load(open('$STATE_FILE')).get('toolchain',{}).get('checkCommands',[])]" 2>/dev/null)
+  fi
+fi
+
+# Fallback: try common check commands
+if [ -z "$COMMANDS" ]; then
+  if [ -f "tsconfig.json" ]; then
+    if [ -f "pnpm-lock.yaml" ]; then
+      COMMANDS="pnpm tsc --noEmit"
+    elif [ -f "package-lock.json" ]; then
+      COMMANDS="npx tsc --noEmit"
+    fi
+  elif [ -f "Cargo.toml" ]; then
+    COMMANDS="cargo check"
+  elif [ -f "go.mod" ]; then
+    COMMANDS="go vet ./..."
+  fi
+fi
+
+# Run each check command
+if [ -n "$COMMANDS" ]; then
+  echo "$COMMANDS" | while read -r cmd; do
+    if [ -n "$cmd" ]; then
+      echo "🔍 Running: $cmd"
+      if ! eval "$cmd"; then
+        echo "❌ Pre-commit check failed: $cmd"
+        echo "Fix the errors before committing."
+        exit 1
+      fi
+    fi
+  done
+fi
+
+echo "✅ All pre-commit checks passed."
