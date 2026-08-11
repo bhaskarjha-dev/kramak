@@ -363,29 +363,73 @@ After writing ALL work items for this batch, perform a self-audit:
 
 ---
 
-## STEP 6: UPDATE STATE AND EXIT
+## STEP 6: SESSION CONTINUITY DECISION
 
-1. **Do any direct work first.** If you decided to update docs, AGENTS.md, or install tools — do those NOW, before writing work items. Don't create work items for things you can do yourself.
+Before ending, decide: **continue in this session or recommend a new one?**
 
-2. **Update `state.json`:**
-   ```json
+### 1. Do any direct work first
+
+If you decided to update docs, AGENTS.md, or install tools — do those NOW, before writing work items. Don't create work items for things you can do yourself.
+
+### 2. Assess session weight
+
+| Signal | Light 🟢 | Medium 🟡 | Heavy 🔴 |
+|--------|----------|-----------|----------|
+| WIs written this session | ≤2 | 3-4 | 5+ |
+| Files read | ≤10 | 11-20 | 20+ |
+| Direct changes made | 0-1 | 2-3 | 4+ |
+| Complex research done | None | Some | Extensive |
+
+### 3. Assess next phase cost
+
+| Next phase | Typical cost |
+|-----------|-------------|
+| Execution of ≤2 simple WIs | Light 🟢 |
+| Execution of 3-5 WIs | Medium 🟡 |
+| Execution of complex/multi-file WIs | Heavy 🔴 |
+| Audit of ≤3 done WIs | Light 🟢 |
+| Audit of 4+ done WIs | Medium-Heavy 🟡🔴 |
+
+### 4. Assess capability fit
+
+- Am I the right capability for the next phase?
+- If I have strong reasoning AND can execute code well → I can continue
+- If I'm primarily a reasoning model and next is execution → new session recommended
+
+### 5. Decision matrix
+
+| This session | Next phase | Capability fit | Decision |
+|-------------|-----------|----------------|----------|
+| Light 🟢 | Light 🟢 | ✅ Right fit | **CONTINUE** in this session |
+| Light 🟢 | Medium 🟡 | ✅ Right fit | **CONTINUE** — you have capacity |
+| Light 🟢 | Any | ❌ Wrong fit | **NEW SESSION** with right capability |
+| Medium 🟡 | Light 🟢 | ✅ Right fit | **CONTINUE** — manageable |
+| Medium 🟡 | Medium+ | Any | **NEW SESSION** — context getting loaded |
+| Heavy 🔴 | Any | Any | **NEW SESSION** — context is saturated |
+
+### 6. If CONTINUING in this session:
+
+```
+a) Update state.json with the new phase (e.g., "executing")
+b) Log in lastSession: "Continuing from planning to execution in same session."
+c) Proceed directly to the next phase's STEP 1
+d) Do NOT tell the user anything — just continue working
+```
+
+### 7. If recommending a NEW SESSION:
+
+```
+a) Update state.json:
    {
-     "phase": "executing",
-     "nextAction": "Start new session with fast execution capability and say Start.",
-     "roadmapPhase": "<current phase description>",
-     "currentBranch": "pipeline/batch-XX",
-     "batchNumber": X,
-     "queue": ["WI-X01", "WI-X02", ...],
-     "active": null,
-     "lastSession": {
-       "model": "<your model name>",
-       "timestamp": "<current ISO>",
-       "summary": "<what you planned, what you changed directly, and why>"
-     }
+     "phase": "<next phase>",
+     "nextAction": "Start new session with <capability> and say Start.",
+     ...
    }
-   ```
+b) Push changes: git push
+c) Tell the user the nextAction. Nothing else.
+```
 
-3. Tell the user the `nextAction` from state.json. Nothing else.
+> **Context fatigue warning:** Research shows LLM quality degrades at ~40-50% of context capacity, with a "Lost in the Middle" effect where information in the middle of long contexts gets ignored. When in doubt, prefer a new session. A fresh context with state.json continuity is better than a fatigued context with everything loaded.
 
 ---
 

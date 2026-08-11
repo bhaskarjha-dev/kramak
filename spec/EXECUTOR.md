@@ -141,33 +141,69 @@ If execution or verification fails irrecoverably:
 
 ---
 
-## STEP 7: CONTINUE OR STOP
+## STEP 7: SESSION CONTINUITY DECISION
 
-- **More items in queue?** → Go to STEP 2
-- **Queue empty?** → Go to STEP 8: CLOSE SESSION
-- **You've completed 6+ items in this session?** → Go to STEP 8 (prevent context degradation)
+After completing a work item, decide what to do next:
+
+### If more items in queue:
+
+**Assess whether to continue executing:**
+
+| Signal | Continue 🟢 | Stop 🔴 |
+|--------|------------|---------|
+| WIs completed this session | ≤4 | 5+ |
+| Total files changed | ≤15 | 15+ |
+| Errors encountered and fixed | ≤2 | 3+ (quality may be degrading) |
+| Failed items this session | 0 | 1+ (context may be confused) |
+
+- **Continue 🟢:** Go to STEP 2 (next WI)
+- **Stop 🔴:** Go to STEP 8 (close session)
+
+### If queue is empty:
+
+**Assess whether to audit in this session or recommend a new one:**
+
+| This session weight | Decision |
+|-------------------|----------|
+| Light (≤2 WIs, simple changes) | **CONTINUE to audit** — you have capacity AND the work is fresh |
+| Medium (3-4 WIs) | **NEW SESSION recommended** — some self-audit bias risk |
+| Heavy (5+ WIs) | **NEW SESSION required** — self-audit bias is high, context is loaded |
+
+> **Self-audit bias:** When you audit your own work from the same session, you're biased toward thinking it's correct because you just wrote it. Fresh eyes (a new session) catch more issues. The heavier the session, the stronger the bias.
+
+**If continuing to audit:**
+```
+a) Update state.json: phase = "auditing"
+b) Log: "Continuing from execution to audit in same session (light batch)."
+c) Proceed to PLANNER.md STEP 7 (Audit)
+```
+
+**If recommending a new session:**
+```
+a) Update state.json: phase = "auditing", nextAction = "..."
+b) Push changes: git push
+c) Tell user the nextAction
+```
 
 ---
 
 ## STEP 8: CLOSE SESSION
 
+When you've decided to stop (context loaded, capability mismatch, or session limit reached):
+
 1. Update `state.json`:
-   - If queue is empty:
-     ```json
-     {
-       "phase": "auditing",
-       "nextAction": "Start new session with strong reasoning capability and say Start.",
-       "active": null
+   ```json
+   {
+     "phase": "<appropriate next phase>",
+     "nextAction": "Start new session with <capability> and say Start.",
+     "active": null,
+     "lastSession": {
+       "model": "<your model name>",
+       "timestamp": "<current ISO>",
+       "summary": "<WIs completed, files changed, anything notable>"
      }
-     ```
-   - If queue still has items (you hit the 6-item limit):
-     ```json
-     {
-       "phase": "executing",
-       "nextAction": "Start new session with fast execution capability and say Start.",
-       "active": null
-     }
-     ```
+   }
+   ```
 
 2. Push changes: `git push`
 3. Tell the user ONE sentence: the `nextAction` from state.json.
