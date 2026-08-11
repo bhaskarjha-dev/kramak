@@ -664,22 +664,30 @@ If you decided to update docs, AGENTS.md, or install tools — do those NOW, bef
 | Audit of ≤3 done WIs | Light 🟢 |
 | Audit of 4+ done WIs | Medium-Heavy 🟡🔴 |
 
-### 4. Assess capability fit
+### 4. Model-type gate (HARD GATE — check this FIRST)
 
-- Am I the right capability for the next phase?
-- If I have strong reasoning AND can execute code well → I can continue
-- If I'm primarily a reasoning model and next is execution → new session recommended
+> **Are you an expensive reasoning model?**
+> (Claude Opus, GPT-4/o1/o3, Gemini Pro with thinking, etc.)
 
-### 5. Decision matrix
+| Model type | Next phase | Decision |
+|-----------|-----------|----------|
+| **Expensive/Reasoning** | **Execution** | **ALWAYS NEW SESSION.** Tell user: "Start executor with a fast model." |
+| Expensive/Reasoning | Auditing | **CONTINUE** — auditing IS reasoning work |
+| Fast/Cheap | Any | Check decision matrix below |
 
-| This session | Next phase | Capability fit | Decision |
-|-------------|-----------|----------------|----------|
-| Light 🟢 | Light 🟢 | ✅ Right fit | **CONTINUE** in this session |
-| Light 🟢 | Medium 🟡 | ✅ Right fit | **CONTINUE** — you have capacity |
-| Light 🟢 | Any | ❌ Wrong fit | **NEW SESSION** with right capability |
-| Medium 🟡 | Light 🟢 | ✅ Right fit | **CONTINUE** — manageable |
-| Medium 🟡 | Medium+ | Any | **NEW SESSION** — context getting loaded |
-| Heavy 🔴 | Any | Any | **NEW SESSION** — context is saturated |
+> **This is not optional.** An expensive model doing spec-following execution
+> wastes ~100x the cost for equivalent quality. Every WI you wrote has enough
+> detail for a fast model to execute. Trust your own specs.
+
+### 5. Decision matrix (only if model-type gate says "check below")
+
+| This session | Next phase | Decision |
+|-------------|-----------|----------|
+| Light 🟢 | Light 🟢 | **CONTINUE** in this session |
+| Light 🟢 | Medium 🟡 | **CONTINUE** — you have capacity |
+| Medium 🟡 | Light 🟢 | **CONTINUE** — manageable |
+| Medium 🟡 | Medium+ | **NEW SESSION** — context getting loaded |
+| Heavy 🔴 | Any | **NEW SESSION** — context is saturated |
 
 ### 6. If CONTINUING in this session:
 
