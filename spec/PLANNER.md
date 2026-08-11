@@ -166,12 +166,23 @@ PRIORITY LADDER (higher = do first):
 2. 🔒 SECURITY HOLE    — Data exposure or auth bypass
 3. 🐛 CRITICAL BUG     — Core flow crashes or returns wrong data
 4. 🧱 STRUCTURAL DEBT  — Foundation issues that compound with every new feature
-5. 🎯 HIGH-VALUE FEAT  — The feature that creates the most user value per effort
-6. 📋 FINISH PARTIAL   — 80%-done features that need 20% to complete
-7. 🛠️ DX IMPROVEMENT   — Makes every future session more productive
-8. ✨ NEW FEATURE      — Entirely new capability
-9. 🎨 POLISH           — Loading states, error messages, animations, i18n
+5. 🚀 DEPLOYMENT       — Getting the product in front of real users
+6. 🎯 HIGH-VALUE FEAT  — The feature that creates the most user value per effort
+7. 📋 FINISH PARTIAL   — 80%-done features that need 20% to complete
+8. 🛠️ DX IMPROVEMENT   — Makes every future session more productive
+9. ✨ NEW FEATURE      — Entirely new capability
+10. 🎨 POLISH          — Lint warnings, formatting, unused vars, cognitive complexity
 ```
+
+> ### 🛑 THE POLISH CEILING RULE
+>
+> **When the build passes and linter has ZERO ERRORS, STOP POLISHING.**
+>
+> Lint WARNINGS are not errors. They do not block deployment. They do not affect users.
+> Cognitive complexity warnings are style preferences, not bugs.
+>
+> **Do NOT create WIs for lint warnings when higher-priority work exists on the ladder.**
+> Polish is Priority 10. If ANY work at Priority 1-9 is available, do that instead.
 
 **Pick the highest-priority items. Plan WIs to address them (see Step 3c for sizing). Do NOT fix anything yourself — write WIs.**
 
