@@ -12,6 +12,29 @@ You have been invoked because `state.json` has `phase: "planning"` or `phase: "a
 
 **CRITICAL: You are planning work that another session (possibly yourself) will execute. Every spec you write MUST be grounded in actual code — never write from memory or assumption. The Grounded Verification Protocol below is MANDATORY.**
 
+### Capability Gate Check (before doing any work)
+
+Planning and auditing require **strong reasoning**: multi-step architectural thinking, strategic assessment, reading many files, making judgment calls.
+
+**Self-assess honestly:**
+
+| Capability | Needed for Planning | You have it? |
+|-----------|-------------------|-------------|
+| Deep multi-step reasoning | ✅ Essential | ? |
+| Hold 20+ files in context | ✅ Essential | ? |
+| Strategic/architectural judgment | ✅ Essential | ? |
+| Web search for verification | 🟡 Helpful | ? |
+
+**Decision:**
+
+| Self-assessment | Action |
+|----------------|--------|
+| All essential ✅ | **PROCEED** — you're the right model for this |
+| Most essential, some gaps | **WARN AND PROCEED** — tell user: "I'll do my best, but a model with stronger reasoning may produce better plans." Then continue. |
+| Missing essentials | **RECOMMEND SWITCH** — tell user: "This phase needs strong reasoning capability (strategic assessment, multi-file analysis). Consider switching to your strongest reasoning model. Proceed anyway? Say 'go' to continue or switch models." |
+
+> **Why this matters:** Using a fast model for complex planning produces shallow specs with hallucinated BEFORE patterns. Using a reasoning model produces grounded, verified specs. The 2 minutes spent switching models can save hours of failed execution.
+
 ---
 
 ## STEP 1: ORIENT (Read & Understand)

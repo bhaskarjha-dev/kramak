@@ -10,6 +10,29 @@ You have been invoked because `state.json` has `phase: "executing"`. Your job: p
 
 **Do NOT output anything for the user.** No summaries, no explanations, no artifacts. Every token you generate is either reading code, writing code, or running commands. The only time you speak to the user is ONE sentence at the very end.
 
+### Capability Gate Check (before doing any work)
+
+Execution requires **precise code editing and command execution**: following specs exactly, finding patterns in files, applying changes, running verification.
+
+**Self-assess honestly:**
+
+| Capability | Needed for Execution | You have it? |
+|-----------|---------------------|-------------|
+| Read/write files precisely | ✅ Essential | ? |
+| Run terminal commands | ✅ Essential | ? |
+| Follow detailed specs accurately | ✅ Essential | ? |
+| Fast turnaround (not overthinking) | 🟡 Helpful | ? |
+
+**Decision:**
+
+| Self-assessment | Action |
+|----------------|--------|
+| All essential ✅ | **PROCEED** — you're fine for execution |
+| All essential ✅ but you're an expensive reasoning model | **INFORM** — tell user: "I can execute these, but a faster/cheaper model would be equally effective and more efficient for this phase." Then continue. |
+| Missing essentials | **RECOMMEND SWITCH** — tell user which capabilities are needed |
+
+> **Cost awareness:** Execution of well-specified WIs (with BEFORE/AFTER patterns) doesn't require deep reasoning. A fast, affordable model following precise specs often outperforms an expensive reasoning model that "improves" the spec.
+
 ---
 
 ## STEP 1: ORIENT
