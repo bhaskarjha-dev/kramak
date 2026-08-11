@@ -39,16 +39,26 @@ Planning and auditing require **strong reasoning**: multi-step architectural thi
 
 ## STEP 1: ORIENT (Read & Understand)
 
-Read these files. Not as immutable scripture — as context you may improve.
+Read files in priority order. Stop reading when you have enough context to plan.
 
-1. `.agents/pipeline/state.json` — pipeline state, history, what failed
+**Always read (every session):**
+1. `.agents/pipeline/state.json` — pipeline state, productPhase, history, what failed
 2. `PRINCIPLES.md` (from this spec) — AI development principles
-3. `.agents/AGENTS.md` — project rules, stack, conventions (if it exists)
-4. Project docs (roadmap, product spec, architecture — whatever the project has)
-5. `.agents/pipeline/done/` — completed work items
-6. `.agents/pipeline/failed/` — failed items and WHY
-7. `.agents/pipeline/HUMAN-TASKS.md` — check if human tasks are pending that unblock work
-8. `.agents/pipeline/INBOX.md` — check for user-submitted bugs, insights, direction changes
+3. `.agents/pipeline/INBOX.md` — user-submitted bugs, insights, direction changes
+4. `.agents/pipeline/done/` — completed work items (skim titles, not full content)
+5. `.agents/pipeline/failed/` — failed items and WHY
+
+**Read based on productPhase:**
+
+| Phase | Also read | Why |
+|-------|-----------|-----|
+| BUILD | Project docs (roadmap, product spec, architecture), `.agents/AGENTS.md` | Need feature specs and architecture context |
+| SHIP | Deployment docs, `.agents/pipeline/HUMAN-TASKS.md` | Need deployment context |
+| ITERATE | Project roadmap, `.agents/AGENTS.md` | Need to understand what users need next |
+
+**Read on demand (only if relevant):**
+- Project docs — when planning features
+- `.agents/AGENTS.md` — when unsure about conventions
 
 ### Process INBOX items
 
@@ -629,44 +639,62 @@ c) Tell the user the nextAction. Nothing else.
 
 After an execution batch finishes, you audit what was built.
 
-### Audit Procedure:
+### Audit Procedure (phase-aware):
 
+**Always do:**
 1. Read `done/` — what was completed
 2. Read the actual changed files — verify correctness
-3. Run the project's build/check commands
-4. Read the code holistically — architecture fit, quality, edge cases
-5. Check against project requirements/specs
-6. Check against PRINCIPLES.md values
+3. Run the project's build/check commands — ERRORS must be zero
+
+**During BUILD phase, focus on:**
+- Was the feature implemented correctly? Does it match the WI intent?
+- Does it integrate with existing architecture?
+- Do NOT create fix WIs for lint warnings — executor handles those inline next batch
+
+**During SHIP phase, focus on:**
+- Will this survive in production? Are there crash paths?
+- Are security boundaries intact?
+- Critical bugs only — cosmetic issues wait for ITERATE
+
+**During ITERATE phase, focus on:**
+- Did the change address the user feedback it was designed for?
+- Full quality check (NOW lint, formatting, and polish matter)
 
 ### Audit Outcomes:
 
 | Finding | Action |
 |---------|--------|
 | Everything looks good | Set `phase: "planning"`, plan next batch |
-| Minor issues | Write fix WIs → `queue/`, set `phase: "executing"` |
+| Build-blocking issues | Write fix WIs → `queue/`, set `phase: "executing"` |
 | Major architectural problem | Write detailed 🔴 Guided WIs — do NOT fix code yourself |
 | Executor went off-script | Strengthen DO NOT sections in future WIs |
-| Executor made architectural decisions in Directed/Outcome WIs | This is a planner responsibility. Revert and rewrite as Guided WI. |
-| Directed/Outcome WI result doesn't match project conventions | Strengthen constraints in future WIs. Consider upgrading risk level. |
-| Docs are outdated | Update them directly (docs are planning artifacts, not source code) |
+| Executor made arch decisions in Directed/Outcome WIs | Rewrite as Guided WI |
+| Lint warnings / minor issues | **IGNORE during BUILD/SHIP.** Note for ITERATE phase. |
+| Docs are outdated | Update them directly (docs are planning artifacts) |
 | Pipeline process needs improvement | Update pipeline files directly |
 
-> **Remember: the planner NEVER modifies source code.** If the audit reveals code problems,
-> write WIs for the executor. Your audit tokens are for ASSESSMENT, not FIXING.
+> **The planner NEVER modifies source code.** Your audit tokens are for ASSESSMENT, not FIXING.
+
+### Phase Transition Check (do this after EVERY audit):
+
+| Current phase | Transition when... | New phase |
+|--------------|--------------------|-----------|
+| BUILD | Core features complete + architecture solid + deployable | **SHIP** |
+| SHIP | Product is live and accessible to real users | **ITERATE** |
+| ITERATE | Major new feature set needed (v2, pivot) | **BUILD** |
+
+If transitioning, update `state.productPhase` in state.json.
 
 ### Circuit Breaker (prevents infinite audit loops):
 
 If you notice you're writing fix WIs for the **same area** that was already "fixed" in a previous batch:
-- **2nd time fixing the same thing:** Acceptable — the first fix might have been incomplete.
-- **3rd time fixing the same thing:** **STOP.** The approach is wrong, not the execution. Step back. Reconsider the architecture. The answer is not "patch harder" — it's "rethink the design." Write your analysis to `.agents/pipeline/AUDIT-NOTES.md` and plan a different approach.
+- **2nd time fixing the same thing:** Acceptable.
+- **3rd time fixing the same thing:** **STOP.** Rethink the design.
 
 ### After Audit:
 
-Update `state.json` with the appropriate next phase and `nextAction`:
-- If planning next batch → `nextAction: "Start new session with strong reasoning capability and say Start."`
-- If fix WIs queued → `nextAction: "Start new session with fast execution capability and say Start."`
-
-Tell the user the `nextAction`. Nothing else.
+**Always transition to planning.** Set `phase: "planning"` and proceed to STEP 2.
+Do NOT stay in `auditing` across sessions — that's how the pipeline gets stuck.
 
 ---
 
