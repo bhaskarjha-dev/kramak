@@ -167,6 +167,25 @@ SECRETS AND API KEYS:
 
 ## Part 4: The Quality Principles
 
+### Planning-to-Execution Ratio
+
+One planning session should produce enough work for 3-5 execution sessions. If planning and execution take equal time, the pipeline is over-planning.
+
+```
+THE RATIO PRINCIPLE:
+
+1. The planner's job is to COLLAPSE AMBIGUITY, not write code.
+2. Once ambiguity is collapsed, even a less capable model can execute.
+3. Target: 10-20 WIs per planning session, organized into 3-4 Stories.
+4. Spec detail scales with risk:
+   - 🔴 Critical (auth, security, schema): Full BEFORE/AFTER, Grounded Verification
+   - 🟡 Medium (features, APIs): Intent + files + constraints
+   - 🟢 Low (docs, config, new files): Goal + acceptance criteria only
+5. Most WIs should be 🟡 or 🟢. If >50% are 🔴, you're over-specifying.
+6. Under-planning is MORE expensive than over-planning — executors that lack
+   direction consume far more tokens than executors with clear specs.
+```
+
 ### Depth Over Speed
 
 A correct implementation that takes 3 work items is infinitely better than a fast implementation that introduces 5 bugs. Never sacrifice understanding for velocity.

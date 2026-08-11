@@ -195,35 +195,57 @@ CHOSEN: [A/B] because [specific reason]
 
 Write this analysis in the WI's "Intent" section so future sessions know WHY this approach was chosen over alternatives.
 
-### 3b. Size the batch
+### 3b. Write the Batch Plan
+
+Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/PLAN-batch-XX.md`:
+
+```markdown
+# Batch XX Plan: [Theme/Goal]
+
+## Strategic Intent
+[Why this batch exists. What user value it creates when all stories complete.]
+
+## Stories (ordered by dependency)
+
+### Story 1: [Name] — [estimated WI count]
+**Goal:** [What this story delivers when complete]
+**Dependencies:** None | Story N
+**Risk:** Low | Medium | High
+**Key files:** [list ~5-10 files across all WIs in this story]
+
+### Story 2: ...
+
+## Totals
+- WIs: ~[N] across [N] Stories
+- Estimated execution sessions: [N]
+- Critical-risk WIs requiring Guided specs: [N]
+```
+
+### 3c. Size the batch
+
+**Target: 10-20 WIs across 3-4 Stories, producing 3-5 execution sessions.**
+
+The planner's job is to collapse ambiguity, not write code. One planning session should fuel multiple execution sessions.
+
+| Metric | Target |
+|--------|--------|
+| WIs per batch | 10-20 |
+| Stories per batch | 3-4 |
+| Execution sessions per planning session | 3-5 |
+| Planning:Execution time ratio | ~1:4 |
 
 ### Sizing rules:
-- **3-6 work items per batch** — enough progress, manageable scope
-- **Max 5 files per work item** — quality degrades above this
-- **Dependencies first** — schema changes before code that uses them
-- **One concern per item** — separation keeps quality high
-- **Start small, grow** — prefer 3 items that succeed over 6 that half-fail
+- **Dependencies first** — schema before code that uses it, backend before frontend
+- **One concern per WI** — but WIs can touch 3-8 files if they're coherent
+- **Group by Story** — related WIs execute together for context coherence
+- **Risk drives detail** — only 🔴 Critical WIs need full BEFORE/AFTER (see Step 5)
 
-### Feature build order (prevents "build everything in one shot" failure):
-When building a new feature, ALWAYS decompose into this dependency chain:
-1. **Schema/data model** (if needed) — WI first
-2. **Backend endpoint/logic** (if needed) — depends on schema
-3. **Frontend component** — depends on backend
-4. **Integration wiring** — connecting the pieces
-5. **Polish** (i18n, loading states, error handling) — last
-
-Each step is a SEPARATE work item. Never combine schema + frontend in one WI.
-
-### What can be in a work item:
-- Code changes (features, fixes, refactors)
-- Documentation updates
-- Schema migrations
-- New file creation
-- Dependency installation
-- Configuration changes
-- Test creation
-- Pipeline improvements
-- **Anything** — work items aren't limited to code
+### Feature build order (within a Story):
+1. **Schema/data model** (if needed) — 🔴 Guided spec
+2. **Backend endpoint/logic** — 🟡 Directed spec
+3. **Frontend component** — 🟡 Directed or 🟢 Outcome spec
+4. **Integration wiring** — 🟡 Directed spec
+5. **Polish** (loading states, error handling, empty states) — 🟢 Outcome spec
 
 ---
 
@@ -241,121 +263,162 @@ Run the git command. Update `state.currentBranch`.
 
 ---
 
-## STEP 5: WRITE WORK ITEMS (Grounded Verification Protocol)
+## STEP 5: WRITE WORK ITEMS (Spec Detail Scaling)
 
 For each task, create a file in `.agents/pipeline/queue/` named `WI-XXX.md`.
 
 **Use batch-scoped numbering:** Batch 1 = WI-101, WI-102... Batch 2 = WI-201, WI-202...
 
-### ⚠️ THE GROUNDED VERIFICATION PROTOCOL (MANDATORY)
+### The Planning-to-Execution Principle
 
-**This protocol prevents the #1 planning failure: writing specs based on assumed code that doesn't match reality.**
+> **Your job is to collapse ambiguity, not write code.**
+> Once ambiguity is collapsed into a clear spec, even a less capable model can execute it.
+> Spend your tokens on WHAT and WHY, not on quoting every line of existing code.
 
-For EVERY code change in EVERY work item, you MUST follow this sequence:
+### Spec Detail Scaling — Choose by Risk
+
+| Risk | Mode | Planner effort | Executor freedom |
+|------|------|---------------|------------------|
+| 🔴 **Critical** (auth, security, schema, data integrity) | **Guided** | Full Grounded Verification. Exact BEFORE/AFTER. Caller analysis. | Zero — follow exactly |
+| 🟡 **Medium** (core features, API endpoints, business logic) | **Directed** | Read files, describe intent, list key interfaces/types, specify constraints | Moderate — figure out implementation |
+| 🟢 **Low** (new files, docs, config, UI components, tests) | **Outcome** | Describe WHAT should exist when done. Acceptance criteria only. | Full — executor designs and implements |
+
+**Most WIs should be 🟡 Directed or 🟢 Outcome.** Only use 🔴 Guided for changes where a mistake would cause data loss, security holes, or cascading failures.
+
+---
+
+### 🔴 Guided Mode (Critical Risk Only)
+
+**When:** Auth changes, schema migrations, security middleware, data model alterations, encryption.
+
+**Grounded Verification Protocol (for Guided WIs only):**
 
 ```
-STEP A: LOCATE
-  → Use grep_search or view_file to find the actual code
-  → Record the EXACT file path and line numbers
-
-STEP B: QUOTE
-  → Copy the EXACT lines from the file into your work item as the BEFORE pattern
-  → These lines MUST be a verbatim copy — not paraphrased, not from memory
-
-STEP C: VERIFY
-  → Run grep_search for a unique substring from your BEFORE pattern
-  → Confirm it exists in the file and appears exactly ONCE
-  → If it appears multiple times, narrow the BEFORE pattern until unique
-
-STEP D: DESIGN
-  → Only NOW write the AFTER pattern
-  → The AFTER must be a drop-in replacement for the BEFORE
-  → Count: same number of surrounding lines, compatible indentation
-
-STEP E: CROSS-CHECK
-  → Does the AFTER introduce any new imports? → List them explicitly
-  → Does the AFTER reference any symbol not in the file? → Verify that symbol exists with grep
-  → Does the AFTER change a function signature? → grep for all callers and list them
+STEP A: LOCATE — grep/view_file to find actual code, record file path + lines
+STEP B: QUOTE — copy EXACT lines as BEFORE pattern (verbatim, not from memory)
+STEP C: VERIFY — grep for unique substring, confirm exactly ONE match
+STEP D: DESIGN — write AFTER as drop-in replacement
+STEP E: CROSS-CHECK — verify new imports exist, grep for affected callers
 ```
-
-**If you cannot complete steps A-C for a change, do NOT include it in the work item.** Mark it as `risk: high` with a note: "Could not verify — needs review."
-
-### Choosing WI Spec Mode
-
-Two valid spec approaches. Choose per-WI based on risk:
-
-| Mode | When to Use | What It Looks Like |
-|------|-------------|-------------------|
-| **Guided** (BEFORE/AFTER) | Risk: medium-high. Exact file edits. Critical code. | Full Grounded Verification Protocol. Step-by-step changes. |
-| **Outcome** (goal + constraints) | Risk: low-medium. New files. Docs. DX. | Goal, constraints, file list, acceptance criteria. Agent decides HOW. |
-
-**Default to Guided mode.** Only use Outcome mode when:
-- The task creates NEW files (no existing code to quote)
-- The task is clearly low-risk (docs, configs, tests)
-- The "how" is genuinely better left to the executor (e.g., "add loading states to all forms")
-
-**Outcome mode WIs must still have:** file list, DO NOT section, verification commands, acceptance criteria. The executor decides the implementation, not the boundaries.
-
-### Work Item Template (Guided Mode — Default):
 
 ````markdown
 # WI-XXX: [Title]
 
 ## Classification
-- **Type:** fix | feature | refactor | test | perf | security | docs | pipeline
-- **Priority:** P0 | P1 | P2
-- **Risk:** low | medium | high
-- **Scope:** S (1-3 files) | M (4-5 files)
+- **Type:** fix | feature | security
+- **Risk:** 🔴 Critical
+- **Story:** [Story name from Batch Plan]
 - **Dependencies:** [WI-YYY] or "none"
 
 ## Intent
-[WHY this change exists. What problem it solves. What value it creates.]
+[WHY. What breaks if this is wrong.]
 
 ## Read First
-1. `path/to/file.ts` (lines X-Y) — what to understand
-2. `path/to/related.ts` — why it matters
+1. `path/to/file.ts` (lines X-Y) — understand current behavior
 
 ## Changes
-
 ### Change 1: [Description]
 **File:** `path/to/file.ts`
-**Verified:** ✅ grep confirmed BEFORE pattern exists at lines X-Y (unique match)
+**Verified:** ✅ grep confirmed unique match at lines X-Y
 
 ```
-// BEFORE (lines X-Y — verbatim from file):
-[exact current code — COPIED from view_file output]
+// BEFORE:
+[exact current code]
 
 // AFTER:
-[exact replacement code]
+[exact replacement]
 ```
 
-**New symbols introduced:** [list any new imports, functions, types, or none]
-**Callers affected:** [list files that call changed functions, or "none — internal change"]
-
-### Change 2: [Description]
-...
+**New symbols:** [list] | **Callers affected:** [list]
 
 ## DO NOT
-- Do NOT modify files not listed above
-- Do NOT refactor adjacent code
-- Do NOT change import organization unless required
-- [Task-specific constraints]
+[Hard constraints — zero deviation allowed]
 
 ## Verification
-```bash
-[Project-specific build/check commands]
-[Additional task-specific checks]
-```
+[Build/check commands]
 
 ## Acceptance Criteria
-[Observable behaviors that prove the change works — not just "compiles"]
-1. [e.g., "API returns 200 with correct shape when called with valid input"]
-2. [e.g., "Component renders without errors with empty data"]
+[Observable proof it works]
+````
 
-## Commit Message
+---
+
+### 🟡 Directed Mode (Medium Risk — Most Common)
+
+**When:** New API endpoints, refactoring existing features, component rewrites, integration work.
+
+The planner describes WHAT the executor should build, lists the files involved, and provides key type signatures or interfaces. The executor reads the files and figures out the implementation.
+
+````markdown
+# WI-XXX: [Title]
+
+## Classification
+- **Type:** feature | refactor | fix
+- **Risk:** 🟡 Medium
+- **Story:** [Story name]
+- **Dependencies:** [WI-YYY] or "none"
+
+## Intent
+[WHY this exists. What user value it creates.]
+
+## Target Files
+- `path/to/file1.ts` — [what to change here]
+- `path/to/file2.ts` — [what to change here]
+- `path/to/file3.ts` — [what to change here]
+
+## Key Context
+[Important type signatures, interfaces, or patterns the executor needs to know.
+ NOT full BEFORE/AFTER — just the "shape" of what exists.]
+
+```typescript
+// The endpoint should match this shape:
+type Response = { data: ProspectList; total: number; page: number }
 ```
-[type]([scope]): [description]
-```
+
+## Constraints
+- Must use [specific pattern/library/approach]
+- Must handle [specific edge cases]
+- Must NOT [specific anti-patterns]
+
+## Verification
+[Build/check commands]
+
+## Acceptance Criteria
+1. [Observable behavior 1]
+2. [Observable behavior 2]
+````
+
+---
+
+### 🟢 Outcome Mode (Low Risk)
+
+**When:** Creating new files, docs, configs, UI components from scratch, tests, DX improvements.
+
+The planner describes the GOAL and acceptance criteria. The executor has full autonomy on implementation.
+
+````markdown
+# WI-XXX: [Title]
+
+## Classification
+- **Type:** feature | docs | test | pipeline
+- **Risk:** 🟢 Low
+- **Story:** [Story name]
+- **Dependencies:** [WI-YYY] or "none"
+
+## Goal
+[What should exist when this WI is done. Describe the outcome, not the steps.]
+
+## Constraints
+- Must [follow project conventions, use existing patterns, etc.]
+- Must NOT [scope limits]
+
+## Verification
+[Build/check commands]
+
+## Acceptance Criteria
+1. [Observable outcome 1]
+2. [Observable outcome 2]
+3. [Observable outcome 3]
 ````
 
 ---
@@ -364,23 +427,25 @@ Two valid spec approaches. Choose per-WI based on risk:
 
 After writing ALL work items for this batch, perform a self-audit:
 
-### Self-Audit Checklist (answer each one):
+### Self-Audit Checklist:
 
-1. **File existence:** For every file path in every WI — did I actually open and read this file in this session? If no → open it NOW and verify.
+1. **Batch Plan exists?** Did you write PLAN-batch-XX.md with Stories and strategic intent?
 
-2. **BEFORE pattern accuracy:** For every BEFORE block — did I copy this verbatim from `view_file` output? If no → re-read the file and correct it.
+2. **WI count:** Do you have 10-20 WIs? If fewer than 8, you're under-planning — are there more Stories to cover?
 
-3. **Grep verification:** For every BEFORE block — did I run `grep_search` to confirm it exists? If no → run it NOW.
+3. **Risk distribution:** Are most WIs 🟡 Directed or 🟢 Outcome? If >50% are 🔴 Guided, you're over-specifying.
 
-4. **New symbol verification:** For every AFTER block that introduces a new import or reference — did I verify the imported symbol exists? If no → grep for it NOW.
+4. **For 🔴 Guided WIs only:** Did you run the full Grounded Verification Protocol? (grep, quote, verify)
 
-5. **Caller impact:** For every function signature change — did I grep for callers? If no → grep NOW and add them to the WI scope or create a dependent WI.
+5. **For 🟡 Directed WIs:** Did you read the target files and provide accurate context (types, interfaces, patterns)?
 
-6. **Scope creep:** Does any WI touch more than 5 files? If yes → split it.
+6. **For 🟢 Outcome WIs:** Are acceptance criteria clear and observable?
 
-7. **Dependency order:** Are WIs ordered so dependencies come first? If no → reorder the queue.
+7. **Dependency order:** Are WIs ordered within each Story so dependencies come first?
 
-8. **Verification commands:** Does every WI have the project's build/check commands? If no → add them.
+8. **Story coherence:** Does each Story deliver a complete, testable unit of value?
+
+9. **Verification commands:** Does every WI have the project's build/check commands?
 
 **Fix any failures before proceeding to STEP 6.**
 

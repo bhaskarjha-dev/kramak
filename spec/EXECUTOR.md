@@ -68,22 +68,46 @@ Execution requires **precise code editing and command execution**: following spe
 
 ## STEP 3: EXECUTE
 
+**Check the WI's Risk level to determine your autonomy:**
+
+### For 🔴 Guided WIs (BEFORE/AFTER provided):
+
 For each Change in the work item:
 
 1. Open the target file
-2. Find the BEFORE pattern (if provided)
+2. Find the BEFORE pattern
 3. **If BEFORE doesn't match:**
    - Search for similar code in the file (it may have shifted by a few lines)
    - If found at different lines → proceed with the fix at the correct location
-   - If the code has fundamentally changed → FAIL this item with reason "BEFORE pattern not found — code has drifted"
-4. Apply the change precisely
+   - If the code has fundamentally changed → FAIL this item: "BEFORE pattern not found — code has drifted"
+4. Apply the change precisely — zero deviation from the AFTER spec
 5. Save the file
 
-After all changes:
-- Run `git diff --name-only` — compare every touched file against the WI's file list
-- Any file NOT listed in the spec → `git checkout -- <that file>` immediately
+### For 🟡 Directed WIs (intent + files + constraints):
+
+1. Read ALL target files listed in the WI
+2. Understand the intent and constraints
+3. **Design your implementation** — you decide the HOW
+4. If something is unclear → web search for the API/pattern rather than guessing
+5. Implement the changes across the listed files
+6. Stay within the listed files and constraints
+7. Run verification after each significant change
+
+### For 🟢 Outcome WIs (goal + acceptance criteria):
+
+1. Read the goal and acceptance criteria carefully
+2. Study the project's existing patterns (look at similar files for conventions)
+3. **Design and implement freely** — you own the approach
+4. Create new files if needed (follow project conventions for naming/location)
+5. Web search for best practices if you're uncertain about an approach
+6. Verify each acceptance criterion is met
+
+### After all changes (all modes):
+- Run `git diff --name-only` — compare every touched file against the WI's scope
+- For 🔴 Guided: ANY file NOT listed → `git checkout -- <that file>` immediately
+- For 🟡 Directed: files should be within the listed targets (adjacent helper files are acceptable if needed)
+- For 🟢 Outcome: broader scope is acceptable as long as it serves the goal
 - Any import added that isn't required by the changes → revert it
-- This is a HARD check, not a self-assessment. The diff output is objective truth.
 
 ---
 
@@ -161,6 +185,24 @@ If execution or verification fails irrecoverably:
 3. **Revert any uncommitted changes**: `git checkout -- .`
 4. **Move** the work item from `active/` to `failed/`
 5. **Update `state.json`**: set `active: null`, increment `metrics.totalFailed`
+
+---
+
+## STEP 6c: IN-FLIGHT PROBLEM HANDLING
+
+During execution, you may encounter issues. Handle them proportionally:
+
+| Problem | Severity | Your action |
+|---------|----------|------------|
+| Typo in spec (wrong import name, off-by-one line) | Minor | Fix it yourself. Note the correction in the done/ file. |
+| Need an additional file not in spec | Minor | Create it if it clearly serves the WI goal. Note in done/ file. |
+| Dependency order wrong (WI-203 needed WI-204 first) | Minor | Reorder: skip current, do the dependency first, come back. |
+| Spec describes a feature but missing edge case | Minor | Handle the edge case. It's within scope. |
+| Need to touch a file not in the WI's scope at all | Medium | Create an **ad-hoc WI** in `queue/` (WI-XXX-adhoc.md). Note in state.json. |
+| Architecture approach won't work | Major | Write diagnosis to `INBOX.md`. Set phase to "planning" with detailed reason. |
+| Multiple consecutive failures (3+ in same area) | Major | **Circuit Breaker** → stop, set phase to "planning", explain in state.json. |
+
+> **The goal: only architecture problems and circuit breaker trigger re-planning.** Everything else is handled in-flight.
 
 ---
 
