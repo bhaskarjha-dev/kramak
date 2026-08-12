@@ -49,7 +49,7 @@ Execution requires **precise code editing and command execution**: following spe
 5. Check: is `state.active` set?
    - **Yes** → Resume that work item (it was interrupted mid-execution)
    - **No** → Pick the first ID from `state.queue`
-6. If queue is empty → Update state: `phase: "auditing"`, `nextAction: "Start new session with strong reasoning capability and say Start."` → Tell user that ONE sentence → STOP.
+6. If queue is empty → Proceed to STEP 7 (Should I Audit?) — evaluate whether to audit now or recommend a fresh session for audit.
 7. If a work item requires something from `HUMAN-TASKS.md` that's still pending → Skip it, move to next item, add note in state.json.
 
 ---
@@ -281,9 +281,8 @@ If degradation signals are present → **stop**. If all healthy → **continue**
 
 **If continuing to audit:**
 ```
-a) Update state.json: phase = "auditing"
-b) Log: "Continuing from execution to audit in same session (light batch)."
-c) Proceed to PLANNER.md STEP 7 (Audit)
+a) Log: "Continuing from execution to audit in same session (light batch)."
+b) Proceed to STEP 8.5 (Executor Audit)
 ```
 
 **If recommending a new session:**
