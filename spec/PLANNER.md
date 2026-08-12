@@ -75,20 +75,27 @@ Planning and auditing require **strong reasoning**: multi-step architectural thi
 
 Read files in priority order. Stop reading when you have enough context to plan.
 
-**Always read (every session):**
-1. `.agents/pipeline/state.json` — pipeline state, productPhase, history, what failed
-2. `PRINCIPLES.md` (from this spec) — AI development principles
-3. `.agents/pipeline/INBOX.md` — user-submitted bugs, insights, direction changes
-4. `.agents/pipeline/done/` — completed work items (skim titles, not full content)
-5. `.agents/pipeline/failed/` — failed items and WHY
+**Always read FIRST (every session, in this order):**
+1. Project roadmap — big picture: what's built, what's next, what's deferred
+2. `.agents/pipeline/HUMAN-TASKS.md` — what's blocked by humans, and WHAT EXACTLY is blocked
+3. `.agents/pipeline/state.json` — what the LAST SESSION thought should happen next
+4. `PRINCIPLES.md` — AI development principles
+5. `.agents/pipeline/INBOX.md` — user-submitted bugs, insights, direction changes
+6. `.agents/pipeline/done/` — completed work items (skim titles)
+7. `.agents/pipeline/failed/` — failed items and WHY
 
-**Read based on productPhase:**
+> ⚠️ **Roadmap and HUMAN-TASKS come BEFORE state.json.** This is deliberate.
+> You must form your OWN assessment of the project before reading the last
+> session's opinion (state.json). This prevents anchoring bias — the tendency
+> to over-weight the first thing you read.
 
-| Phase | Also read | Why |
+**Then read based on the direction you've assessed:**
+
+| Your assessment | Also read | Why |
 |-------|-----------|-----|
-| BUILD | Project docs (roadmap, product spec, architecture), `.agents/AGENTS.md` | Need feature specs and architecture context |
-| SHIP | Deployment docs, `.agents/pipeline/HUMAN-TASKS.md` | Need deployment context |
-| ITERATE | Project roadmap, `.agents/AGENTS.md` | Need to understand what users need next |
+| Features to build | Project docs (product spec, architecture), `.agents/AGENTS.md` | Need feature specs and architecture |
+| Deployment to prepare | Deployment docs, `.agents/pipeline/HUMAN-TASKS.md` | Need deployment context |
+| Post-deployment work | Project roadmap, `.agents/AGENTS.md` | Need to understand what users need next |
 
 **Read on demand (only if relevant):**
 - Project docs — when planning features
@@ -133,7 +140,27 @@ Move processed items to the "Processed" section with a note on action taken.
 | `state.phase` = `auditing` but nothing new to audit (already audited) | **Override** → set phase to `planning`, go to STEP 2 |
 | INBOX has critical bug or direction change | **Override** → set phase to `planning`, go to STEP 2 with new priorities |
 | Queue still has unexecuted WIs | Leave phase as `executing`, tell user to start executor |
+| **Current direction is blocked by human tasks** | **Blocked Fallback** → see below |
 | **You genuinely disagree with the current direction** | **Strategic Override** → see below |
+
+> #### Blocked Fallback (when human tasks block the primary direction)
+>
+> If `humanTasksPending` is true and the current `productPhase` work is exhausted:
+>
+> 1. **Read HUMAN-TASKS.md** — what EXACTLY do the human tasks block?
+>    (Usually: deployment infra, API keys, DNS. Almost NEVER: feature development.)
+>
+> 2. **Read project roadmap** — are there features or work available?
+>
+> 3. **If work exists that DON'T depend on the blocked tasks:**
+>    → Switch `productPhase` to `BUILD`, plan those features.
+>    → Note in state.json: `"deploymentBlocked": true, "fallbackPhase": "BUILD"`
+>    → This is NOT abandoning SHIP. It's using blocked time productively.
+>
+> 4. **If genuinely NOTHING can be done without human tasks:**
+>    → Document this clearly in state.json
+>    → Tell user ONE sentence about what human action is needed
+>    → Do NOT waste tokens on checklists the pipeline can't execute
 
 > #### Strategic Override (when you believe the direction is wrong)
 >
@@ -287,8 +314,13 @@ SHIP PRIORITIES:
 5. 📝 DOCUMENTATION    — API docs, deployment guides
 6. ⚡ PERFORMANCE      — Optimization for real traffic
 
-NOT PLANNED: lint warnings, new features, cosmetic issues
+NOT PLANNED: lint warnings, cosmetic issues
 ```
+
+> **⚠️ BLOCKED SHIP RULE:** If ALL code-level SHIP work is done and the remaining
+> work requires human action (API keys, VM setup, DNS), DO NOT declare "blocked."
+> Instead, trigger the **Blocked Fallback** (see reorientation table above).
+> Feature development is almost certainly available.
 
 Transition to ITERATE when: product is deployed and accessible to real users.
 
