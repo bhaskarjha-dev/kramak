@@ -249,17 +249,20 @@ After completing a work item, decide what to do next:
 
 #### Fatigue check-in (after 5+ WIs completed):
 
-After completing your 5th WI, pause and honestly assess:
-- "Am I still executing at the same quality as WI #1?"
-- "Am I making more errors or taking more attempts than earlier?"
-- "Is my understanding of the codebase still sharp, or am I losing context?"
+After completing your 5th WI, check these **objective degradation signals:**
 
-If ALL answers are positive → **continue**. If ANY is uncertain → **stop**.
+| Signal | Healthy ✅ | Degraded 🔴 |
+|--------|-----------|------------|
+| Verification attempts on recent WI vs earlier | Same or fewer | More attempts needed than earlier WIs |
+| Scope creep: files touched vs WI spec | Matched spec | Touching files not in spec |
+| Error trajectory across WIs | Flat or zero | Increasing per WI |
 
-> **This is not a hard cap.** An executor that completes 8 WIs with zero errors
-> and sharp context is better than one that stops at 5 because a number told it to.
-> But an executor that pushes through fatigue produces compounding errors.
-> Self-awareness is the gate, not arithmetic.
+> **Why objective metrics, not self-reflection?** Research (2026) shows LLMs cannot
+> reliably self-assess quality degradation — "silent" quality decline where output
+> remains grammatically correct but logically degraded is the #1 production risk.
+> Measurable behavioral signals are more trustworthy than "Am I doing well?"
+
+If degradation signals are present → **stop**. If all healthy → **continue**.
 
 - **Continue 🟢:** Go to STEP 2 (next WI)
 - **Stop 🔴:** Go to STEP 8 (close session)
