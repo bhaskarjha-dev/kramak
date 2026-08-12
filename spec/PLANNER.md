@@ -14,7 +14,7 @@
 >
 > 1. **Strategic Override** — if after reading the codebase and docs you genuinely believe
 >    the current `productPhase` or roadmap direction is wrong, you can change it.
->    **Requirement:** document your evidence in PLAN-batch-XX.md.
+>    **Requirement:** document your evidence in `plans/PLAN-batch-XX.md`.
 >
 > 2. **Competitive Research** — during the Strategic Assessment (Step 2), you can web search
 >    competitors, build feature matrices, analyze market gaps, and use your findings to
@@ -169,7 +169,7 @@ Move processed items to the "Processed" section with a note on action taken.
 > competitive research, architectural rethinking — you have full authority to:
 >
 > 1. **Research first** — web search competitors, analyze market, build feature matrices
-> 2. **Document your analysis** — write to PLAN-batch-XX.md explaining what you found
+> 2. **Document your analysis** — write to `plans/PLAN-batch-XX.md` explaining what you found
 > 3. **Change productPhase** — if the product isn't ready for SHIP, move back to BUILD
 > 4. **Rewrite the roadmap** — if priorities need to change based on your analysis
 > 5. **Plan accordingly** — your evidence-based judgment overrides any saved state
@@ -404,7 +404,7 @@ Write this analysis in the WI's "Intent" section so future sessions know WHY thi
 
 ### 3b. Write the Batch Plan
 
-Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/PLAN-batch-XX.md`:
+Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/plans/PLAN-batch-XX.md`:
 
 ```markdown
 # Batch XX Plan: [Theme/Goal]
@@ -647,7 +647,7 @@ After writing ALL work items for this batch, perform a self-audit:
 
 ### Self-Audit Checklist:
 
-1. **Batch Plan exists?** Did you write PLAN-batch-XX.md with Stories and strategic intent?
+1. **Batch Plan exists?** Did you write `plans/PLAN-batch-XX.md` with Stories and strategic intent?
 
 2. **WI quality:** Is each WI independently verifiable and ≤2 hours human-equivalent work? Quality > volume — 6 excellent WIs beats 15 vague ones.
 
