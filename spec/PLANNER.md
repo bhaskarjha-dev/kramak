@@ -75,9 +75,51 @@ Planning and auditing require **strong reasoning**: multi-step architectural thi
 
 Read files in priority order. Stop reading when you have enough context to plan.
 
+### 1a. Project Discovery (first session or when structure unknown)
+
+If `state.json` doesn't have a `projectStructure` field, scan the project:
+
+1. **List the project root** and common documentation directories (`docs/`, `doc/`, `.github/`)
+2. **Look for planning/tracking files:**
+   - Roadmaps: `ROADMAP.md`, `roadmap.md`, `TODO.md`, `BACKLOG.md`, `tasks.md`
+   - Product specs: `PRODUCT.md`, `PRD.md`, `spec.md`, `FEATURES.md`
+   - Architecture: `ARCHITECTURE.md`, `DESIGN.md`, `ADR/`
+   - Deployment: `deploy/`, `Dockerfile`, `docker-compose.yml`, `k8s/`
+   - Conventions: `AGENTS.md`, `CONTRIBUTING.md`, `README.md`
+
+3. **Record what you found** in state.json:
+   ```json
+   "projectStructure": {
+     "roadmap": "docs/ROADMAP.md",
+     "productSpec": "docs/PRODUCT.md",
+     "architecture": null,
+     "conventions": ".agents/AGENTS.md",
+     "readme": "README.md",
+     "discovered": true
+   }
+   ```
+
+4. **If critical files are MISSING** (no roadmap, no product spec):
+   - Assess what the project needs based on codebase analysis and README
+   - Create appropriate files (e.g., `ROADMAP.md` from code + README analysis)
+   - Or note: "No roadmap — direction determined by code analysis"
+
+5. **If existing files could be BETTER** (e.g., tasks.md exists but ROADMAP.md
+   would be more useful for planning):
+   - Create the better structure, merging content from existing files
+   - Don't delete the original — the user may prefer it
+   - Document your choice in the batch plan
+
+**On subsequent sessions:** Use the recorded `projectStructure` from state.json.
+Re-scan only if files are missing or you detect structural changes.
+
+---
+
+### 1b. Read project context
+
 **Always read FIRST (every session, in this order):**
-1. Project roadmap — big picture: what's built, what's next, what's deferred
-2. `.agents/pipeline/HUMAN-TASKS.md` — what's blocked by humans, and WHAT EXACTLY is blocked
+1. Project roadmap (from `projectStructure.roadmap` or scan) — big picture
+2. `.agents/pipeline/HUMAN-TASKS.md` — what's blocked and WHAT EXACTLY is blocked
 3. `.agents/pipeline/state.json` — what the LAST SESSION thought should happen next
 4. `PRINCIPLES.md` — AI development principles
 5. `.agents/pipeline/INBOX.md` — user-submitted bugs, insights, direction changes
@@ -93,7 +135,7 @@ Read files in priority order. Stop reading when you have enough context to plan.
 
 | Your assessment | Also read | Why |
 |-------|-----------|-----|
-| Features to build | Project docs (product spec, architecture), `.agents/AGENTS.md` | Need feature specs and architecture |
+| Features to build | Product spec (from `projectStructure`), `.agents/AGENTS.md` | Need feature specs and architecture |
 | Deployment to prepare | Deployment docs, `.agents/pipeline/HUMAN-TASKS.md` | Need deployment context |
 | Post-deployment work | Project roadmap, `.agents/AGENTS.md` | Need to understand what users need next |
 
@@ -190,7 +232,82 @@ Move processed items to the "Processed" section with a note on action taken.
 > But strategic thinking must lead to ACTIONABLE OUTPUT — updated priorities,
 > roadmap changes, or well-specified WIs. Thinking without output is a failure mode.
 
-### The Role Cycle
+### 2a. STRATEGIC VISION (conditional — check triggers first)
+
+**Run this step when ANY trigger is true:**
+
+| Trigger | How to check |
+|---------|-------------|
+| **MILESTONE** — a major feature batch just completed | Check `done/` — was the last batch a significant feature (not just fixes)? |
+| **ROADMAP LOW** — few unbuilt features remain | Read roadmap — are there < 3 features not yet built? |
+| **PERIODIC** — it's been ≥ 5 batches since last vision | Check `state.json → lastVisionAssessment.batchNumber` vs current |
+| **FIRST SESSION** — no prior planning has been done | Check if `state.json → lastVisionAssessment` exists |
+| **PLANNER JUDGMENT** — you sense an inflection point | Use your judgment — is the product at a natural turning point? |
+
+**If NO trigger is true → skip to 2b (Role Cycle).**
+
+**If ANY trigger is true → run these 5 lenses:**
+
+#### Lens 1: Quality Retrospective (Look Back)
+> "Is what we built genuinely excellent, or just functional?"
+
+- Review the last 2-3 batches of completed work — **read the actual code**, not just WI titles
+- A feature that "passes tsc" can still be mediocre. Ask:
+  - Would a discerning user be *delighted* or just *okay*?
+  - Is the UX thoughtful or mechanical?
+  - Are edge cases handled? Is the error experience graceful?
+  - Is this feature *genuinely competitive* with the best in the market?
+- **OUTPUT:** Quality improvement WIs if needed, or a note in the plan: "Quality is solid."
+
+#### Lens 2: User Journey Walk (Look At the Core)
+> "Walk through the product as a real user — where does it break down?"
+
+- Mentally (or actually) walk through: signup → first use → daily workflow → advanced features
+- Where are friction points, missing steps, or confusing flows?
+- Is the product solving the right problem in the right way?
+- What would a first-time user struggle with?
+- **OUTPUT:** UX improvement items for roadmap, or "user journey is smooth."
+
+#### Lens 3: Competitive & Market Scan (Look Around)
+> "What exists in the market that we're missing?"
+
+- Web search the top 3-5 competitors or similar products
+- What features do they have that this product doesn't?
+- What emerging patterns, technologies, or approaches could improve this product?
+- Build a brief feature comparison matrix (even mental)
+- **OUTPUT:** New feature proposals for roadmap with priority assessment
+
+#### Lens 4: Innovation Brainstorm (Look Forward)
+> "What features should exist that aren't in any doc yet?"
+
+- Think from first principles: if you were building this product from scratch today, what would you add?
+- What's non-obvious but would delight users?
+- Are there integration opportunities, workflow innovations, or UX breakthroughs?
+- What would make this the BEST product in its category, not just another one?
+- **OUTPUT:** New roadmap items (add them directly to the roadmap file)
+
+#### Lens 5: Architecture Check (Look Under the Hood)
+> "Will the foundation support what's coming, or will it crack?"
+
+- Is the technical foundation still right for the features ahead?
+- Are there patterns that should be refactored before adding more on top?
+- Is there technical debt that compounds with each new feature?
+- **OUTPUT:** Architectural proposals or refactor WIs
+
+**After the Vision step:** Update state.json with `lastVisionAssessment`:
+```json
+"lastVisionAssessment": {
+  "batchNumber": N,
+  "timestamp": "...",
+  "findings": "Brief summary of what was found"
+}
+```
+
+Then update the roadmap if new items were identified. Then continue to 2b.
+
+---
+
+### 2b. The Role Cycle
 
 Cycle through these lenses. For each, ask the question and answer it honestly from the ACTUAL code, not from docs.
 
