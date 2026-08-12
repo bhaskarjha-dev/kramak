@@ -237,19 +237,29 @@ After completing a work item, decide what to do next:
 
 ### If more items in queue:
 
-**Assess whether to continue executing:**
+**Self-assess whether to continue executing. You own this decision — no external cap.**
 
-| Signal | Continue 🟢 | Stop 🔴 |
-|--------|------------|---------|
-| WIs completed this session | ≤4 | 5+ |
-| Total files changed | ≤15 | 15+ |
-| Errors encountered and fixed | ≤2 | 3+ (quality may be degrading) |
-| Failed items this session | 0 | 1+ (context may be confused) |
+#### Hard gates (ANY = STOP immediately):
 
-> **Anti-Orphan Exception:** If you've hit 5 WIs BUT the remaining queue has
-> ≤ 3 WIs that are ALL 🟢 Low Risk, **continue and finish the batch.**
-> The cold-start cost of a new session (~6K tokens re-reading files) exceeds
-> the cost of completing 1-3 trivial WIs. Don't create orphan tails.
+| Signal | Threshold | Why |
+|--------|-----------|-----|
+| Failed items this session | ≥ 1 | Context may be confused — fresh start is safer |
+| Errors fixed this session | ≥ 4 | Quality is degrading — you're fighting the code |
+| Total files modified | ≥ 20 | Scope is sprawling — commit and restart |
+
+#### Fatigue check-in (after 5+ WIs completed):
+
+After completing your 5th WI, pause and honestly assess:
+- "Am I still executing at the same quality as WI #1?"
+- "Am I making more errors or taking more attempts than earlier?"
+- "Is my understanding of the codebase still sharp, or am I losing context?"
+
+If ALL answers are positive → **continue**. If ANY is uncertain → **stop**.
+
+> **This is not a hard cap.** An executor that completes 8 WIs with zero errors
+> and sharp context is better than one that stops at 5 because a number told it to.
+> But an executor that pushes through fatigue produces compounding errors.
+> Self-awareness is the gate, not arithmetic.
 
 - **Continue 🟢:** Go to STEP 2 (next WI)
 - **Stop 🔴:** Go to STEP 8 (close session)

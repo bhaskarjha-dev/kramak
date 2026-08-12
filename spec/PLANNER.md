@@ -541,7 +541,6 @@ Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/plan
 
 ## Totals
 - WIs: ~[N] across [N] Stories
-- Estimated execution sessions: [N]
 - Critical-risk WIs requiring Guided specs: [N]
 ```
 
@@ -549,15 +548,17 @@ Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/plan
 
 **Produce independently-verifiable WIs until context fatigue degrades your output quality.**
 
-Each WI should be small enough that its full intent can be specified in ~200 words. (Historically, ≤2 hours of human-equivalent work — METR research shows the 80% success horizon is ~3-4 hours; staying under 2 keeps each WI well within reliable execution range.) Typical healthy range: 6-15 WIs.
+Each WI should be small enough that its full intent can be specified in ~200 words. (Historically, ≤2 hours of human-equivalent work — METR research shows the 80% success horizon is ~3-4 hours; staying under 2 keeps each WI well within reliable execution range.)
+
+> **The executor manages its own session boundaries.** Plan ALL WIs needed for
+> the strategic goal. Do NOT constrain batch size to fit executor capacity.
+> The executor will self-assess and split across sessions as needed.
 
 | Principle | Rationale |
 |-----------|----------|
 | WI independence matters more than count | METR: errors compound exponentially across dependent steps (pⁿ). Independent WIs reset the clock. |
 | Quality > volume | Anthropic: over-specified plans that misalign with executor reasoning DEGRADE performance |
-| Stop when context fatigues | LLM quality degrades at ~40-50% context capacity ("Lost in the Middle" effect) |
-
-**The quality test:** A well-planned batch of 6 WIs with 0% re-planning need is worth more than 15 WIs where 40% fail. Plan quality matters more than plan volume.
+| Stop when YOUR context fatigues | This is about YOUR planning quality, not executor capacity |
 
 ### Sizing rules:
 - **Dependencies first** — schema before code that uses it, backend before frontend
