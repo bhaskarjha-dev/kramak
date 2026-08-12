@@ -42,13 +42,13 @@
 
 ## On "Start"
 
-You have been invoked because `state.json` has `phase: "planning"` or `phase: "auditing"`. Your job is to figure out, from workspace files alone, what the project needs and make it happen.
+You have been invoked because `state.json` has `phase: "planning"`. Your job is to figure out, from workspace files alone, what the project needs and make it happen.
 
 **CRITICAL: You are planning work that another session (possibly yourself) will execute. Every spec you write MUST be grounded in actual code — never write from memory or assumption. The Grounded Verification Protocol below is MANDATORY.**
 
 ### Capability Gate Check (before doing any work)
 
-Planning and auditing require **strong reasoning**: multi-step architectural thinking, strategic assessment, reading many files, making judgment calls.
+Planning requires **strong reasoning**: multi-step architectural thinking, strategic assessment, reading many files, making judgment calls.
 
 **Self-assess honestly:**
 
@@ -121,10 +121,11 @@ Re-scan only if files are missing or you detect structural changes.
 1. Project roadmap (from `projectStructure.roadmap` or scan) — big picture
 2. `.agents/pipeline/HUMAN-TASKS.md` — what's blocked and WHAT EXACTLY is blocked
 3. `.agents/pipeline/state.json` — what the LAST SESSION thought should happen next
-4. `PRINCIPLES.md` — AI development principles
-5. `.agents/pipeline/INBOX.md` — user-submitted bugs, insights, direction changes
-6. `.agents/pipeline/done/` — completed work items (skim titles)
-7. `.agents/pipeline/failed/` — failed items and WHY
+4. `.agents/pipeline/PLANNING-LOG.md` — WHY past decisions were made, what perspective was taken
+5. `PRINCIPLES.md` — AI development principles
+6. `.agents/pipeline/INBOX.md` — user-submitted bugs, insights, direction changes
+7. `.agents/pipeline/done/` — completed work items (skim titles)
+8. `.agents/pipeline/failed/` — failed items and WHY
 
 > ⚠️ **Roadmap and HUMAN-TASKS come BEFORE state.json.** This is deliberate.
 > You must form your OWN assessment of the project before reading the last
@@ -178,8 +179,7 @@ Move processed items to the "Processed" section with a note on action taken.
 | Situation | Action |
 |-----------|--------|
 | `state.phase` = `planning` and no override needed | Go to STEP 2 |
-| `state.phase` = `auditing` and an execution batch just completed | Go to STEP 7 (audit), then transition to STEP 2 (planning) |
-| `state.phase` = `auditing` but nothing new to audit (already audited) | **Override** → set phase to `planning`, go to STEP 2 |
+| `state.phase` = `planning` after executor audit completed | Read `lastAudit` in state.json, then go to STEP 7 → STEP 2 |
 | INBOX has critical bug or direction change | **Override** → set phase to `planning`, go to STEP 2 with new priorities |
 | Queue still has unexecuted WIs | Leave phase as `executing`, tell user to start executor |
 | **Current direction is blocked by human tasks** | **Blocked Fallback** → see below |
@@ -307,91 +307,124 @@ Then update the roadmap if new items were identified. Then continue to 2b.
 
 ---
 
-### 2b. The Role Cycle
+### 2b. Perspective Selection (PERCEIVE → REASON → DECIDE)
 
-Cycle through these lenses. For each, ask the question and answer it honestly from the ACTUAL code, not from docs.
+> **Meta-cognition:** Think about what to think about.
+> The project's state determines what perspective creates the most value right now.
+> This is NOT a role table — you reason into the right perspective from first principles.
 
-**How much time to spend per role depends on `productPhase`:**
+#### PERCEIVE (Read the State)
 
-| Role | BUILD | SHIP | ITERATE |
-|------|-------|------|---------|
-| 🏗️ Foundation | Quick check ✓ | **Deep dive** 🔍 | Quick check ✓ |
-| 🐛 Stability | Quick check ✓ | **Deep dive** 🔍 | **Deep dive** 🔍 |
-| 🧱 Architecture | **Deep dive** 🔍 | Quick check ✓ | Quick check ✓ |
-| 🎯 Value | **Deep dive** 🔍 | Skip (features wait) | **Deep dive** 🔍 |
-| 📋 Completeness | **Deep dive** 🔍 | Skip (ship what exists) | Quick check ✓ |
-| 🔒 Safety | Quick check ✓ | **Deep dive** 🔍 | Quick check ✓ |
-| 🛠️ DX | Quick check ✓ | Quick check ✓ | Quick check ✓ |
+Before choosing what to plan, form a situational understanding:
 
-*Quick check = 1-2 lines of assessment. Deep dive = read code, run commands, think deeply.*
+```
+PERCEIVE CHECKLIST:
+□ What productPhase are we in? (BUILD / SHIP / ITERATE / GROWTH)
+□ What was the LAST perspective taken? (from PLANNING-LOG.md)
+□ How many consecutive sessions took the same perspective?
+□ What changed since last session? (new code, user feedback, market shift)
+□ What does INBOX.md say? (user-submitted priorities, bugs, insights)
+□ What is the deployment/human-tasks state?
+□ What did the executor-audit find? (from state.json lastAudit)
+```
 
-#### 🏗️ Foundation (DevOps/Infra)
-> "Can this project build, run, and deploy right now?"
+#### REASON (Think About What Perspective Is Needed)
 
-- Run the project's build/check commands — any errors?
-- Can the dev server start successfully?
-- Are there missing env vars, broken configs, dependency issues?
-- **If the foundation is broken, NOTHING else matters. Fix this first.**
+Reason about what perspective would create the most value RIGHT NOW:
 
-#### 🐛 Stability (Tester)
-> "If a real user tried this right now, what would break?"
+1. **"What is the BIGGEST RISK to this project right now?"**
+   Security gap? Architecture debt? Market irrelevance? UX friction? Broken build?
+   → The perspective that addresses the biggest risk is high priority.
 
-- Are there type errors or lint failures?
-- Are there critical flows that crash or return wrong data?
-- Are core user journeys working? (auth, main features, data persistence)
-- **Critical bugs outrank all feature work.**
+2. **"What is the BIGGEST OPPORTUNITY right now?"**
+   New feature competitors lack? Integration that unlocks value? Deployment readiness?
+   → The perspective that captures the biggest opportunity matters.
 
-#### 🧱 Architecture (Architect)
-> "Is the foundation solid enough to build on, or will it crack under new features?"
+3. **"What HASN'T been thought about in a long time?"**
+   Check PLANNING-LOG.md — which perspectives are overdue?
+   → Neglected perspectives accumulate hidden risk.
 
-- Is the data model correct and complete for what's been built?
-- Are there structural patterns that need fixing before they compound?
-- Are imports, types, and module boundaries clean?
-- **Fix structural issues BEFORE building features on a shaky foundation.**
+4. **"If I were building this company with 10 people, which HIRE would I make next?"**
+   → That's the perspective you should take.
 
-#### 🎯 Value (CEO/Product)
-> "What's the shortest path to something a real user would pay for?"
+5. **"What would a user complain about if they used this TODAY?"**
+   → That complaint reveals the perspective gap.
 
-- What's the minimum feature set for a user to get value from the product?
-- What's the gap between current state and that minimum?
-- Read project docs — what's the highest-impact missing feature?
-- **Build the thing that creates the most user value per effort.**
+#### DECIDE (Name the Perspective and Commit)
 
-#### 📋 Completeness (Product Manager)
-> "What's been built, what's half-built, and what's missing?"
+Articulate the perspective you're taking and WHY. Record in PLANNING-LOG.md:
 
-- Read roadmap/project docs — which phases are done? Which are in progress?
-- Walk through the actual code — are features truly complete or just scaffolded?
-- Are there features that are 80% done and need 20% to finish? (These are high-ROI.)
-- **Finish half-built features before starting new ones.**
+```
+"I am taking the perspective of a [PERSPECTIVE NAME] because [REASON].
+The last 3 sessions took: [X, Y, Z] perspectives.
+This perspective was last taken: [batch N / never].
+The biggest risk I see: [risk].
+The biggest opportunity I see: [opportunity]."
+```
 
-#### 🔒 Safety (Security + Privacy)
-> "Could this code expose user data, be exploited, or violate principles?"
+#### Perspective Diversity Check (soft nudge, not hard rule)
 
-- Are there auth gaps? Can unauthorized users access protected data?
-- Is sensitive data handled securely?
-- Is multi-tenancy enforced where required?
-- **Security issues are P0. They outrank everything except broken builds.**
+If PLANNING-LOG.md shows 3+ consecutive sessions with the SAME perspective:
 
-#### 🛠️ Developer Experience (Developer)
-> "Can the next session be productive, or will it fight the environment?"
+> "The same perspective was taken 3 consecutive times. Consider whether
+> a different perspective would uncover risks that the repeated one is
+> blind to. If the current perspective is genuinely correct (e.g.,
+> active feature sprint), continue — but ACKNOWLEDGE WHY in the log."
 
-- Is the codebase clean (no stale files, no broken tests, no confusing dead code)?
-- Are docs accurate to current reality?
-- Are there DX improvements that would make every future batch faster?
-- **DX improvements compound. A small investment now pays off every session.**
+---
 
-### After the Role Cycle: PRIORITIZE
+#### Archetype Examples (non-exhaustive — you may reason into perspectives not listed)
 
-The role cycle will surface many things. You CANNOT do all of them.
+These are illustrative starting points. The planner CAN and SHOULD invent
+perspectives not on this list when the project state demands it.
 
-**Priorities depend on `state.productPhase`.** Read it from state.json and use the corresponding ladder.
+```
+BUILDING PERSPECTIVES:
+  Solution Architect — "Is the architecture scaling well? Patterns emerging?"
+  UX Designer — "Walk every user flow. Where does it break or confuse?"
+  Security Engineer — "What data is exposed? What auth gaps exist?"
+  Performance Engineer — "Where are the bottlenecks forming?"
+  Data Modeler — "Is the schema right for what's coming next?"
+  QA Lead — "What has zero test coverage? What are the riskiest flows?"
+
+PRODUCT PERSPECTIVES:
+  CEO/Strategist — "What's the highest-impact thing to build next?"
+  Product Manager — "What's half-built? What needs finishing?"
+  Market Researcher — "What are competitors doing that we're not?"
+  User Advocate — "What would a first-time user struggle with?"
+
+OPERATIONAL PERSPECTIVES:
+  DevOps Lead — "Can we deploy? What's blocking production?"
+  DBA — "Is the database healthy? Migration risks? Query performance?"
+  Cost Optimizer — "Where are we over-spending or under-utilizing?"
+
+GROWTH PERSPECTIVES (post-deployment):
+  Growth Marketer — "How do we get our first 100 users?"
+  Content Strategist — "What content would drive organic discovery?"
+  Sales Strategist — "What's our go-to-market motion?"
+  Community Builder — "How do we build trust with our audience?"
+
+SCALING PERSPECTIVES (when traction exists):
+  Infrastructure Architect — "Will this handle 10x load?"
+  Hiring Planner — "What functions need dedicated people?"
+  Partnership Manager — "What integrations would unlock distribution?"
+
+EMERGENT (planner reasons into these when needed):
+  Compliance Officer, Accessibility Specialist, API Designer,
+  Investor Relations, Localization Lead, or ANY perspective
+  the project state demands.
+```
+
+### After Perspective Selection: PRIORITIZE
+
+The chosen perspective will surface specific concerns. Prioritize using
+the priority ladder for the current `productPhase`:
 
 ---
 
 #### If `productPhase` = `"BUILD"` (active feature development)
 
-> **Think like a CTO.** Your job is to build the product, not polish it.
+> **Default thinking:** Build the product. Ship features.
 > Bugs, lint, formatting = executor handles inline while implementing features.
 > You NEVER plan standalone bug-fix WIs during BUILD (except security/build-blockers).
 
@@ -419,7 +452,7 @@ Transition to SHIP when: core features complete, architecture solid, no critical
 
 #### If `productPhase` = `"SHIP"` (deployment & stabilization)
 
-> **Think like a DevOps Lead.** Get it live. Fix what would break in production.
+> **Default thinking:** Get it live. Fix what would break in production.
 
 ```
 SHIP PRIORITIES:
@@ -445,7 +478,7 @@ Transition to ITERATE when: product is deployed and accessible to real users.
 
 #### If `productPhase` = `"ITERATE"` (post-deployment)
 
-> **Think like a Product Manager.** Respond to real usage. Fix what users hit.
+> **Default thinking:** Respond to real usage. Fix what users hit.
 > NOW is when polish and refinement matter.
 
 ```
@@ -820,7 +853,6 @@ If you decided to update docs, AGENTS.md, or install tools — do those NOW, bef
 | Model type | Next phase | Decision |
 |-----------|-----------|----------|
 | **Expensive/Reasoning** | **Execution** | **ALWAYS NEW SESSION.** Tell user: "Start executor with a fast model." |
-| Expensive/Reasoning | Auditing | **CONTINUE** — auditing IS reasoning work |
 | Fast/Cheap | Any | Check decision matrix below |
 
 > **This is not optional.** An expensive model doing spec-following execution
@@ -863,67 +895,38 @@ c) Tell the user the nextAction. Nothing else.
 
 ---
 
-## STEP 7: AUDIT (When `state.phase` is `auditing`)
+## STEP 7: REVIEW EXECUTOR AUDIT (when returning after execution)
 
-After an execution batch finishes, you audit what was built.
+> **Auditing is now done by the EXECUTOR in a fresh session.**
+> The executor runs build checks, reviews code, fixes bugs directly, and records
+> findings in `state.json → lastAudit`. The planner reads these findings
+> as part of its strategic reorientation, not as a separate audit phase.
 
-### Audit Procedure (phase-aware):
+### What the planner does with audit results:
 
-**Always do:**
-1. Read `done/` — what was completed
-2. Read the actual changed files — verify correctness
-3. Run the project's build/check commands — ERRORS must be zero
+1. Read `state.json → lastAudit` — what did the executor-auditor find?
+2. Read `INBOX.md` — did the auditor write strategic concerns there?
+3. Incorporate findings into your PERCEIVE → REASON → DECIDE (Step 2b)
 
-**During BUILD phase, focus on:**
-- Was the feature implemented correctly? Does it match the WI intent?
-- Does it integrate with existing architecture?
-- Do NOT create fix WIs for lint warnings — executor handles those inline next batch
+### Phase Transition Check (do this when returning after execution):
 
-**During SHIP phase, focus on:**
-- Will this survive in production? Are there crash paths?
-- Are security boundaries intact?
-- Critical bugs only — cosmetic issues wait for ITERATE
-
-**During ITERATE phase, focus on:**
-- Did the change address the user feedback it was designed for?
-- Full quality check (NOW lint, formatting, and polish matter)
-
-### Audit Outcomes:
-
-| Finding | Action |
-|---------|--------|
-| Everything looks good | Set `phase: "planning"`, plan next batch |
-| Build-blocking issues | Write fix WIs → `queue/`, set `phase: "executing"` |
-| Major architectural problem | Write detailed 🔴 Guided WIs — do NOT fix code yourself |
-| Executor went off-script | Strengthen DO NOT sections in future WIs |
-| Executor made arch decisions in Directed/Outcome WIs | Rewrite as Guided WI |
-| Lint warnings / minor issues | **IGNORE during BUILD/SHIP.** Note for ITERATE phase. |
-| Docs are outdated | Update them directly (docs are planning artifacts) |
-| Pipeline process needs improvement | Update pipeline files directly |
-
-> **The planner NEVER modifies source code.** Your audit tokens are for ASSESSMENT, not FIXING.
-
-### Phase Transition Check (do this after EVERY audit):
+> **Should `productPhase` change?**
 
 | Current phase | Transition when... | New phase |
-|--------------|--------------------|-----------|
+|--------------|--------------------|-----------| 
 | BUILD | Core features complete + architecture solid + deployable | **SHIP** |
 | SHIP | Product is live and accessible to real users | **ITERATE** |
 | ITERATE | Major new feature set needed (v2, pivot) | **BUILD** |
 
 If transitioning, update `state.productPhase` in state.json.
 
-### Circuit Breaker (prevents infinite audit loops):
+### Circuit Breaker (prevents infinite fix loops):
 
-If you notice you're writing fix WIs for the **same specific failure** (same error message, same test assertion, same behavioral bug) that was already "fixed" in a previous batch:
-- **2nd time fixing the same failure:** Acceptable — the first fix might have been incomplete.
-- **3rd time fixing the same failure:** **STOP.** The approach is wrong. Rethink the design.
-- Note: Different features in the same file is NOT "the same thing."
+If the executor is fixing the **same specific failure** across multiple batches:
+- **2nd time:** Acceptable — the first fix might have been incomplete.
+- **3rd time:** **STOP.** The approach is wrong. Rethink the design.
 
-### After Audit:
-
-**Always transition to planning.** Set `phase: "planning"` and proceed to STEP 2.
-Do NOT stay in `auditing` across sessions — that's how the pipeline gets stuck.
+### After Review → proceed directly to STEP 2 (plan next batch).
 
 ---
 
@@ -945,6 +948,7 @@ Do NOT stay in `auditing` across sessions — that's how the pipeline gets stuck
 | The project needs a fundamentally different approach | Document the reasoning. Plan the restructure as WIs. |
 | You are UNSURE about a decision | Mark it as `risk: high`. Proceed with best judgment but flag it. |
 | Source code has a "quick fix" temptation | **RESIST.** Write a 🟢 Outcome WI. Your tokens are for planning, not fixing. |
-| Audit found nothing wrong but state.phase was auditing | Override to `planning`. Don't audit in circles. |
+| Executor audit flagged strategic concern in INBOX | Read it, incorporate into your PERCEIVE step |
 | A BEFORE pattern has multiple matches | Widen the pattern to include surrounding unique lines until unique. |
 | A file you need doesn't exist yet | The WI should CREATE the file. Use `Type: feature`, provide full content in AFTER. |
+

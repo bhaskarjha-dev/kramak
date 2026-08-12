@@ -288,14 +288,55 @@ c) Proceed to PLANNER.md STEP 7 (Audit)
 
 **If recommending a new session:**
 ```
-a) Update state.json: phase = "auditing", nextAction = "..."
+a) Update state.json: nextAction = "Start executor (fresh session) for technical audit"
 b) Push changes: git push
 c) Tell user the nextAction
 ```
 
 ---
 
-## STEP 8: CLOSE SESSION
+## STEP 8.5: EXECUTOR AUDIT (fresh session, after execution)
+
+> **Technical auditing is executor work, not planner work.**
+> The executor can audit AND fix in one session. The planner's expensive
+> reasoning tokens are for strategic thinking, not running build checks.
+
+**When to run this step:** When state.json says `nextAction` mentions "audit"
+or when starting a fresh session after an execution batch.
+
+### Audit Procedure:
+
+1. **Read `done/` files** — what WIs were completed in the last batch
+2. **Run the project's build/check commands** — must pass. If errors, fix them directly.
+3. **Run linter** — errors are blockers, warnings are not.
+4. **Review changed files** — read the actual code from the last batch:
+   - Does it match WI intent?
+   - Are there obvious bugs, missing edge cases, or broken patterns?
+   - Are imports and types correct?
+5. **If issues found → FIX DIRECTLY** (commit with `fix(audit):` prefix)
+6. **If strategic concerns** (architecture drift, design questions) → write to `INBOX.md` for the planner
+7. **Write audit report** to `plans/AUDIT-batch-NN.md`
+
+### After Audit:
+
+Update state.json:
+```json
+{
+  "phase": "planning",
+  "nextAction": "Start planner session and say Start.",
+  "lastAudit": {
+    "batchNumber": N,
+    "timestamp": "...",
+    "verdict": "pass | pass-with-fixes",
+    "fixesApplied": ["brief description of each fix"],
+    "strategicConcerns": ["written to INBOX.md if any"]
+  }
+}
+```
+
+---
+
+## STEP 9: CLOSE SESSION
 
 When you've decided to stop (context loaded, capability mismatch, or session limit reached):
 
