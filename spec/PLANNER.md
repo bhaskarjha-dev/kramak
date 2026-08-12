@@ -808,11 +808,9 @@ If you decided to update docs, AGENTS.md, or install tools — do those NOW, bef
 
 | Next phase | Typical cost |
 |-----------|-------------|
-| Execution of ≤2 simple WIs | Light 🟢 |
-| Execution of 3-5 WIs | Medium 🟡 |
-| Execution of complex/multi-file WIs | Heavy 🔴 |
-| Audit of ≤3 done WIs | Light 🟢 |
-| Audit of 4+ done WIs | Medium-Heavy 🟡🔴 |
+| Execution (you just wrote a small batch, context is hot) | Light-Medium 🟢🟡 |
+| Execution (large batch or stale context) | Heavy 🔴 |
+| Audit of recent batch | Light-Medium 🟢🟡 |
 
 ### 4. Model-type gate (HARD GATE — check this FIRST)
 
