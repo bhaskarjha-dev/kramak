@@ -140,9 +140,15 @@ Plus any additional verification commands specified in the work item.
 
 1. Read the error output carefully
 2. Is the error in a file within this work item's scope?
-   - **Yes** → Fix it. You have up to 3 attempts.
+   - **Yes** → Fix it. You have up to **3 attempts by default**.
    - **No** → The error is pre-existing or in another file. This is NOT your bug. Note it and continue.
-3. After 3 failed fix attempts → FAIL this item
+3. **Trajectory-aware retry extension:** If each attempt REDUCES the error count
+   (e.g., 14 errors → 4 → 1), you get up to **5 attempts** total. If any attempt
+   increases or maintains the error count, FAIL the item immediately.
+4. After exhausting all attempts → FAIL this item
+
+> **While editing files:** Fix any lint warnings in lines you're already touching.
+> Don't seek out warnings in other files — just clean up what's in your path.
 
 **If verification passes:** → Continue to STEP 5
 
@@ -239,6 +245,11 @@ After completing a work item, decide what to do next:
 | Total files changed | ≤15 | 15+ |
 | Errors encountered and fixed | ≤2 | 3+ (quality may be degrading) |
 | Failed items this session | 0 | 1+ (context may be confused) |
+
+> **Anti-Orphan Exception:** If you've hit 5 WIs BUT the remaining queue has
+> ≤ 3 WIs that are ALL 🟢 Low Risk, **continue and finish the batch.**
+> The cold-start cost of a new session (~6K tokens re-reading files) exceeds
+> the cost of completing 1-3 trivial WIs. Don't create orphan tails.
 
 - **Continue 🟢:** Go to STEP 2 (next WI)
 - **Stop 🔴:** Go to STEP 8 (close session)

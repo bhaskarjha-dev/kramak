@@ -240,7 +240,7 @@ Move processed items to the "Processed" section with a note on action taken.
 |---------|-------------|
 | **MILESTONE** — a major feature batch just completed | Check `done/` — was the last batch a significant feature (not just fixes)? |
 | **ROADMAP LOW** — few unbuilt features remain | Read roadmap — are there < 3 features not yet built? |
-| **PERIODIC** — it's been ≥ 5 batches since last vision | Check `state.json → lastVisionAssessment.batchNumber` vs current |
+| **PERIODIC** — ≥20 WIs completed since last vision OR ≥5 batches | Check `state.json → lastVisionAssessment.batchNumber` vs current |
 | **FIRST SESSION** — no prior planning has been done | Check if `state.json → lastVisionAssessment` exists |
 | **PLANNER JUDGMENT** — you sense an inflection point | Use your judgment — is the product at a natural turning point? |
 
@@ -549,7 +549,7 @@ Before writing individual WIs, create a **Batch Plan** in `.agents/pipeline/plan
 
 **Produce independently-verifiable WIs until context fatigue degrades your output quality.**
 
-Each WI should represent ≤2 hours of human-equivalent work (METR research shows the 80% success horizon is ~3-4 hours; staying under 2 hours keeps each WI well within reliable execution range). Typical healthy range: 6-15 WIs.
+Each WI should be small enough that its full intent can be specified in ~200 words. (Historically, ≤2 hours of human-equivalent work — METR research shows the 80% success horizon is ~3-4 hours; staying under 2 keeps each WI well within reliable execution range.) Typical healthy range: 6-15 WIs.
 
 | Principle | Rationale |
 |-----------|----------|
@@ -799,7 +799,7 @@ If you decided to update docs, AGENTS.md, or install tools — do those NOW, bef
 | Signal | Light 🟢 | Medium 🟡 | Heavy 🔴 |
 |--------|----------|-----------|----------|
 | WIs written this session | ≤2 | 3-4 | 5+ |
-| Files read | ≤10 | 11-20 | 20+ |
+| Files read (large 200+ line files count double) | ≤10 | 11-20 | 20+ |
 | Direct changes made | 0-1 | 2-3 | 4+ |
 | Complex research done | None | Some | Extensive |
 
@@ -916,9 +916,10 @@ If transitioning, update `state.productPhase` in state.json.
 
 ### Circuit Breaker (prevents infinite audit loops):
 
-If you notice you're writing fix WIs for the **same area** that was already "fixed" in a previous batch:
-- **2nd time fixing the same thing:** Acceptable.
-- **3rd time fixing the same thing:** **STOP.** Rethink the design.
+If you notice you're writing fix WIs for the **same specific failure** (same error message, same test assertion, same behavioral bug) that was already "fixed" in a previous batch:
+- **2nd time fixing the same failure:** Acceptable — the first fix might have been incomplete.
+- **3rd time fixing the same failure:** **STOP.** The approach is wrong. Rethink the design.
+- Note: Different features in the same file is NOT "the same thing."
 
 ### After Audit:
 
