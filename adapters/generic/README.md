@@ -4,7 +4,7 @@ For any AI coding tool that can read files and run commands:
 
 ## Setup
 
-1. Copy the `spec/` directory into your project (or keep it referenced externally)
+1. Copy the `spec/` directory into your project as `.kramak/spec/` (or keep it referenced externally)
 2. Add the following to your project's agent context file (AGENTS.md, README, or system prompt):
 
 ```markdown
@@ -13,13 +13,13 @@ For any AI coding tool that can read files and run commands:
 When you receive the instruction "Start":
 
 1. Read `.agents/pipeline/state.json` in this workspace
-   - If missing → Read spec/BOOTSTRAP.md and follow the bootstrap procedure
+   - If missing → Read .kramak/spec/BOOTSTRAP.md and follow the bootstrap procedure
    - If present → Read state.phase and follow the matching procedure:
-     - "planning" → Read and follow spec/PLANNER.md
-     - "executing" → Read and follow spec/EXECUTOR.md
-     - "auditing" → Read and follow spec/PLANNER.md STEP 7
+     - "planning" → Read and follow .kramak/spec/PLANNER.md
+     - "executing" → Read and follow .kramak/spec/EXECUTOR.md
+     - "auditing" → Read and follow .kramak/spec/PLANNER.md STEP 7
 
-2. Before any work, read spec/PRINCIPLES.md (non-negotiable rules)
+2. Before any work, read .kramak/spec/PRINCIPLES.md (non-negotiable rules)
 
 3. Core rules:
    - Every token advances the project (no chat, no explanations)

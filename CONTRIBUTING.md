@@ -45,9 +45,12 @@ Before modifying ANY file in spec/:
 
 5. Submit the PR with your Anti-Bias Guard answers in the PR description
 
+### Adapter contributions
+Want to add an adapter for a new IDE or AI tool? These are welcome without the Anti-Bias Guard — adapters are integrations, not process changes. See `adapters/generic/README.md` for the pattern.
+
 ### Documentation improvements
 PRs for docs/ and adapters/ are welcome without the Anti-Bias Guard — these are informational, not procedural.
 
 ## Code of conduct
 
-Be respectful. Be constructive. The pipeline improves through evidence, not opinion.
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

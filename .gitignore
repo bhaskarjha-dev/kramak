@@ -13,3 +13,13 @@ Desktop.ini
 node_modules/
 dist/
 *.tgz
+
+# Pipeline workspace files (when Kramak is used as a submodule)
+# These are created in the USER's project, not in this repo
+.agents/pipeline/state.json
+.agents/pipeline/queue/
+.agents/pipeline/active/
+.agents/pipeline/done/
+.agents/pipeline/failed/
+.agents/pipeline/plans/
+.agents/pipeline/PLANNING-LOG.md

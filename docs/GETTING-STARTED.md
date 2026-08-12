@@ -14,10 +14,12 @@ Kramak is a file-based, model-agnostic, IDE-agnostic autonomous development meth
 
 ```bash
 # Clone Kramak
-git clone https://github.com/bhaskarjha-dev/kramak.git
+git clone https://github.com/YOUR_USERNAME/kramak.git
 
 # Copy spec files to your project
 cp -r kramak/spec/ your-project/.kramak/
+
+# Copy workspace templates
 cp -r kramak/templates/ your-project/.agents/pipeline/
 ```
 
@@ -66,7 +68,7 @@ See the `adapters/` directory for IDE-specific setup:
                        │
                        ▼
                 ┌──────────────┐
-                │   AUDITING   │ ← Strong reasoning model
+                │   AUDITING   │ ← Fresh executor session
                 │              │   Reviews what was built
                 │  Check →     │
                 │  Fix or →    │
@@ -83,13 +85,15 @@ Everything is stored in files:
 - `queue/` — work items waiting for execution
 - `done/` — completed work items (audit trail)
 - `failed/` — failed items with diagnosis
+- `plans/` — batch plans with strategic intent
+- `PLANNING-LOG.md` — history of what perspectives were taken and why
 
 ### Model Agnostic
 
 Kramak doesn't require specific models. It requires **capabilities**:
 - Planning needs strong reasoning
 - Execution needs fast, precise code generation
-- Auditing needs strong reasoning
+- Auditing needs a fresh context (executor in new session)
 
 Any model that can read files, write code, and run commands can use Kramak.
 

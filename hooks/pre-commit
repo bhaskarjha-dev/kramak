@@ -5,6 +5,7 @@
 
 # Read check commands from state.json if it exists
 STATE_FILE=".agents/pipeline/state.json"
+COMMANDS=""
 
 if [ -f "$STATE_FILE" ]; then
   # Try to extract check commands (requires jq or python)
@@ -31,17 +32,23 @@ if [ -z "$COMMANDS" ]; then
 fi
 
 # Run each check command
+# NOTE: We use a temp file instead of piping to avoid the subshell exit bug
+# where `exit 1` inside a pipeline only exits the subshell, not the hook.
 if [ -n "$COMMANDS" ]; then
-  echo "$COMMANDS" | while read -r cmd; do
+  TMPFILE=$(mktemp)
+  echo "$COMMANDS" > "$TMPFILE"
+  while IFS= read -r cmd; do
     if [ -n "$cmd" ]; then
       echo "🔍 Running: $cmd"
       if ! eval "$cmd"; then
         echo "❌ Pre-commit check failed: $cmd"
         echo "Fix the errors before committing."
+        rm -f "$TMPFILE"
         exit 1
       fi
     fi
-  done
+  done < "$TMPFILE"
+  rm -f "$TMPFILE"
 fi
 
 echo "✅ All pre-commit checks passed."

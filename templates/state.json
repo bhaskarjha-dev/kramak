@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "phase": "planning",
   "nextAction": "Start new session with strong reasoning capability and say Start.",
-  "roadmapPhase": "",
+  "productPhase": "",
   "currentBranch": "main",
   "batchNumber": 0,
   "queue": [],

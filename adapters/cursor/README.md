@@ -17,12 +17,12 @@ When the user says "Start", "begin", "continue", or "go":
    - YES → Read state.json, follow the procedure for state.phase
    - NO → Bootstrap: scan workspace, detect toolchain, create pipeline files
 
-2. Read PRINCIPLES from: [path to kramak]/spec/PRINCIPLES.md
+2. Read PRINCIPLES from: .kramak/spec/PRINCIPLES.md
 
 3. Follow the phase:
-   - planning → Read [path to kramak]/spec/PLANNER.md
-   - executing → Read [path to kramak]/spec/EXECUTOR.md
-   - auditing → Read [path to kramak]/spec/PLANNER.md §STEP 7
+   - planning → Read .kramak/spec/PLANNER.md
+   - executing → Read .kramak/spec/EXECUTOR.md
+   - auditing → Read .kramak/spec/PLANNER.md §STEP 7
 
 4. At session end, recommend capabilities (not model names) for next phase.
 
@@ -35,6 +35,6 @@ When the user says "Start", "begin", "continue", or "go":
 
 ## Setup
 
-1. Copy the `spec/` directory from Kramak to your project or reference it by path
+1. Copy the `spec/` directory from Kramak into your project as `.kramak/spec/` (or reference it by path)
 2. Create `.cursor/rules/kramak.mdc` with the content above
 3. Say "Start" in Cursor chat

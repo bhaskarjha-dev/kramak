@@ -24,8 +24,9 @@ When this procedure is invoked, determine which scenario applies:
 5. Create `state.json` from template with `phase: "planning"`
 6. Create `INBOX.md` from template
 7. Create `HUMAN-TASKS.md` from template
-8. Create empty `queue/`, `active/`, `done/`, `failed/` directories
-9. Tell the user: "Pipeline initialized. Starting planning phase."
+8. Create `PLANNING-LOG.md` from template
+9. Create empty `queue/`, `active/`, `done/`, `failed/`, `plans/` directories
+10. Tell the user: "Pipeline initialized. Starting planning phase."
 10. Proceed to PLANNER.md STEP 1
 
 ### Scenario 3: Existing Project Without Context
@@ -131,8 +132,10 @@ After bootstrap, the workspace should have:
 │   ├── state.json         ← Initial state (phase: "planning")
 │   ├── INBOX.md           ← Empty inbox with format guide
 │   ├── HUMAN-TASKS.md     ← Empty human tasks file
+│   ├── PLANNING-LOG.md    ← Empty planning history
 │   ├── queue/             ← Empty (planner will populate)
 │   ├── active/            ← Empty
 │   ├── done/              ← Empty
-│   └── failed/            ← Empty
+│   ├── failed/            ← Empty
+│   └── plans/             ← Empty (planner will populate)
 ```
