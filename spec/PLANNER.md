@@ -244,7 +244,7 @@ Move processed items to the "Processed" section with a note on action taken.
 | **FIRST SESSION** — no prior planning has been done | Check if `state.json → lastVisionAssessment` exists |
 | **PLANNER JUDGMENT** — you sense an inflection point | Use your judgment — is the product at a natural turning point? |
 
-**If NO trigger is true → skip to 2b (Role Cycle).**
+**If NO trigger is true → skip to 2b (Perspective Selection).**
 
 **If ANY trigger is true → run these 5 lenses:**
 
