@@ -1,17 +1,30 @@
 #!/bin/sh
 # Kramak pre-commit hook
-# Prevents commits that fail build/check commands.
+# Prevents commits that fail build/check commands or have invalid pipeline state.
 # Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
 
-# Read check commands from state.json if it exists
 STATE_FILE=".agents/pipeline/state.json"
 COMMANDS=""
 
+# 1. Validate pipeline state integrity if validator script exists and node is installed
+if [ -f "scripts/validate.js" ] && command -v node > /dev/null 2>&1; then
+  if [ -f "$STATE_FILE" ]; then
+    echo "🔍 Validating Kramak pipeline state..."
+    if ! node scripts/validate.js > /dev/null 2>&1; then
+      echo "❌ Kramak pipeline validation failed. Run 'node scripts/validate.js' for details."
+      exit 1
+    fi
+  fi
+fi
+
+# 2. Read check commands from state.json if it exists
 if [ -f "$STATE_FILE" ]; then
-  # Try to extract check commands (requires jq or python)
-  if command -v jq &> /dev/null; then
+  # Try to extract check commands (requires jq or python or node)
+  if command -v node > /dev/null 2>&1; then
+    COMMANDS=$(node -e "try { const s = require('./$STATE_FILE'); (s.toolchain?.checkCommands || []).forEach(c => console.log(c)); } catch(e){}" 2>/dev/null)
+  elif command -v jq > /dev/null 2>&1; then
     COMMANDS=$(jq -r '.toolchain.checkCommands[]' "$STATE_FILE" 2>/dev/null)
-  elif command -v python3 &> /dev/null; then
+  elif command -v python3 > /dev/null 2>&1; then
     COMMANDS=$(python3 -c "import json; [print(c) for c in json.load(open('$STATE_FILE')).get('toolchain',{}).get('checkCommands',[])]" 2>/dev/null)
   fi
 fi
@@ -19,15 +32,21 @@ fi
 # Fallback: try common check commands
 if [ -z "$COMMANDS" ]; then
   if [ -f "tsconfig.json" ]; then
-    if [ -f "pnpm-lock.yaml" ]; then
+    if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+      COMMANDS="bun x tsc --noEmit"
+    elif [ -f "pnpm-lock.yaml" ]; then
       COMMANDS="pnpm tsc --noEmit"
     elif [ -f "package-lock.json" ]; then
       COMMANDS="npx tsc --noEmit"
+    elif [ -f "yarn.lock" ]; then
+      COMMANDS="yarn tsc --noEmit"
     fi
   elif [ -f "Cargo.toml" ]; then
     COMMANDS="cargo check"
   elif [ -f "go.mod" ]; then
     COMMANDS="go vet ./..."
+  elif [ -f "uv.lock" ]; then
+    COMMANDS="uv run ruff check ."
   fi
 fi
 
