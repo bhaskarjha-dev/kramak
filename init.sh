@@ -17,8 +17,9 @@ cd "$TARGET_DIR"
 
 echo "📂 Target directory: $(pwd)"
 
-# Create Kramak spec directory
+# Create Kramak directory structure
 mkdir -p .kramak/spec
+mkdir -p .kramak/templates
 mkdir -p .agents/pipeline/queue
 mkdir -p .agents/pipeline/active
 mkdir -p .agents/pipeline/done
@@ -34,10 +35,11 @@ touch .agents/pipeline/plans/.gitkeep
 
 KRAMAK_REPO_RAW="https://raw.githubusercontent.com/bhaskarjha-dev/kramak/main"
 
-# Download or copy spec files if not local
+# Download or copy spec and template files if not local
 if [ -d "spec" ] && [ -f "spec/PLANNER.md" ]; then
-  echo "📋 Copying local spec files..."
+  echo "📋 Copying local spec and template files..."
   cp -r spec/* .kramak/spec/
+  cp -r templates/* .kramak/templates/
   cp templates/state.json .agents/pipeline/state.json
   cp templates/INBOX.md .agents/pipeline/INBOX.md
   cp templates/HUMAN-TASKS.md .agents/pipeline/HUMAN-TASKS.md
@@ -50,10 +52,20 @@ else
   curl -fsSL "$KRAMAK_REPO_RAW/spec/BOOTSTRAP.md" -o .kramak/spec/BOOTSTRAP.md
   curl -fsSL "$KRAMAK_REPO_RAW/spec/state.schema.json" -o .kramak/spec/state.schema.json
 
-  curl -fsSL "$KRAMAK_REPO_RAW/templates/state.json" -o .agents/pipeline/state.json
-  curl -fsSL "$KRAMAK_REPO_RAW/templates/INBOX.md" -o .agents/pipeline/INBOX.md
-  curl -fsSL "$KRAMAK_REPO_RAW/templates/HUMAN-TASKS.md" -o .agents/pipeline/HUMAN-TASKS.md
-  curl -fsSL "$KRAMAK_REPO_RAW/templates/PLANNING-LOG.md" -o .agents/pipeline/PLANNING-LOG.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/state.json" -o .kramak/templates/state.json
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/INBOX.md" -o .kramak/templates/INBOX.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/HUMAN-TASKS.md" -o .kramak/templates/HUMAN-TASKS.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/PLANNING-LOG.md" -o .kramak/templates/PLANNING-LOG.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/batch-plan.md" -o .kramak/templates/batch-plan.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/audit-report.md" -o .kramak/templates/audit-report.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/work-item-guided.md" -o .kramak/templates/work-item-guided.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/work-item-directed.md" -o .kramak/templates/work-item-directed.md
+  curl -fsSL "$KRAMAK_REPO_RAW/templates/work-item-outcome.md" -o .kramak/templates/work-item-outcome.md
+
+  cp .kramak/templates/state.json .agents/pipeline/state.json
+  cp .kramak/templates/INBOX.md .agents/pipeline/INBOX.md
+  cp .kramak/templates/HUMAN-TASKS.md .agents/pipeline/HUMAN-TASKS.md
+  cp .kramak/templates/PLANNING-LOG.md .agents/pipeline/PLANNING-LOG.md
 fi
 
 # Initialize AGENTS.md if missing
@@ -70,6 +82,7 @@ When you receive the instruction "Start", "begin", "continue", or "go":
      - `planning` -> Read `.kramak/spec/PLANNER.md`
      - `executing` -> Read `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable).
 3. Rules: Every token advances the project. Continuous state update. Grounded verification.
 EOF

@@ -56,9 +56,11 @@ fi
 if [ -n "$COMMANDS" ]; then
   TMPFILE=$(mktemp)
   echo "$COMMANDS" > "$TMPFILE"
+  CHECK_COUNT=0
   while IFS= read -r cmd; do
     if [ -n "$cmd" ]; then
-      echo "🔍 Running: $cmd"
+      CHECK_COUNT=$((CHECK_COUNT + 1))
+      echo "🔍 Running ($CHECK_COUNT): $cmd"
       if ! eval "$cmd"; then
         echo "❌ Pre-commit check failed: $cmd"
         echo "Fix the errors before committing."
@@ -68,6 +70,8 @@ if [ -n "$COMMANDS" ]; then
     fi
   done < "$TMPFILE"
   rm -f "$TMPFILE"
+  echo "✅ All pre-commit checks passed ($CHECK_COUNT checks executed)."
+else
+  echo "⚠️  [WARN] No check commands configured in state.json or auto-detected."
+  echo "ℹ️  Tip: Add verification commands to 'toolchain.checkCommands' in $STATE_FILE."
 fi
-
-echo "✅ All pre-commit checks passed."

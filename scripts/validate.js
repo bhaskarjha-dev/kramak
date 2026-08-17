@@ -63,6 +63,40 @@ function parseArgs() {
   return { pipelinePath, isTemplateCheck };
 }
 
+function validateSchemaContract(state) {
+  const possibleSchemaPaths = [
+    path.join(process.cwd(), 'spec', 'state.schema.json'),
+    path.join(process.cwd(), '.kramak', 'spec', 'state.schema.json')
+  ];
+
+  let schemaPath = null;
+  for (const p of possibleSchemaPaths) {
+    if (fs.existsSync(p)) {
+      schemaPath = p;
+      break;
+    }
+  }
+
+  if (!schemaPath) return;
+
+  try {
+    const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+    const allowedKeys = Object.keys(schema.properties || {});
+    const stateKeys = Object.keys(state);
+    
+    if (schema.additionalProperties === false) {
+      for (const k of stateKeys) {
+        if (!allowedKeys.includes(k)) {
+          logError(`Schema violation: property "${k}" is not defined in state.schema.json.`);
+        }
+      }
+    }
+    logPass('state.json adheres to state.schema.json property constraints.');
+  } catch (err) {
+    logWarn(`Could not validate against schema: ${err.message}`);
+  }
+}
+
 function validateStateJson(stateFile, isTemplate) {
   logInfo(`Validating state file: ${stateFile}`);
 
@@ -80,6 +114,9 @@ function validateStateJson(stateFile, isTemplate) {
     logError(`state.json JSON syntax error: ${err.message}`);
     return null;
   }
+
+  // Schema properties check
+  validateSchemaContract(state);
 
   // Required root fields
   const requiredFields = ['version', 'phase', 'nextAction', 'currentBranch', 'batchNumber', 'queue', 'metrics'];
@@ -101,9 +138,26 @@ function validateStateJson(stateFile, isTemplate) {
     logError(`Invalid productPhase "${state.productPhase}". Must be one of: ${VALID_PRODUCT_PHASES.map(p => `"${p}"`).join(', ')}`);
   }
 
+  // Batch number check
+  if (typeof state.batchNumber === 'number') {
+    if (state.batchNumber < 0 || !Number.isInteger(state.batchNumber)) {
+      logError(`"batchNumber" must be a non-negative integer.`);
+    }
+  }
+
   // Queue check
   if (!Array.isArray(state.queue)) {
     logError(`"queue" must be an array in state.json.`);
+  }
+
+  // Toolchain check
+  if (state.toolchain) {
+    if (state.toolchain.detected === false && !isTemplate) {
+      logWarn('toolchain.detected is false. Run bootstrap or configure toolchain.checkCommands in state.json.');
+    }
+    if (Array.isArray(state.toolchain.checkCommands) && state.toolchain.checkCommands.length === 0 && !isTemplate) {
+      logWarn('toolchain.checkCommands is empty. Verification gates will have no check commands to execute.');
+    }
   }
 
   // Metrics check
@@ -138,6 +192,7 @@ function validateFilesystemReconciliation(pipelinePath, state) {
 
   const queueDir = path.join(pipelinePath, 'queue');
   const activeDir = path.join(pipelinePath, 'active');
+  const doneDir = path.join(pipelinePath, 'done');
   const failedDir = path.join(pipelinePath, 'failed');
 
   // Check active item
@@ -178,6 +233,17 @@ function validateFilesystemReconciliation(pipelinePath, state) {
     }
   }
 
+  // Check done items
+  if (fs.existsSync(doneDir) && Array.isArray(state.completed)) {
+    const doneFiles = fs.readdirSync(doneDir).filter(f => f.endsWith('.md'));
+    const completedIds = state.completed.map(item => typeof item === 'string' ? item : item.id);
+    for (const wiId of completedIds) {
+      if (wiId && !doneFiles.includes(`${wiId}.md`)) {
+        logWarn(`state.completed lists "${wiId}", but "${wiId}.md" is not in done/ directory.`);
+      }
+    }
+  }
+
   // Check failed items
   if (fs.existsSync(failedDir)) {
     const failedFiles = fs.readdirSync(failedDir).filter(f => f.endsWith('.md'));
@@ -186,16 +252,17 @@ function validateFilesystemReconciliation(pipelinePath, state) {
       if (!content.includes('## Failure Diagnosis')) {
         logError(`Failed work item "${f}" is missing mandatory "## Failure Diagnosis" section!`);
       } else {
-        // Check failure category
-        let hasCategory = false;
-        for (const cat of VALID_FAILURE_CATEGORIES) {
-          if (content.includes(cat)) {
-            hasCategory = true;
-            break;
+        // Strict failure category detection in diagnosis section
+        const diagMatch = content.match(/## Failure Diagnosis[\s\S]*?(?:Category:|\*\*Category:\*\*)\s*`?([a-zA-Z0-9_-]+)`?/i);
+        if (diagMatch && diagMatch[1]) {
+          const category = diagMatch[1].trim();
+          if (VALID_FAILURE_CATEGORIES.includes(category)) {
+            logPass(`Failed item "${f}" has valid category: ${category}`);
+          } else {
+            logError(`Failed item "${f}" has invalid failure category "${category}". Must be one of: ${VALID_FAILURE_CATEGORIES.join(', ')}`);
           }
-        }
-        if (!hasCategory) {
-          logWarn(`Failed item "${f}" does not clearly specify a recognized failure category.`);
+        } else {
+          logWarn(`Failed item "${f}" does not clearly specify a recognized failure category in "## Failure Diagnosis".`);
         }
       }
     }

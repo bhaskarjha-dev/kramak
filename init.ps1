@@ -10,7 +10,7 @@ param (
 $ErrorActionPreference = "Stop"
 
 Write-Host "=============================================" -ForegroundColor Cyan
-Write-Host "   Kramak (Kramak) Project Initializer" -ForegroundColor Cyan
+Write-Host "   Kramak (क्रमक) Project Initializer" -ForegroundColor Cyan
 Write-Host "   The missing SDLC for AI agents" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host ""
@@ -22,6 +22,7 @@ Write-Host "[INFO] Target directory: $currentPath"
 # Create directory structure
 $dirs = @(
     ".kramak/spec",
+    ".kramak/templates",
     ".agents/pipeline/queue",
     ".agents/pipeline/active",
     ".agents/pipeline/done",
@@ -42,8 +43,9 @@ foreach ($d in $dirs) {
 $KRAMAK_RAW = "https://raw.githubusercontent.com/bhaskarjha-dev/kramak/main"
 
 if ((Test-Path "spec/PLANNER.md") -and (Test-Path "templates/state.json")) {
-    Write-Host "[INFO] Copying local spec files..." -ForegroundColor Yellow
+    Write-Host "[INFO] Copying local spec and template files..." -ForegroundColor Yellow
     Copy-Item -Path "spec/*" -Destination ".kramak/spec/" -Recurse -Force
+    Copy-Item -Path "templates/*" -Destination ".kramak/templates/" -Recurse -Force
     Copy-Item -Path "templates/state.json" -Destination ".agents/pipeline/state.json" -Force
     Copy-Item -Path "templates/INBOX.md" -Destination ".agents/pipeline/INBOX.md" -Force
     Copy-Item -Path "templates/HUMAN-TASKS.md" -Destination ".agents/pipeline/HUMAN-TASKS.md" -Force
@@ -56,10 +58,20 @@ if ((Test-Path "spec/PLANNER.md") -and (Test-Path "templates/state.json")) {
     Invoke-WebRequest -Uri "$KRAMAK_RAW/spec/BOOTSTRAP.md" -OutFile ".kramak/spec/BOOTSTRAP.md"
     Invoke-WebRequest -Uri "$KRAMAK_RAW/spec/state.schema.json" -OutFile ".kramak/spec/state.schema.json"
 
-    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/state.json" -OutFile ".agents/pipeline/state.json"
-    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/INBOX.md" -OutFile ".agents/pipeline/INBOX.md"
-    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/HUMAN-TASKS.md" -OutFile ".agents/pipeline/HUMAN-TASKS.md"
-    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/PLANNING-LOG.md" -OutFile ".agents/pipeline/PLANNING-LOG.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/state.json" -OutFile ".kramak/templates/state.json"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/INBOX.md" -OutFile ".kramak/templates/INBOX.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/HUMAN-TASKS.md" -OutFile ".kramak/templates/HUMAN-TASKS.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/PLANNING-LOG.md" -OutFile ".kramak/templates/PLANNING-LOG.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/batch-plan.md" -OutFile ".kramak/templates/batch-plan.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/audit-report.md" -OutFile ".kramak/templates/audit-report.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/work-item-guided.md" -OutFile ".kramak/templates/work-item-guided.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/work-item-directed.md" -OutFile ".kramak/templates/work-item-directed.md"
+    Invoke-WebRequest -Uri "$KRAMAK_RAW/templates/work-item-outcome.md" -OutFile ".kramak/templates/work-item-outcome.md"
+
+    Copy-Item -Path ".kramak/templates/state.json" -Destination ".agents/pipeline/state.json" -Force
+    Copy-Item -Path ".kramak/templates/INBOX.md" -Destination ".agents/pipeline/INBOX.md" -Force
+    Copy-Item -Path ".kramak/templates/HUMAN-TASKS.md" -Destination ".agents/pipeline/HUMAN-TASKS.md" -Force
+    Copy-Item -Path ".kramak/templates/PLANNING-LOG.md" -Destination ".agents/pipeline/PLANNING-LOG.md" -Force
 }
 
 # Check AGENTS.md
@@ -76,6 +88,7 @@ When you receive the instruction "Start", "begin", "continue", or "go":
      - `planning` -> Read `.kramak/spec/PLANNER.md`
      - `executing` -> Read `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable).
 3. Rules: Every token advances the project. Continuous state update. Grounded verification.
 "@

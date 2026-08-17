@@ -24,12 +24,24 @@ jobs:
         run: |
           node scripts/validate.js --template
 
-      - name: Validate JSON Schema Syntax
+      - name: Validate JSON Schema & Templates
         run: |
           node -e "
-            const schema = JSON.parse(require('fs').readFileSync('spec/state.schema.json', 'utf8'));
-            const state = JSON.parse(require('fs').readFileSync('templates/state.json', 'utf8'));
-            console.log('✅ spec/state.schema.json and templates/state.json syntax valid');
+            const fs = require('fs');
+            const schema = JSON.parse(fs.readFileSync('spec/state.schema.json', 'utf8'));
+            const state = JSON.parse(fs.readFileSync('templates/state.json', 'utf8'));
+            const allowed = Object.keys(schema.properties || {});
+            for (const k of Object.keys(state)) {
+              if (schema.additionalProperties === false && !allowed.includes(k)) {
+                console.error('❌ Property not allowed in schema:', k);
+                process.exit(1);
+              }
+            }
+            if (!schema.properties.phase.enum.includes(state.phase)) {
+              console.error('❌ Invalid phase in state.json:', state.phase);
+              process.exit(1);
+            }
+            console.log('✅ spec/state.schema.json and templates/state.json fully validated');
           "
 
       - name: Verify Pre-commit Hook Syntax
