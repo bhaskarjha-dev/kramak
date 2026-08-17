@@ -22,7 +22,7 @@ When the user says "Start", "begin", "continue", or "go":
 3. Follow the phase:
    - planning → Read .kramak/spec/PLANNER.md
    - executing → Read .kramak/spec/EXECUTOR.md
-   - auditing → Read .kramak/spec/PLANNER.md §STEP 7
+   - auditing → Read .kramak/spec/EXECUTOR.md §STEP 8.5
 
 4. At session end, recommend capabilities (not model names) for next phase.
 

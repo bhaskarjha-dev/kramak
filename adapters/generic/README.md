@@ -17,7 +17,7 @@ When you receive the instruction "Start":
    - If present → Read state.phase and follow the matching procedure:
      - "planning" → Read and follow .kramak/spec/PLANNER.md
      - "executing" → Read and follow .kramak/spec/EXECUTOR.md
-     - "auditing" → Read and follow .kramak/spec/PLANNER.md STEP 7
+     - "auditing" → Read and follow .kramak/spec/EXECUTOR.md STEP 8.5
 
 2. Before any work, read .kramak/spec/PRINCIPLES.md (non-negotiable rules)
 

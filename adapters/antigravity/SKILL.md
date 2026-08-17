@@ -29,7 +29,7 @@ Read `spec/PRINCIPLES.md` from the Kramak project. These are non-negotiable.
 |---------------|-----------------|
 | `planning` | `spec/PLANNER.md` |
 | `executing` | `spec/EXECUTOR.md` |
-| `auditing` | `spec/PLANNER.md` §STEP 7 |
+| `auditing` | `spec/EXECUTOR.md` §STEP 8.5 |
 
 ## Step 4: Model self-assessment
 

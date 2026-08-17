@@ -14,7 +14,7 @@ When I say "Start":
 2. Phases:
    - planning → Follow .kramak/spec/PLANNER.md
    - executing → Follow .kramak/spec/EXECUTOR.md
-   - auditing → Follow .kramak/spec/PLANNER.md §STEP 7
+   - auditing → Follow .kramak/spec/EXECUTOR.md §STEP 8.5
 
 3. Always read .kramak/spec/PRINCIPLES.md first
 
