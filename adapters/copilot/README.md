@@ -13,6 +13,7 @@ When instructed to "Start", "begin", "continue", or "go":
      - `planning` -> Follow `.kramak/spec/PLANNER.md`
      - `executing` -> Follow `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Follow `.kramak/spec/EXECUTOR.md §STEP 8.5`
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 
 2. Follow `.kramak/spec/PRINCIPLES.md` at all times:
    - Grounded Verification: read real code files before writing work item specs or applying diffs.

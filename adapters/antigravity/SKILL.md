@@ -16,20 +16,21 @@ When the user says **"Start"** (or "begin", "continue", "go"):
 ```
 Does .agents/pipeline/state.json exist?
   → YES: Read it. Follow the procedure for state.phase (see Step 3).
-  → NO:  Read spec/BOOTSTRAP.md from the Kramak project and follow its procedure.
+  → NO:  Read .kramak/spec/BOOTSTRAP.md (or spec/BOOTSTRAP.md) and follow its procedure.
 ```
 
 ## Step 2: Read principles
 
-Read `spec/PRINCIPLES.md` from the Kramak project. These are non-negotiable.
+Read `.kramak/spec/PRINCIPLES.md` (or `spec/PRINCIPLES.md`). These are non-negotiable.
 
 ## Step 3: Follow the phase
 
 | `state.phase` | Read and follow |
 |---------------|-----------------|
-| `planning` | `spec/PLANNER.md` |
-| `executing` | `spec/EXECUTOR.md` |
-| `auditing` | `spec/EXECUTOR.md` §STEP 8.5 |
+| `planning` | `.kramak/spec/PLANNER.md` (or `spec/PLANNER.md`) |
+| `executing` | `.kramak/spec/EXECUTOR.md` (or `spec/EXECUTOR.md`) |
+| `auditing` | `.kramak/spec/EXECUTOR.md §STEP 8.5` (or `spec/EXECUTOR.md §STEP 8.5`) |
+| `waiting` | Check `HUMAN-TASKS.md` & `INBOX.md`. If resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise ask user. |
 
 ## Step 4: Model self-assessment
 

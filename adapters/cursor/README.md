@@ -15,7 +15,7 @@ When the user says "Start", "begin", "continue", or "go":
 
 1. Check if `.agents/pipeline/state.json` exists
    - YES → Read state.json, follow the procedure for state.phase
-   - NO → Bootstrap: scan workspace, detect toolchain, create pipeline files
+   - NO → Read .kramak/spec/BOOTSTRAP.md and follow the bootstrap procedure
 
 2. Read PRINCIPLES from: .kramak/spec/PRINCIPLES.md
 
@@ -23,6 +23,7 @@ When the user says "Start", "begin", "continue", or "go":
    - planning → Read .kramak/spec/PLANNER.md
    - executing → Read .kramak/spec/EXECUTOR.md
    - auditing → Read .kramak/spec/EXECUTOR.md §STEP 8.5
+   - waiting → Check HUMAN-TASKS.md & INBOX.md; if resolved, set phase to "planning" and follow .kramak/spec/PLANNER.md; otherwise prompt user
 
 4. At session end, recommend capabilities (not model names) for next phase.
 

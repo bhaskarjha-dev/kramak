@@ -15,9 +15,10 @@ When you receive the instruction "Start":
 1. Read `.agents/pipeline/state.json` in this workspace
    - If missing → Read .kramak/spec/BOOTSTRAP.md and follow the bootstrap procedure
    - If present → Read state.phase and follow the matching procedure:
-     - "planning" → Read and follow .kramak/spec/PLANNER.md
-     - "executing" → Read and follow .kramak/spec/EXECUTOR.md
-     - "auditing" → Read and follow .kramak/spec/EXECUTOR.md STEP 8.5
+      - "planning" → Read and follow .kramak/spec/PLANNER.md
+      - "executing" → Read and follow .kramak/spec/EXECUTOR.md
+      - "auditing" → Read and follow .kramak/spec/EXECUTOR.md §STEP 8.5
+      - "waiting" → Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to "planning" and follow `PLANNER.md`; otherwise prompt user.
 
 2. Before any work, read .kramak/spec/PRINCIPLES.md (non-negotiable rules)
 
