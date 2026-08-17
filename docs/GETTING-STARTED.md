@@ -14,13 +14,18 @@ Kramak is a file-based, model-agnostic, IDE-agnostic autonomous development meth
 
 ```bash
 # Clone Kramak
-git clone https://github.com/YOUR_USERNAME/kramak.git
+git clone https://github.com/bhaskarjha-dev/kramak.git
 
-# Copy spec files to your project
+# Copy spec and templates to your project
 cp -r kramak/spec/ your-project/.kramak/
+cp -r kramak/templates/ your-project/.kramak/
 
-# Copy workspace templates
-cp -r kramak/templates/ your-project/.agents/pipeline/
+# Copy initial runtime files
+mkdir -p your-project/.agents/pipeline
+cp kramak/templates/state.json your-project/.agents/pipeline/
+cp kramak/templates/INBOX.md your-project/.agents/pipeline/
+cp kramak/templates/HUMAN-TASKS.md your-project/.agents/pipeline/
+cp kramak/templates/PLANNING-LOG.md your-project/.agents/pipeline/
 ```
 
 Then add to your project's AGENTS.md:

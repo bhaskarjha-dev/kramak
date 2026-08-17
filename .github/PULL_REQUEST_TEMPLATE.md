@@ -32,6 +32,6 @@ Brief description of what this PR does.
 
 ## Checklist
 
-- [ ] I've read [CONTRIBUTING.md](CONTRIBUTING.md)
+- [ ] I've read [CONTRIBUTING.md](../CONTRIBUTING.md)
 - [ ] My changes follow the existing spec style
 - [ ] I've tested this with at least one AI agent (if applicable)
