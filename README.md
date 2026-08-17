@@ -9,7 +9,8 @@
 *√kram (to step, to progress methodically) + -aka (the agent who does)*
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Spec Version](https://img.shields.io/badge/spec-v1.0.0-7C3AED.svg)](#)
+[![Spec Version](https://img.shields.io/badge/spec-v1.0.0-7C3AED.svg)](VERSION)
+[![JSON Schema](https://img.shields.io/badge/schema-valid-green.svg)](spec/state.schema.json)
 [![Pure Methodology](https://img.shields.io/badge/type-pure_methodology-green.svg)](#)
 [![IDE Agnostic](https://img.shields.io/badge/IDE-agnostic-orange.svg)](#)
 
@@ -27,31 +28,29 @@ Kramak is a **file-based, model-agnostic, IDE-agnostic autonomous development me
 
 It's like Scrum or Kanban, but for AI-assisted development.
 
-> **This repo contains zero executable code.** Kramak is a set of markdown specifications and JSON templates — a pure process framework. You bring it into *your* project, and any AI agent that can read files can follow it.
+> **This repo contains zero mandatory runtime dependencies.** Kramak is a set of markdown specifications, JSON schemas, and templates — a pure process framework. You bring it into *your* project, and any AI agent that can read files can follow it.
 
 ### Why does this exist?
 
 The AI coding landscape in 2026 has a gap:
 
 | Layer | Standard | Status |
-|-------|----------|--------|
+|---|---|---|
 | **Context** ("What is my project?") | AGENTS.md | ✅ 60k+ repos, AAIF standard |
 | **Protocol** ("How do tools connect?") | MCP | ✅ Industry standard |
-| **Process** ("How to autonomously develop?") | ??? | ❌ **This is the gap** |
-
-Kramak fills it.
+| **Process** ("How to autonomously develop?") | **Kramak (क्रमक)** | 🚀 **Fills this gap** |
 
 ---
 
 ## Key Features
 
 | Feature | What it does | Why it matters |
-|---------|-------------|----------------|
+|---|---|---|
 | **Grounded Verification** | Every spec quotes actual code, confirmed by grep | Prevents hallucinated specs |
 | **Anti-Bias Guard** | 5-point checklist before pipeline self-improvement | Prevents recency bias in self-evolving systems |
 | **Perspective-Based Planning** | PERCEIVE → REASON → DECIDE assessment cycle | Ensures strategic thinking from the right angle |
-| **Failure Taxonomy** | 6 failure categories with structured diagnosis | Enables learning from failures |
 | **Spec Detail Scaling** | 🔴 Guided (exact BEFORE/AFTER) · 🟡 Directed (intent+constraints) · 🟢 Outcome (goal+criteria) | Right level of detail per risk level |
+| **Failure Taxonomy** | 6 failure categories with structured diagnosis | Enables learning from failures |
 | **Hard Scope Check** | `git diff --name-only` vs spec file list | Deterministic scope enforcement |
 | **State Reconciliation** | Crash recovery from state.json inconsistency | Survives session crashes |
 | **Circuit Breaker** | Stops infinite audit-fix-audit loops | Prevents wasted work |
@@ -63,74 +62,57 @@ Kramak fills it.
 
 ## Quick Start
 
-### 1. Get Kramak
+### 1. One-Line Setup (Recommended)
+
+In your project root, run:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/kramak.git
+# macOS / Linux / WSL
+curl -fsSL https://raw.githubusercontent.com/bhaskarjha-dev/kramak/main/init.sh | sh
+
+# Windows (PowerShell)
+iwr -useb https://raw.githubusercontent.com/bhaskarjha-dev/kramak/main/init.ps1 | iex
 ```
 
-### 2. Set up your project
+### 2. Manual Setup
 
-**Option A — Copy into project:**
 ```bash
-# Copy the spec into your project
-cp -r kramak/spec/ your-project/.kramak/
+# Clone Kramak
+git clone https://github.com/bhaskarjha-dev/kramak.git
 
-# Copy workspace templates
+# Copy specs and templates into your project
+cp -r kramak/spec/ your-project/.kramak/
 cp -r kramak/templates/ your-project/.agents/pipeline/
 ```
 
-**Option B — Use an adapter:**
-- [Antigravity IDE](adapters/antigravity/SKILL.md)
+### 3. Choose your AI tool & Say "Start"
+
+Use one of the pre-built adapters:
+- [Google Antigravity IDE](adapters/antigravity/SKILL.md)
 - [Cursor](adapters/cursor/README.md)
 - [Claude Code](adapters/claude-code/README.md)
-- [Any AI tool](adapters/generic/README.md)
-
-### 3. Say "Start"
-
-The agent will bootstrap your project (detect toolchain, create pipeline files) and begin the Plan → Execute → Audit loop.
+- [Windsurf](adapters/windsurf/README.md)
+- [Cline & Roo Code](adapters/cline/README.md)
+- [GitHub Copilot](adapters/copilot/README.md)
+- [Aider](adapters/aider/README.md)
+- [Any AI Tool (Generic)](adapters/generic/README.md)
 
 ---
 
 ## How It Works
 
-```
-┌──────────┐     ┌──────────┐     ┌──────────┐
-│ PLANNING │ ──→ │EXECUTING │ ──→ │ AUDITING │ ──→ (back to Planning)
-│          │     │          │     │          │
-│ • Assess │     │ • Pick   │     │ • Review │
-│ • Decide │     │ • Code   │     │ • Verify │
-│ • Spec   │     │ • Verify │     │ • Plan   │
-│          │     │ • Commit │     │   next   │
-└──────────┘     └──────────┘     └──────────┘
+```mermaid
+graph LR
+    P[1. PLANNING<br>Assess & Spec] --> E[2. EXECUTING<br>Code & Verify]
+    E --> A[3. AUDITING<br>Inspect & Fix]
+    A --> P
 ```
 
-**State persists across sessions** via `state.json` and work item files. No conversation history needed.
+**State persists across sessions** via `state.json` (validated against `spec/state.schema.json`).
 
-**Model agnostic** — uses capability self-assessment, not model names. Planning needs reasoning. Execution needs speed. Any model that can read/write files works.
+**Model agnostic** — uses capability self-assessment, not model names. High-reasoning models plan; fast, precise models execute.
 
-**IDE agnostic** — just markdown files and JSON. Adapters exist for specific IDEs.
-
----
-
-## What's In This Repo vs. What's In Your Project
-
-Kramak lives in **two places** — this is by design:
-
-| Location | What's There | Purpose |
-|----------|-------------|---------|
-| **This repo** (`kramak/`) | `spec/` — the methodology specs | The "rulebook" — read-only reference |
-| | `templates/` — workspace file templates | Starting point for your pipeline files |
-| | `adapters/` — IDE-specific integrations | How to wire Kramak into your tool |
-| | `docs/` — documentation | Learning and comparison |
-| **Your project** (`.agents/pipeline/`) | `state.json` — current state | Cross-session memory |
-| | `queue/`, `active/`, `done/`, `failed/` | Work item lifecycle |
-| | `plans/` — batch plans | Strategic planning artifacts |
-| | `INBOX.md` — user input | Mid-project notes and feedback |
-| | `HUMAN-TASKS.md` — human actions | Tasks the pipeline can't do |
-| | `PLANNING-LOG.md` — planning history | Why past decisions were made |
-
-The `spec/` files are referenced (read) by the AI agent. The `.agents/pipeline/` files are written and managed by the agent during development.
+**IDE agnostic** — pure markdown and JSON files.
 
 ---
 
@@ -138,55 +120,67 @@ The `spec/` files are referenced (read) by the AI agent. The `.agents/pipeline/`
 
 ```
 kramak/
-├── README.md              ← You are here
+├── README.md                  ← You are here
 ├── LICENSE
-├── CHANGELOG.md           ← Evolution history
-├── CONTRIBUTING.md
+├── CHANGELOG.md               ← Evolution history
+├── CONTRIBUTING.md            ← Anti-Bias Guard guidelines
 ├── CODE_OF_CONDUCT.md
-├── VERSION                ← Spec version (1.0.0)
-├── spec/                  ← The core methodology
-│   ├── PLANNER.md         ← Planning procedure
-│   ├── EXECUTOR.md        ← Execution procedure  
-│   ├── PRINCIPLES.md      ← Development principles
-│   └── BOOTSTRAP.md       ← First-time setup
-├── templates/             ← Workspace file templates
-│   ├── state.json         ← State schema
-│   ├── INBOX.md           ← User input inbox
-│   ├── HUMAN-TASKS.md     ← Human task tracker
-│   ├── PLANNING-LOG.md    ← Planning history template
-│   ├── queue/             ← Work items waiting
-│   ├── active/            ← Work item in progress
-│   ├── done/              ← Completed items (audit trail)
-│   ├── failed/            ← Failed items with diagnosis
-│   └── plans/             ← Batch plans
-├── adapters/              ← IDE-specific integrations
-│   ├── antigravity/       ← Google Antigravity IDE
-│   ├── cursor/            ← Cursor
-│   ├── claude-code/       ← Claude Code
-│   └── generic/           ← Any AI coding tool
-├── hooks/                 ← Git hooks
-│   └── pre-commit         ← Build/check verification
-├── docs/                  ← Documentation
-│   ├── GETTING-STARTED.md
-│   ├── COMPARISON.md      ← vs RIPER-5, Spec Kit, AGENTS.md
-│   └── assets/            ← Logo and images
-├── examples/              ← Sample adoption walkthrough
-└── .github/               ← Issue & PR templates
+├── VERSION                    ← Spec version (1.0.0)
+├── init.sh / init.ps1         ← One-command bootstrapper
+├── spec/                      ← The core methodology
+│   ├── PLANNER.md             ← Planning procedure & perspectives
+│   ├── EXECUTOR.md            ← Execution procedure & audit execution
+│   ├── PRINCIPLES.md          ← Constitutional development principles
+│   ├── BOOTSTRAP.md           ← First-time setup & toolchain detection
+│   └── state.schema.json      ← JSON Schema for state.json validation
+├── templates/                 ← Workspace file templates
+│   ├── state.json             ← State template
+│   ├── INBOX.md               ← User input inbox
+│   ├── HUMAN-TASKS.md         ← Human task tracker
+│   ├── PLANNING-LOG.md        ← Planning history template
+│   ├── batch-plan.md          ← Batch plan template
+│   ├── audit-report.md        ← Audit report template
+│   ├── work-item-guided.md    ← 🔴 Critical Guided WI template
+│   ├── work-item-directed.md  ← 🟡 Medium Directed WI template
+│   └── work-item-outcome.md   ← 🟢 Low Outcome WI template
+├── adapters/                  ← IDE-specific integrations
+│   ├── antigravity/           ← Google Antigravity IDE
+│   ├── cursor/                ← Cursor (.mdc rule)
+│   ├── claude-code/           ← Claude Code (CLAUDE.md)
+│   ├── windsurf/              ← Windsurf (.windsurfrules)
+│   ├── cline/                 ← Cline & Roo Code (.clinerules)
+│   ├── copilot/               ← GitHub Copilot Workspace
+│   ├── aider/                 ← Aider pair programming
+│   └── generic/               ← Any AI coding tool
+├── scripts/                   ← Zero-dependency tooling
+│   └── validate.js            ← State & pipeline integrity linter
+├── hooks/                     ← Git hooks
+│   └── pre-commit             ← Build & state verification
+├── docs/                      ← Documentation
+│   ├── SPECIFICATION.md       ← Formal state machine & invariant spec
+│   ├── GETTING-STARTED.md     ← Walkthrough guide
+│   ├── COMPARISON.md          ← vs RIPER-5, Spec Kit, Aider, Devin
+│   ├── FAQ.md                 ← Monorepos, models, edge cases
+│   └── assets/                ← Logo and diagrams
+├── examples/                  ← Sample adoption walkthrough
+└── .github/                   ← CI/CD & Issue/PR templates
 ```
 
 ---
 
-## What makes this different?
+## Validation & Tooling
 
-See [docs/COMPARISON.md](docs/COMPARISON.md) for a detailed comparison with RIPER-5, GitHub Spec Kit, AGENTS.md, and more.
+Validate your pipeline anytime:
 
-**TL;DR:** Kramak is the only methodology that is simultaneously:
-- ✅ Fully autonomous (zero human intervention during execution)
-- ✅ IDE-agnostic (works in any tool that reads files)
-- ✅ Model-agnostic (self-assesses capabilities)
-- ✅ Self-improving (with Anti-Bias Guard governance)
-- ✅ Crash-resilient (state reconciliation)
-- ✅ Verification-grounded (grep-confirmed specs, hard diff scope checks)
+```bash
+node scripts/validate.js
+```
+
+Install the pre-commit hook for automated checks before every commit:
+
+```bash
+cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+```
 
 ---
 
@@ -194,7 +188,7 @@ See [docs/COMPARISON.md](docs/COMPARISON.md) for a detailed comparison with RIPE
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Pipeline changes must pass the **Anti-Bias Guard** — a 5-point checklist that prevents recency bias in self-evolving systems.
+All pipeline modifications must pass the **Anti-Bias Guard** — a 5-point checklist preventing recency bias in self-evolving systems.
 
 ---
 

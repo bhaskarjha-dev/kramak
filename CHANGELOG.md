@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### The Public Release
 
-Kramak (formerly "Kramak") — the missing SDLC for AI agents. This is the first public release of the complete methodology specification.
+Kramak (formerly "Builoop") — the missing SDLC for AI agents. This is the first public release of the complete methodology specification.
 
 ### Core Specification
 - **PLANNER.md** — Complete planning procedure with perspective-based assessment (PERCEIVE → REASON → DECIDE), strategic vision lenses, spec detail scaling (🔴/🟡/🟢), and bounded autonomy

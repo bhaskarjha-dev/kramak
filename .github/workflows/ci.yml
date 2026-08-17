@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: Validate Spec, Schemas & Tooling
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Kramak Pipeline Validator on Templates
+        run: |
+          node scripts/validate.js --template
+
+      - name: Validate JSON Schema Syntax
+        run: |
+          node -e "
+            const schema = JSON.parse(require('fs').readFileSync('spec/state.schema.json', 'utf8'));
+            const state = JSON.parse(require('fs').readFileSync('templates/state.json', 'utf8'));
+            console.log('✅ spec/state.schema.json and templates/state.json syntax valid');
+          "
+
+      - name: Verify Pre-commit Hook Syntax
+        run: |
+          sh -n hooks/pre-commit
+          sh -n init.sh
+          echo "✅ Shell script syntax valid"
