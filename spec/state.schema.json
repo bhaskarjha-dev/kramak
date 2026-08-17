@@ -173,7 +173,9 @@
       "required": ["totalCompleted", "totalFailed"],
       "properties": {
         "totalCompleted": { "type": "integer", "minimum": 0 },
-        "totalFailed": { "type": "integer", "minimum": 0 }
+        "totalFailed": { "type": "integer", "minimum": 0 },
+        "consecutiveFailures": { "type": "integer", "minimum": 0 },
+        "circuitBreakerTripped": { "type": "boolean" }
       },
       "description": "Cumulative pipeline performance metrics"
     }

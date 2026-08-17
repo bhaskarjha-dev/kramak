@@ -8,6 +8,7 @@
  *   node scripts/validate.js
  *   node scripts/validate.js --path .agents/pipeline
  *   node scripts/validate.js --template
+ *   node scripts/validate.js --help
  */
 
 const fs = require('fs');
@@ -45,13 +46,36 @@ function logInfo(msg) {
   console.log(`ℹ️  [INFO]  ${msg}`);
 }
 
+function printHelp() {
+  console.log(`
+Kramak (क्रमक) Pipeline & State Validator
+
+Usage:
+  node scripts/validate.js [options]
+
+Options:
+  --path <dir>     Path to the .agents/pipeline directory (default: .agents/pipeline)
+  --template       Validate the repository template directory (templates/)
+  -h, --help       Show this help message and exit
+  -v, --version    Show version and exit
+`);
+}
+
 function parseArgs() {
   const args = process.argv.slice(2);
   let pipelinePath = path.join(process.cwd(), '.agents', 'pipeline');
   let isTemplateCheck = false;
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--path' && args[i + 1]) {
+    if (args[i] === '--help' || args[i] === '-h') {
+      printHelp();
+      process.exit(0);
+    } else if (args[i] === '--version' || args[i] === '-v') {
+      const versionFile = path.join(process.cwd(), 'VERSION');
+      const version = fs.existsSync(versionFile) ? fs.readFileSync(versionFile, 'utf8').trim() : '1.0.0';
+      console.log(`Kramak Validator v${version}`);
+      process.exit(0);
+    } else if (args[i] === '--path' && args[i + 1]) {
       pipelinePath = path.resolve(args[i + 1]);
       i++;
     } else if (args[i] === '--template') {
@@ -77,7 +101,10 @@ function validateSchemaContract(state) {
     }
   }
 
-  if (!schemaPath) return;
+  if (!schemaPath) {
+    logWarn('Could not locate state.schema.json for strict schema validation.');
+    return;
+  }
 
   try {
     const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
@@ -91,6 +118,38 @@ function validateSchemaContract(state) {
         }
       }
     }
+
+    // Nested schema validation
+    if (state.metrics && typeof state.metrics === 'object') {
+      const allowedMetricKeys = Object.keys(schema.properties.metrics.properties || {});
+      for (const k of Object.keys(state.metrics)) {
+        if (!allowedMetricKeys.includes(k)) {
+          logError(`Schema violation: property "metrics.${k}" is not defined in state.schema.json.`);
+        }
+      }
+      if (state.metrics.consecutiveFailures !== undefined && typeof state.metrics.consecutiveFailures !== 'number') {
+        logError('"metrics.consecutiveFailures" must be a number.');
+      }
+      if (state.metrics.circuitBreakerTripped !== undefined && typeof state.metrics.circuitBreakerTripped !== 'boolean') {
+        logError('"metrics.circuitBreakerTripped" must be a boolean.');
+      }
+    }
+
+    if (state.toolchain && typeof state.toolchain === 'object') {
+      const allowedToolchainKeys = Object.keys(schema.properties.toolchain.properties || {});
+      for (const k of Object.keys(state.toolchain)) {
+        if (!allowedToolchainKeys.includes(k)) {
+          logError(`Schema violation: property "toolchain.${k}" is not defined in state.schema.json.`);
+        }
+      }
+    }
+
+    if (state.lastAudit && typeof state.lastAudit === 'object') {
+      if (state.lastAudit.verdict && !['pass', 'pass-with-fixes', 'fail'].includes(state.lastAudit.verdict)) {
+        logError(`Invalid lastAudit.verdict "${state.lastAudit.verdict}". Must be pass, pass-with-fixes, or fail.`);
+      }
+    }
+
     logPass('state.json adheres to state.schema.json property constraints.');
   } catch (err) {
     logWarn(`Could not validate against schema: ${err.message}`);

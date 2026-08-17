@@ -10,7 +10,9 @@ When this procedure is invoked, determine which scenario applies:
 
 ### Scenario 1: Continuing Project
 **Check:** Does `.agents/pipeline/state.json` exist?
-→ **YES:** This project already has a pipeline. Read state.json and follow the procedure for `state.phase`. **Do not re-bootstrap.**
+→ **YES:** This project already has a pipeline.
+  - **Empty Workspace Guard:** If `state.phase == "planning"`, but the workspace contains no source code, no design/requirement documents, and `INBOX.md` is empty, **do not proceed to planning**. Follow **Scenario 5: Empty Workspace** instead.
+  - Otherwise: Read `state.json` and follow the procedure for `state.phase`. **Do not re-bootstrap.**
 
 ### Scenario 2: Existing Project With Context
 **Check:** Does `.agents/AGENTS.md` exist? (or CLAUDE.md, .cursorrules, README.md with substantial content)

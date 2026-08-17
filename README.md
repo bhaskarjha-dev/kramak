@@ -81,8 +81,10 @@ iwr -useb https://raw.githubusercontent.com/bhaskarjha-dev/kramak/main/init.ps1 
 git clone https://github.com/bhaskarjha-dev/kramak.git
 
 # Copy specs and templates into your project
-cp -r kramak/spec/ your-project/.kramak/
-cp -r kramak/templates/ your-project/.agents/pipeline/
+cp -r kramak/spec/ your-project/.kramak/spec/
+cp -r kramak/templates/ your-project/.kramak/templates/
+mkdir -p your-project/.agents/pipeline
+cp -r kramak/templates/* your-project/.agents/pipeline/
 ```
 
 ### 3. Choose your AI tool & Say "Start"

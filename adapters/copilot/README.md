@@ -13,7 +13,7 @@ When instructed to "Start", "begin", "continue", or "go":
      - `planning` -> Follow `.kramak/spec/PLANNER.md`
      - `executing` -> Follow `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Follow `.kramak/spec/EXECUTOR.md §STEP 8.5`
-     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 
 2. Follow `.kramak/spec/PRINCIPLES.md` at all times:
    - Grounded Verification: read real code files before writing work item specs or applying diffs.
@@ -23,9 +23,10 @@ When instructed to "Start", "begin", "continue", or "go":
 
 ## Setup Instructions
 
-1. Copy Kramak specs into `.kramak/spec/`:
+1. Copy Kramak specs and templates into `.kramak/`:
    ```bash
    cp -r path/to/kramak/spec/ .kramak/spec/
+   cp -r path/to/kramak/templates/ .kramak/templates/
    ```
 2. Create `.github/copilot-instructions.md` with the instructions above.
 3. In Copilot Chat / Workspace, say **"Start"**.

@@ -45,7 +45,7 @@ Execution requires **precise code editing and command execution**: following spe
 4. **Reconcile state with filesystem** (crash recovery):
    - If `state.phase` is `"auditing"` → Proceed directly to STEP 8.5 (Executor Audit).
    - If `state.active` is set but no file exists in `active/` → the session crashed. Check if the file is still in `queue/` (not started) or `done/` (completed). Fix state.json accordingly.
-   - If a file exists in `active/` but `state.active` is null → a previous session crashed mid-move. Read the file, set it as active, resume it.
+   - If a file exists in `active/` but `state.active` is null → a previous session crashed mid-move. Read the file, set it as active, resume it. If duplicate exists in `queue/`, delete `queue/<WI-ID>.md`.
    - If `state.queue` lists a WI but the file doesn't exist in `queue/` → remove it from the queue array.
 
 5. Check: is `state.active` set?
@@ -63,7 +63,7 @@ Execution requires **precise code editing and command execution**: following spe
 3. Read ALL files listed in the "Changes" section — know the current code
 4. Run `git status`:
    - If starting a new WI: working tree must be clean. If dirty from external edits, run `git stash` first.
-   - If resuming an in-flight WI from `active/` (crash recovery): inspect uncommitted changes against the WI spec. If corrupted, clean with `git checkout -- .` and re-apply; if valid progress, continue execution.
+   - If resuming an in-flight WI from `active/` (crash recovery): inspect uncommitted changes against the WI spec. If corrupted, clean with `git checkout -- . && git clean -fd` and re-apply; if valid progress, continue execution.
 5. Verify you're on the correct branch (from `state.currentBranch`). If not, `git checkout <branch>`.
 6. Move the work item file: copy content from `queue/` to `active/`, delete from `queue/` (skip if already in `active/`)
 7. Update `state.json`: set `active` to the work item ID, remove from `queue` array (if not already set)
@@ -181,7 +181,11 @@ Plus any additional verification commands specified in the work item.
        "completedAt": "<ISO timestamp>",
        "verificationPassed": true
      }],
-     "metrics": { "totalCompleted": N+1 }
+     "metrics": {
+       "totalCompleted": N+1,
+       "consecutiveFailures": 0,
+       "circuitBreakerTripped": false
+     }
    }
    ```
 
@@ -211,7 +215,7 @@ If execution or verification fails irrecoverably:
    - **Suggested fix:** [what the planner should do differently]
    ```
 
-3. **Revert any uncommitted changes**: `git checkout -- .`
+3. **Revert any uncommitted changes**: `git checkout -- . && git clean -fd`
 4. **Move** the work item from `active/` to `failed/`
 5. **Update `state.json`**:
    ```json
@@ -222,9 +226,14 @@ If execution or verification fails irrecoverably:
        "category": "<category from diagnosis>",
        "failedAt": "<ISO timestamp>"
      }],
-     "metrics": { "totalFailed": N+1 }
+     "metrics": {
+       "totalFailed": N+1,
+       "consecutiveFailures": (metrics.consecutiveFailures || 0) + 1,
+       "circuitBreakerTripped": (metrics.consecutiveFailures || 0) + 1 >= 3
+     }
    }
    ```
+   *If `consecutiveFailures >= 3`: set `phase: "planning"` and `nextAction: "Circuit breaker tripped (3 consecutive failures). Start planner session to rethink design."`.*
 
 ---
 

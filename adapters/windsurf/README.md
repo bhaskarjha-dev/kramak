@@ -13,7 +13,7 @@ When the user says "Start", "begin", "continue", or "go":
      - `planning` -> Read `.kramak/spec/PLANNER.md`
      - `executing` -> Read `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
-     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 
 2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable development principles).
 
@@ -26,9 +26,9 @@ When the user says "Start", "begin", "continue", or "go":
 
 ## Setup Instructions
 
-1. Copy the `spec/` directory into your project as `.kramak/spec/`:
+1. Copy the `spec/` and `templates/` directories into your project under `.kramak/`:
    ```bash
-   mkdir -p .kramak && cp -r path/to/kramak/spec .kramak/
+   mkdir -p .kramak && cp -r path/to/kramak/spec path/to/kramak/templates .kramak/
    ```
 2. Create `.windsurfrules` in the root of your project with the content above.
 3. Open Windsurf Cascade chat and say **"Start"**.

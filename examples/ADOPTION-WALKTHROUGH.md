@@ -25,14 +25,30 @@ my-app/
 # Copy spec files
 cp -r path/to/kramak/spec/ my-app/.kramak/
 
-# Copy templates
-cp -r path/to/kramak/templates/ my-app/.agents/pipeline/
+# Copy spec and template reference files
+cp -r path/to/kramak/spec/ my-app/.kramak/
+cp -r path/to/kramak/templates/ my-app/.kramak/
+
+# Copy initial runtime files
+mkdir -p my-app/.agents/pipeline
+cp -r path/to/kramak/templates/* my-app/.agents/pipeline/
 ```
 
-Add to your `AGENTS.md`:
+Add to your `.agents/AGENTS.md` (or `AGENTS.md`):
 ```markdown
+# Project Context
+
 ## Autonomous Development (Kramak)
-When you see "Start": read .kramak/spec/BOOTSTRAP.md and follow it.
+When you receive the instruction "Start", "begin", "continue", or "go":
+1. Read `.agents/pipeline/state.json`
+   - If missing: read `.kramak/spec/BOOTSTRAP.md` and bootstrap
+   - If present: follow procedure for `state.phase`:
+     - `planning` -> Read `.kramak/spec/PLANNER.md`
+     - `executing` -> Read `.kramak/spec/EXECUTOR.md`
+     - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable).
+3. Rules: Every token advances the project. Continuous state update. Grounded verification.
 ```
 
 ## Step 2: Say "Start"

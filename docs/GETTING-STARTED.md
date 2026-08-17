@@ -28,10 +28,21 @@ cp kramak/templates/HUMAN-TASKS.md your-project/.agents/pipeline/
 cp kramak/templates/PLANNING-LOG.md your-project/.agents/pipeline/
 ```
 
-Then add to your project's AGENTS.md:
+Then add to your project's `.agents/AGENTS.md` (or project root `AGENTS.md`):
 ```markdown
+# Project Context
+
 ## Autonomous Development (Kramak)
-When you see "Start": read .kramak/spec/BOOTSTRAP.md and follow it.
+When you receive the instruction "Start", "begin", "continue", or "go":
+1. Read `.agents/pipeline/state.json`
+   - If missing: read `.kramak/spec/BOOTSTRAP.md` and bootstrap
+   - If present: follow procedure for `state.phase`:
+     - `planning` -> Read `.kramak/spec/PLANNER.md`
+     - `executing` -> Read `.kramak/spec/EXECUTOR.md`
+     - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable).
+3. Rules: Every token advances the project. Continuous state update. Grounded verification.
 ```
 
 ### Option B: Reference Kramak externally

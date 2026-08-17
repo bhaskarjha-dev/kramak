@@ -10,19 +10,19 @@
 [WHY this change is needed. What breaks if this is implemented incorrectly.]
 
 ## Read First
-1. `path/to/file.ts` (lines X-Y) — understand current behavior and dependencies
+1. `path/to/file.ts` (lines X-Y) — understand current behavior and dependencies (or "None — new file")
 
 ## Changes
 ### Change 1: [Short description of change]
 **File:** `path/to/file.ts`
-**Verified:** ✅ grep confirmed unique match at lines X-Y
+**Verified:** ✅ grep confirmed unique match at lines X-Y (or "✅ New file")
 
 ```
 // BEFORE:
-[exact current lines from codebase - confirmed unique via grep]
+[exact current lines from codebase - confirmed unique via grep, or "(empty / new file)"]
 
 // AFTER:
-[exact drop-in replacement lines]
+[exact drop-in replacement lines or full new file content]
 ```
 
 **New symbols:** [list any new functions/types added]  

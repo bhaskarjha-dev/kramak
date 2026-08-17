@@ -23,7 +23,7 @@ When the user says "Start", "begin", "continue", or "go":
    - planning → Read .kramak/spec/PLANNER.md
    - executing → Read .kramak/spec/EXECUTOR.md
    - auditing → Read .kramak/spec/EXECUTOR.md §STEP 8.5
-   - waiting → Check HUMAN-TASKS.md & INBOX.md; if resolved, set phase to "planning" and follow .kramak/spec/PLANNER.md; otherwise prompt user
+   - waiting → Check HUMAN-TASKS.md & INBOX.md; if resolved or unblocked roadmap work exists, set phase to "planning" and follow .kramak/spec/PLANNER.md; otherwise prompt user
 
 4. At session end, recommend capabilities (not model names) for next phase.
 
@@ -36,6 +36,6 @@ When the user says "Start", "begin", "continue", or "go":
 
 ## Setup
 
-1. Copy the `spec/` directory from Kramak into your project as `.kramak/spec/` (or reference it by path)
+1. Copy the `spec/` and `templates/` directories from Kramak into your project as `.kramak/spec/` and `.kramak/templates/` (or run `./init.sh`)
 2. Create `.cursor/rules/kramak.mdc` with the content above
 3. Say "Start" in Cursor chat

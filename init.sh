@@ -13,6 +13,7 @@ echo "============================================="
 echo ""
 
 TARGET_DIR="${1:-.}"
+mkdir -p "$TARGET_DIR"
 cd "$TARGET_DIR"
 
 echo "📂 Target directory: $(pwd)"
@@ -82,7 +83,7 @@ When you receive the instruction "Start", "begin", "continue", or "go":
      - `planning` -> Read `.kramak/spec/PLANNER.md`
      - `executing` -> Read `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
-     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable).
 3. Rules: Every token advances the project. Continuous state update. Grounded verification.
 EOF

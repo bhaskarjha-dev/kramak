@@ -4,7 +4,7 @@ For any AI coding tool that can read files and run commands:
 
 ## Setup
 
-1. Copy the `spec/` directory into your project as `.kramak/spec/` (or keep it referenced externally)
+1. Copy the `spec/` and `templates/` directories into your project under `.kramak/` (or keep them referenced externally, or run `./init.sh`)
 2. Add the following to your project's agent context file (AGENTS.md, README, or system prompt):
 
 ```markdown
@@ -18,7 +18,7 @@ When you receive the instruction "Start":
       - "planning" → Read and follow .kramak/spec/PLANNER.md
       - "executing" → Read and follow .kramak/spec/EXECUTOR.md
       - "auditing" → Read and follow .kramak/spec/EXECUTOR.md §STEP 8.5
-      - "waiting" → Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to "planning" and follow `PLANNER.md`; otherwise prompt user.
+      - "waiting" → Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to "planning" and follow `PLANNER.md`; otherwise prompt user.
 
 2. Before any work, read .kramak/spec/PRINCIPLES.md (non-negotiable rules)
 

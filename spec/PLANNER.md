@@ -73,7 +73,12 @@ Planning requires **strong reasoning**: multi-step architectural thinking, strat
 
 ## STEP 1: ORIENT (Read & Understand)
 
-Read files in priority order. Stop reading when you have enough context to plan.
+### Empty Workspace Guard (check FIRST before reading or planning)
+If the workspace has **no source code files**, **no design/requirement documents**, and `.agents/pipeline/INBOX.md` has no unprocessed user instructions:
+1. Set `state.phase: "waiting"` in `state.json`.
+2. Set `state.nextAction: "Empty workspace detected. Please describe what we are building in INBOX.md, then say Start."`.
+3. Tell the user: "Empty workspace detected. What are we building? Please describe the project or add requirement files to the workspace, then say 'Start'."
+4. **STOP.** Do not hallucinate plans or roadmaps without user direction.
 
 ### 1a. Project Discovery (first session or when structure unknown)
 
@@ -658,12 +663,14 @@ For each task, create a file in `.agents/pipeline/queue/` named `WI-XXX.md`.
 **Grounded Verification Protocol (for Guided WIs only):**
 
 ```
-STEP A: LOCATE — grep/view_file to find actual code, record file path + lines
-STEP B: QUOTE — copy EXACT lines as BEFORE pattern (verbatim, not from memory)
-STEP C: VERIFY — grep for unique substring, confirm exactly ONE match
-STEP D: DESIGN — write AFTER as drop-in replacement
+STEP A: LOCATE — grep/view_file to find actual code, record file path + lines (or mark as new file)
+STEP B: QUOTE — copy EXACT lines as BEFORE pattern (verbatim, not from memory; or (empty / new file))
+STEP C: VERIFY — grep for unique substring, confirm exactly ONE match (for existing files)
+STEP D: DESIGN — write AFTER as drop-in replacement (or full content for new file)
 STEP E: CROSS-CHECK — verify new imports exist, grep for affected callers
 ```
+
+> **Note on New Files:** If creating a new file in Guided mode, specify `**Verified:** ✅ New file (no prior lines)` and `// BEFORE: (empty / new file)`.
 
 ````markdown
 # WI-XXX: [Title]
@@ -678,19 +685,19 @@ STEP E: CROSS-CHECK — verify new imports exist, grep for affected callers
 [WHY. What breaks if this is wrong.]
 
 ## Read First
-1. `path/to/file.ts` (lines X-Y) — understand current behavior
+1. `path/to/file.ts` (lines X-Y) — understand current behavior (or "None — new file")
 
 ## Changes
 ### Change 1: [Description]
 **File:** `path/to/file.ts`
-**Verified:** ✅ grep confirmed unique match at lines X-Y
+**Verified:** ✅ grep confirmed unique match at lines X-Y (or "✅ New file")
 
 ```
 // BEFORE:
-[exact current code]
+[exact current code, or "(empty / new file)"]
 
 // AFTER:
-[exact replacement]
+[exact replacement or new file content]
 ```
 
 **New symbols:** [list] | **Callers affected:** [list]
@@ -922,9 +929,14 @@ If transitioning, update `state.productPhase` in state.json.
 
 ### Circuit Breaker (prevents infinite fix loops):
 
-If the executor is fixing the **same specific failure** across multiple batches:
-- **2nd time:** Acceptable — the first fix might have been incomplete.
-- **3rd time:** **STOP.** The approach is wrong. Rethink the design.
+Check `state.metrics.circuitBreakerTripped` and `state.metrics.consecutiveFailures`:
+- If `circuitBreakerTripped` is true or `consecutiveFailures >= 3`:
+  - **STOP.** Do not re-queue the failing pattern or retry the same approach.
+  - Rethink the architectural design from first principles.
+  - Reset `metrics.circuitBreakerTripped = false` and `metrics.consecutiveFailures = 0` once a fundamentally new strategy is planned.
+- If the executor is fixing the **same specific failure** across multiple batches:
+  - **2nd time:** Acceptable — the first fix might have been incomplete.
+  - **3rd time:** **STOP.** The approach is wrong. Rethink the design.
 
 ### After Review → proceed directly to STEP 2 (plan next batch).
 

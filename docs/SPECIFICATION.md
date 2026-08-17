@@ -47,7 +47,7 @@ stateDiagram-v2
     
     AUDITING --> PLANNING: Technical audit completed, state.lastAudit updated
     
-    WAITING --> PLANNING: Human task marked done OR INBOX input provided
+    WAITING --> PLANNING: Human task marked done OR INBOX input provided OR unblocked fallback work exists
 ```
 
 1. $\delta(s_{\text{bootstrap}}, \text{ToolchainDetected}) \to s_{\text{planning}}$
@@ -58,7 +58,7 @@ stateDiagram-v2
 6. $\delta(s_{\text{executing}}, \text{QueueEmpty} \lor \text{DegradationHigh}) \to s_{\text{auditing}}$
 7. $\delta(s_{\text{executing}}, \text{CircuitBreaker} \lor \text{MajorArchFault}) \to s_{\text{planning}}$
 8. $\delta(s_{\text{auditing}}, \text{AuditCompleted}) \to s_{\text{planning}}$
-9. $\delta(s_{\text{waiting}}, \text{HumanTaskResolved} \lor \text{InboxInput}) \to s_{\text{planning}}$
+9. $\delta(s_{\text{waiting}}, \text{HumanTaskResolved} \lor \text{InboxInput} \lor \text{UnblockedWorkAvailable}) \to s_{\text{planning}}$
 
 ---
 

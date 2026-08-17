@@ -15,6 +15,9 @@ Write-Host "   The missing SDLC for AI agents" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host ""
 
+if (-not (Test-Path $TargetDir)) {
+    New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
+}
 Set-Location $TargetDir
 $currentPath = (Get-Item .).FullName
 Write-Host "[INFO] Target directory: $currentPath"
@@ -88,11 +91,11 @@ When you receive the instruction "Start", "begin", "continue", or "go":
      - `planning` -> Read `.kramak/spec/PLANNER.md`
      - `executing` -> Read `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
-     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable).
 3. Rules: Every token advances the project. Continuous state update. Grounded verification.
 "@
-    Set-Content -Path ".agents/AGENTS.md" -Value $agentsContent
+    Set-Content -Path ".agents/AGENTS.md" -Value $agentsContent -Encoding utf8
 }
 
 # Git initialization check

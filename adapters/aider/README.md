@@ -25,7 +25,7 @@ When instructed to "Start", "begin", "continue", or "go":
    - If `phase == "planning"`: read `.kramak/spec/PLANNER.md` and write work items to `.agents/pipeline/queue/`.
    - If `phase == "executing"`: read `.kramak/spec/EXECUTOR.md`, execute active/queued work items, and run verification.
    - If `phase == "auditing"`: read `.kramak/spec/EXECUTOR.md §STEP 8.5` and perform technical audit.
-   - If `phase == "waiting"`: check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+   - If `phase == "waiting"`: check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 
 2. Always adhere to `.kramak/spec/PRINCIPLES.md`.
 3. Update `.agents/pipeline/state.json` after completing or failing each item.

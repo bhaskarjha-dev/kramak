@@ -13,7 +13,7 @@ When you receive the instruction "Start", "begin", "continue", or "go":
      - `planning` -> Read `.kramak/spec/PLANNER.md`
      - `executing` -> Read `.kramak/spec/EXECUTOR.md`
      - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
-     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
+     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
 
 2. Read `.kramak/spec/PRINCIPLES.md` (Constitutional rules).
 
@@ -26,9 +26,10 @@ When you receive the instruction "Start", "begin", "continue", or "go":
 
 ## Setup Instructions
 
-1. Copy Kramak specs into `.kramak/spec/`:
+1. Copy Kramak specs and templates into `.kramak/`:
    ```bash
    cp -r path/to/kramak/spec/ .kramak/spec/
+   cp -r path/to/kramak/templates/ .kramak/templates/
    ```
 2. Create `.clinerules` in your workspace root with the snippet above.
 3. Open Cline / Roo Code and trigger the loop with **"Start"**.

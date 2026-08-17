@@ -1,5 +1,5 @@
 {
-  "$schema": "../../spec/state.schema.json",
+  "$schema": "../../.kramak/spec/state.schema.json",
   "version": "1.0.0",
   "phase": "planning",
   "nextAction": "Start new session with strong reasoning capability and say Start.",
@@ -30,6 +30,8 @@
   },
   "metrics": {
     "totalCompleted": 0,
-    "totalFailed": 0
+    "totalFailed": 0,
+    "consecutiveFailures": 0,
+    "circuitBreakerTripped": false
   }
 }

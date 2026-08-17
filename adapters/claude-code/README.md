@@ -15,7 +15,7 @@ When I say "Start":
    - planning → Follow .kramak/spec/PLANNER.md
    - executing → Follow .kramak/spec/EXECUTOR.md
    - auditing → Follow .kramak/spec/EXECUTOR.md §STEP 8.5
-   - waiting → Check HUMAN-TASKS.md & INBOX.md; if resolved, set phase to "planning" and follow .kramak/spec/PLANNER.md; otherwise prompt user
+   - waiting → Check HUMAN-TASKS.md & INBOX.md; if resolved or unblocked roadmap work exists, set phase to "planning" and follow .kramak/spec/PLANNER.md; otherwise prompt user
 
 3. Always read .kramak/spec/PRINCIPLES.md first
 
@@ -25,6 +25,6 @@ When I say "Start":
 
 ## Setup
 
-1. Copy the `spec/` directory from Kramak into your project as `.kramak/spec/` (or reference it by path)
+1. Copy the `spec/` and `templates/` directories from Kramak into your project as `.kramak/spec/` and `.kramak/templates/` (or run `./init.sh`)
 2. Add the section above to your `CLAUDE.md`
 3. Say "Start" in Claude Code

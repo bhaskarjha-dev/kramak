@@ -30,7 +30,7 @@ Read `.kramak/spec/PRINCIPLES.md` (or `spec/PRINCIPLES.md`). These are non-negot
 | `planning` | `.kramak/spec/PLANNER.md` (or `spec/PLANNER.md`) |
 | `executing` | `.kramak/spec/EXECUTOR.md` (or `spec/EXECUTOR.md`) |
 | `auditing` | `.kramak/spec/EXECUTOR.md §STEP 8.5` (or `spec/EXECUTOR.md §STEP 8.5`) |
-| `waiting` | Check `HUMAN-TASKS.md` & `INBOX.md`. If resolved, switch `phase` to `planning` and follow `PLANNER.md`; otherwise ask user. |
+| `waiting` | Check `HUMAN-TASKS.md` & `INBOX.md`. If resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise ask user. |
 
 ## Step 4: Model self-assessment
 
