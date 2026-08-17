@@ -61,10 +61,12 @@ Execution requires **precise code editing and command execution**: following spe
 1. Read the work item file from `queue/<WI-ID>.md` completely
 2. Read ALL files listed in the "Read First" section — understand the context
 3. Read ALL files listed in the "Changes" section — know the current code
-4. Run `git status` — working tree must be clean. If dirty, run `git stash` first.
+4. Run `git status`:
+   - If starting a new WI: working tree must be clean. If dirty from external edits, run `git stash` first.
+   - If resuming an in-flight WI from `active/` (crash recovery): inspect uncommitted changes against the WI spec. If corrupted, clean with `git checkout -- .` and re-apply; if valid progress, continue execution.
 5. Verify you're on the correct branch (from `state.currentBranch`). If not, `git checkout <branch>`.
-6. Move the work item file: copy content from `queue/` to `active/`, delete from `queue/`
-7. Update `state.json`: set `active` to the work item ID, remove from `queue` array
+6. Move the work item file: copy content from `queue/` to `active/`, delete from `queue/` (skip if already in `active/`)
+7. Update `state.json`: set `active` to the work item ID, remove from `queue` array (if not already set)
 
 ---
 
@@ -211,7 +213,18 @@ If execution or verification fails irrecoverably:
 
 3. **Revert any uncommitted changes**: `git checkout -- .`
 4. **Move** the work item from `active/` to `failed/`
-5. **Update `state.json`**: set `active: null`, increment `metrics.totalFailed`
+5. **Update `state.json`**:
+   ```json
+   {
+     "active": null,
+     "failed": [...existing, {
+       "id": "WI-XXX",
+       "category": "<category from diagnosis>",
+       "failedAt": "<ISO timestamp>"
+     }],
+     "metrics": { "totalFailed": N+1 }
+   }
+   ```
 
 ---
 

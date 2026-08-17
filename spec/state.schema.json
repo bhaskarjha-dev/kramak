@@ -13,6 +13,10 @@
     "metrics"
   ],
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON schema reference URI"
+    },
     "version": {
       "type": "string",
       "description": "Kramak specification version (semver)"
@@ -71,7 +75,17 @@
         "required": ["id", "category"],
         "properties": {
           "id": { "type": "string" },
-          "category": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": [
+              "code-drift",
+              "verification-fail",
+              "scope-exceeded",
+              "dependency-missing",
+              "ambiguous-spec",
+              "tool-error"
+            ]
+          },
           "failedAt": { "type": "string" }
         }
       },

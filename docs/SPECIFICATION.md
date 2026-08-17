@@ -35,13 +35,15 @@ $$M = (S, \Sigma, \delta, s_0, F)$$
 ```mermaid
 stateDiagram-v2
     [*] --> BOOTSTRAP: First Invocation
-    BOOTSTRAP --> PLANNING: state.json created (phase: planning)
+    BOOTSTRAP --> PLANNING: Toolchain & context ready (phase: planning)
+    BOOTSTRAP --> WAITING: Empty workspace detected (phase: waiting)
     
     PLANNING --> EXECUTING: Batch planned & WIs populated in queue/
     PLANNING --> WAITING: Blocked on Human Tasks with zero alternative work
     
     EXECUTING --> AUDITING: Queue empty OR session limit reached
     EXECUTING --> EXECUTING: Next WI picked from queue/
+    EXECUTING --> PLANNING: Circuit breaker (3x failures) OR major architecture fault
     
     AUDITING --> PLANNING: Technical audit completed, state.lastAudit updated
     
@@ -49,12 +51,14 @@ stateDiagram-v2
 ```
 
 1. $\delta(s_{\text{bootstrap}}, \text{ToolchainDetected}) \to s_{\text{planning}}$
-2. $\delta(s_{\text{planning}}, \text{BatchPlanCommitted}) \to s_{\text{executing}}$
-3. $\delta(s_{\text{planning}}, \text{HardHumanBlock}) \to s_{\text{waiting}}$
-4. $\delta(s_{\text{executing}}, \text{QueueNotEmpty} \land \text{DegradationLow}) \to s_{\text{executing}}$
-5. $\delta(s_{\text{executing}}, \text{QueueEmpty} \lor \text{DegradationHigh}) \to s_{\text{auditing}}$
-6. $\delta(s_{\text{auditing}}, \text{AuditCompleted}) \to s_{\text{planning}}$
-7. $\delta(s_{\text{waiting}}, \text{HumanTaskResolved}) \to s_{\text{planning}}$
+2. $\delta(s_{\text{bootstrap}}, \text{EmptyWorkspace}) \to s_{\text{waiting}}$
+3. $\delta(s_{\text{planning}}, \text{BatchPlanCommitted}) \to s_{\text{executing}}$
+4. $\delta(s_{\text{planning}}, \text{HardHumanBlock}) \to s_{\text{waiting}}$
+5. $\delta(s_{\text{executing}}, \text{QueueNotEmpty} \land \text{DegradationLow}) \to s_{\text{executing}}$
+6. $\delta(s_{\text{executing}}, \text{QueueEmpty} \lor \text{DegradationHigh}) \to s_{\text{auditing}}$
+7. $\delta(s_{\text{executing}}, \text{CircuitBreaker} \lor \text{MajorArchFault}) \to s_{\text{planning}}$
+8. $\delta(s_{\text{auditing}}, \text{AuditCompleted}) \to s_{\text{planning}}$
+9. $\delta(s_{\text{waiting}}, \text{HumanTaskResolved} \lor \text{InboxInput}) \to s_{\text{planning}}$
 
 ---
 
