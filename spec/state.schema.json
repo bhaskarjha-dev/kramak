@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KramakState",
+  "description": "Schema for Kramak autonomous development pipeline state.json",
+  "type": "object",
+  "required": [
+    "version",
+    "phase",
+    "nextAction",
+    "currentBranch",
+    "batchNumber",
+    "queue",
+    "metrics"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Kramak specification version (semver)"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["planning", "executing", "auditing", "waiting"],
+      "description": "Current operational phase of the pipeline"
+    },
+    "nextAction": {
+      "type": "string",
+      "description": "Single human/agent-readable sentence instructing the next session"
+    },
+    "productPhase": {
+      "type": "string",
+      "enum": ["BUILD", "SHIP", "ITERATE", "GROWTH", ""],
+      "description": "Strategic product lifecycle stage"
+    },
+    "currentBranch": {
+      "type": "string",
+      "description": "Active git branch for pipeline work"
+    },
+    "batchNumber": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current batch iteration index"
+    },
+    "queue": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ordered array of Work Item IDs waiting in queue/"
+    },
+    "active": {
+      "type": ["string", "null"],
+      "description": "Work Item ID currently in progress in active/, or null if idle"
+    },
+    "completed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "completedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "completedAt": { "type": "string" },
+          "verificationPassed": { "type": "boolean" }
+        }
+      },
+      "description": "Audit trail of completed work items in this batch"
+    },
+    "failed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category"],
+        "properties": {
+          "id": { "type": "string" },
+          "category": { "type": "string" },
+          "failedAt": { "type": "string" }
+        }
+      },
+      "description": "Record of failed work items in this batch"
+    },
+    "humanTasksPending": {
+      "type": "boolean",
+      "description": "Flag indicating if tasks in HUMAN-TASKS.md block progress"
+    },
+    "deploymentBlocked": {
+      "type": "boolean",
+      "description": "True if deployment is blocked waiting on human actions"
+    },
+    "fallbackPhase": {
+      "type": "string",
+      "enum": ["BUILD", "SHIP", "ITERATE", "GROWTH", ""],
+      "description": "Temporary fallback phase used while primary phase is blocked"
+    },
+    "toolchain": {
+      "type": "object",
+      "properties": {
+        "packageManager": { "type": "string" },
+        "buildCommand": { "type": "string" },
+        "checkCommands": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "devCommand": { "type": "string" },
+        "detected": { "type": "boolean" }
+      },
+      "description": "Auto-detected build and verification toolchain"
+    },
+    "projectStructure": {
+      "type": ["object", "null"],
+      "properties": {
+        "roadmap": { "type": ["string", "null"] },
+        "productSpec": { "type": ["string", "null"] },
+        "architecture": { "type": ["string", "null"] },
+        "conventions": { "type": ["string", "null"] },
+        "readme": { "type": ["string", "null"] },
+        "discovered": { "type": "boolean" }
+      },
+      "description": "Discovered paths to key project documentation files"
+    },
+    "lastVisionAssessment": {
+      "type": ["object", "null"],
+      "properties": {
+        "batchNumber": { "type": "integer" },
+        "timestamp": { "type": "string" },
+        "findings": { "type": "string" }
+      },
+      "description": "Results from the most recent 5-lens strategic vision assessment"
+    },
+    "lastAudit": {
+      "type": ["object", "null"],
+      "properties": {
+        "batchNumber": { "type": "integer" },
+        "timestamp": { "type": "string" },
+        "verdict": {
+          "type": "string",
+          "enum": ["pass", "pass-with-fixes", "fail"]
+        },
+        "fixesApplied": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "strategicConcerns": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "description": "Results from the most recent executor technical audit"
+    },
+    "lastSession": {
+      "type": "object",
+      "properties": {
+        "model": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "summary": { "type": "string" }
+      },
+      "description": "Summary of the preceding agent session"
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["totalCompleted", "totalFailed"],
+      "properties": {
+        "totalCompleted": { "type": "integer", "minimum": 0 },
+        "totalFailed": { "type": "integer", "minimum": 0 }
+      },
+      "description": "Cumulative pipeline performance metrics"
+    }
+  },
+  "additionalProperties": false
+}

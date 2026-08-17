@@ -6,7 +6,8 @@
 
 ## On "Start"
 
-You have been invoked because `state.json` has `phase: "executing"`. Your job: pick up work items from the queue, execute them, verify them, commit them, and continue until the queue is empty or you've completed a reasonable batch.
+You have been invoked because `state.json` has `phase: "executing"` or `phase: "auditing"`. Your job: pick up work items from the queue, execute them, verify them, commit them, and run technical auditing when the batch finishes.
+If `state.phase` is `"auditing"`, proceed directly to **STEP 8.5: EXECUTOR AUDIT**.
 
 **Do NOT output anything for the user.** No summaries, no explanations, no artifacts. Every token you generate is either reading code, writing code, or running commands. The only time you speak to the user is ONE sentence at the very end.
 
@@ -42,6 +43,7 @@ Execution requires **precise code editing and command execution**: following spe
 3. Read `.agents/AGENTS.md` — project rules and conventions (if it exists)
 
 4. **Reconcile state with filesystem** (crash recovery):
+   - If `state.phase` is `"auditing"` → Proceed directly to STEP 8.5 (Executor Audit).
    - If `state.active` is set but no file exists in `active/` → the session crashed. Check if the file is still in `queue/` (not started) or `done/` (completed). Fix state.json accordingly.
    - If a file exists in `active/` but `state.active` is null → a previous session crashed mid-move. Read the file, set it as active, resume it.
    - If `state.queue` lists a WI but the file doesn't exist in `queue/` → remove it from the queue array.
@@ -287,7 +289,11 @@ b) Proceed to STEP 8.5 (Executor Audit)
 
 **If recommending a new session:**
 ```
-a) Update state.json: nextAction = "Start executor (fresh session) for technical audit"
+a) Update state.json:
+   {
+     "phase": "auditing",
+     "nextAction": "Start executor (fresh session) for technical audit"
+   }
 b) Push changes: git push
 c) Tell user the nextAction
 ```
@@ -366,7 +372,7 @@ When you've decided to stop (context loaded, capability mismatch, or session lim
 4. **Do NOT skip verification.** Even if "it looks right."
 5. **Do NOT ask the user questions.** Make decisions from the WI spec and code.
 6. **Do NOT summarize your work.** Write to state.json, not to chat.
-7. **Do NOT continue after 6 completed items.** Context degrades. Start fresh.
+7. **Do NOT ignore degradation signals or exceed the ~6 item safety ceiling.** If error trajectory rises, retries increase, or 6 complex items complete, close session and start fresh.
 8. **Do NOT delete or overwrite done/ files.** They're the audit trail.
 9. **Do NOT trust your memory of file contents.** Open and read them.
 10. **Do NOT guess at import paths.** Grep for the actual export.

@@ -27,7 +27,7 @@ When this procedure is invoked, determine which scenario applies:
 8. Create `PLANNING-LOG.md` from template
 9. Create empty `queue/`, `active/`, `done/`, `failed/`, `plans/` directories
 10. Tell the user: "Pipeline initialized. Starting planning phase."
-10. Proceed to PLANNER.md STEP 1
+11. Proceed to PLANNER.md STEP 1
 
 ### Scenario 3: Existing Project Without Context
 **Check:** Are there source code files in the workspace? (*.ts, *.py, *.go, *.rs, *.java, etc.)
@@ -77,22 +77,36 @@ Scan the workspace root for these files to auto-detect the build/check commands:
 
 | File Found | Ecosystem | Build Command | Check Commands |
 |-----------|-----------|---------------|----------------|
+| `package.json` + `bun.lockb` / `bun.lock` | Node.js / Bun | `bun install` | `bun x tsc --noEmit` (if TypeScript), `bun lint` |
 | `package.json` + `pnpm-lock.yaml` | Node.js (pnpm) | `pnpm install` | `pnpm tsc --noEmit` (if TypeScript), `pnpm lint` |
 | `package.json` + `package-lock.json` | Node.js (npm) | `npm install` | `npx tsc --noEmit` (if TypeScript), `npm run lint` |
 | `package.json` + `yarn.lock` | Node.js (yarn) | `yarn install` | `yarn tsc --noEmit` (if TypeScript), `yarn lint` |
+| `deno.json` / `deno.jsonc` | Deno | `deno cache main.ts` | `deno check main.ts`, `deno lint`, `deno test` |
+| `pyproject.toml` + `uv.lock` | Python (uv) | `uv sync` | `uv run mypy .`, `uv run ruff check .` |
+| `pyproject.toml` + `poetry.lock` | Python (Poetry) | `poetry install` | `poetry run mypy .`, `poetry run ruff check .` |
+| `pyproject.toml` / `requirements.txt` | Python (pip) | `pip install -e .` | `mypy .`, `ruff check .` |
 | `Cargo.toml` | Rust | `cargo build` | `cargo check`, `cargo clippy` |
 | `go.mod` | Go | `go build ./...` | `go vet ./...`, `golangci-lint run` |
-| `pyproject.toml` / `requirements.txt` | Python | `pip install -e .` | `mypy .`, `ruff check .` |
+| `mix.exs` | Elixir | `mix deps.get` | `mix compile --warnings-as-errors`, `mix test` |
+| `Package.swift` | Swift | `swift build` | `swift test` |
+| `*.csproj` / `*.sln` | .NET / C# | `dotnet build` | `dotnet test` |
+| `composer.json` | PHP | `composer install` | `./vendor/bin/phpstan analyse` |
 | `build.gradle` / `pom.xml` | Java/Kotlin | `./gradlew build` / `mvn compile` | `./gradlew check` / `mvn verify` |
 | `Gemfile` | Ruby | `bundle install` | `bundle exec rubocop` |
 
-**Additional detection:**
+**Additional detection & linters:**
 - If `tsconfig.json` exists → TypeScript project, add `tsc --noEmit` to checks
 - If `biome.json` or `biome.jsonc` exists → add `biome check` to checks
 - If `.eslintrc*` exists → add `eslint` to checks
 - If `prettier.config*` or `.prettierrc*` exists → add `prettier --check` to checks
-- If `turbo.json` exists → monorepo, use `turbo` commands
-- If `nx.json` exists → Nx monorepo
+- If `pnpm-workspace.yaml` exists → pnpm monorepo, use `pnpm -r check` or `pnpm run -r lint`
+- If `turbo.json` exists → Turborepo monorepo, use `turbo build` and `turbo check` / `turbo lint`
+- If `nx.json` exists → Nx monorepo, use `nx run-many -t check lint`
+
+### Monorepo Setup Note
+When bootstrapping in a monorepo workspace:
+1. Store root-level orchestration commands (e.g. `turbo check` or `pnpm -r lint`) in `toolchain.checkCommands`.
+2. For package-specific work items, specify package-scoped verification commands in the WI (e.g. `pnpm --filter @app/web lint`).
 
 **Store detected commands** in `state.json` under `toolchain`:
 ```json
