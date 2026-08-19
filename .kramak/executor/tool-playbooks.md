@@ -4,7 +4,7 @@
 >
 > **Core Mandate:** High-fidelity execution. Every command in this module is deterministic and copy-pasteable. Zero conversational filler, zero guessing.
 >
-> **References:** Universal invariants in [.kramak/ROUTER.md](.kramak/ROUTER.md) and execution lifecycle in [.kramak/executor/CORE.md](.kramak/executor/CORE.md).
+> **References:** Universal invariants in [ROUTER.md](../ROUTER.md) and execution lifecycle in [CORE.md](CORE.md).
 
 ---
 

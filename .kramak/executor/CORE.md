@@ -4,7 +4,7 @@
 >
 > **Core Mandate:** Do NOT output conversational filler, explanations, or progress summaries to the user. Every token must read code, write code, run commands, or update state. Speak to the user ONLY with a single sentence at the end of the session.
 >
-> **Reference:** Universal invariants in [.kramak/ROUTER.md](.kramak/ROUTER.md) apply across all phases.
+> **Reference:** Universal invariants in [ROUTER.md](../ROUTER.md) apply across all phases.
 
 ---
 
@@ -165,7 +165,7 @@ If execution or verification fails irrecoverably:
    - `dependency-missing`: Unresolved prerequisite WI or missing upstream dependency.
    - `ambiguous-spec`: Contradictory or incomplete WI specification.
    - `tool-error`: Toolchain, package manager, or environment failure.
-   *(For deep diagnostic trees, load on-demand module [.kramak/executor/error-recovery.md](.kramak/executor/error-recovery.md)).*
+   *(For deep diagnostic trees, load on-demand module [error-recovery.md](error-recovery.md)).*
 2. Append `## Failure Diagnosis` section to the WI file:
    ```markdown
    ## Failure Diagnosis
@@ -243,7 +243,7 @@ Update `state.lastAudit` in `state.json`:
 | **All Criteria Pass** | Parallel (`budget > 1`) | `merge_queue` | Set `phase: "merge_queue"`, `nextAction: "Serialize and merge completed worktree branches."`. |
 | **Defect Found (Retry Budget > 0)** | Any | `executing` | Re-open WI to `active/`, decrement budget, set `phase: "executing"`, `nextAction: "Retry failed verification on WI-XXX."`. |
 | **Spec Flaw / Budget Exhausted** | Any | `planning` | Move WI to `failed/`, set `phase: "planning"`, `nextAction: "Audit failed on specification defect. Start planner session."`. |
-| **Complex Diagnosis Needed** | Any | — | Load on-demand module [.kramak/executor/error-recovery.md](.kramak/executor/error-recovery.md). |
+| **Complex Diagnosis Needed** | Any | — | Load on-demand module [error-recovery.md](error-recovery.md). |
 
 ---
 
@@ -270,7 +270,7 @@ graph TD
 For each completed WI shard in `.kramak/work-items/*.json` with `merge_status: "queued"`:
 1. Identify worktree path `.kramak/worktrees/<id>` and branch `pipeline/<id>`.
 2. Fetch integration branch HEAD (`state.currentBranch`).
-3. Rebase/merge the worktree branch onto integration HEAD. *(Refer to [.kramak/executor/tool-playbooks.md](.kramak/executor/tool-playbooks.md) for precise git merge commands).*
+3. Rebase/merge the worktree branch onto integration HEAD. *(Refer to [tool-playbooks.md](tool-playbooks.md) for precise git merge commands).*
 4. **Tier 3 Merge Re-Verification:** Run full test suite (`toolchain.checkCommands`) against the integrated working tree.
 5. **Resolution Handling:**
    - **Clean & Passing:** Update shard `merge_status: "merged"`. Delete worktree via `git worktree remove .kramak/worktrees/<id>`. Delete branch `pipeline/<id>`. Advance to next queue item.
@@ -288,7 +288,7 @@ For each completed WI shard in `.kramak/work-items/*.json` with `merge_status: "
 ## SECTION 4: SESSION MANAGEMENT & DEGRADATION DETECTION
 
 ### 4.1 Progress Tracking
-Track execution telemetry in [.kramak/executor/PROGRESS.md](.kramak/executor/PROGRESS.md):
+Track execution telemetry in [PROGRESS.md](PROGRESS.md):
 - Session start timestamp and active batch index.
 - Cumulative WIs attempted, completed, and failed.
 - Files modified count.
@@ -308,7 +308,7 @@ Track execution telemetry in [.kramak/executor/PROGRESS.md](.kramak/executor/PRO
 #### Behavioral Degradation Triggers:
 - **Retry Escalation:** Verification attempts increasing over 3 consecutive WIs.
 - **Error Trajectory Growth:** Error counts increasing rather than decreasing across attempts.
-- **Oscillation:** Same error hash repeating $\rightarrow$ load [.kramak/executor/error-recovery.md](.kramak/executor/error-recovery.md).
+- **Oscillation:** Same error hash repeating $\rightarrow$ load [error-recovery.md](error-recovery.md).
 - **Unresolvable Block:** Irreconcilable dependency or environment failure $\rightarrow$ transition `state.phase: "escalated"`.
 
 ### 4.3 Session Finalization & Handoff
@@ -357,5 +357,5 @@ Load on-demand modules only when explicit trigger conditions occur:
 
 | Module Path | Trigger Condition | Contents |
 |---|---|---|
-| [.kramak/executor/error-recovery.md](.kramak/executor/error-recovery.md) | Failure classification required, Circuit Breaker oscillation detected, or irrecoverable test error. | 6-category failure taxonomy (ODC/MAST crosswalk), state-hash oscillation detection, exponential backoff, ReAct recovery playbooks. |
-| [.kramak/executor/tool-playbooks.md](.kramak/executor/tool-playbooks.md) | Multi-worktree creation/deletion, complex git rebase/merge conflict operations, or WAL replay procedures. | Git worktree CLI workflows, merge conflict resolution playbooks, toolchain execution recipes, atomic WAL write patterns. |
+| [error-recovery.md](error-recovery.md) | Failure classification required, Circuit Breaker oscillation detected, or irrecoverable test error. | 6-category failure taxonomy (ODC/MAST crosswalk), state-hash oscillation detection, exponential backoff, ReAct recovery playbooks. |
+| [tool-playbooks.md](tool-playbooks.md) | Multi-worktree creation/deletion, complex git rebase/merge conflict operations, or WAL replay procedures. | Git worktree CLI workflows, merge conflict resolution playbooks, toolchain execution recipes, atomic WAL write patterns. |

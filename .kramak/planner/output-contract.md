@@ -5,7 +5,7 @@
 > **The Planning-to-Execution Principle:**
 > *"Your job is to collapse ambiguity, not write code. Once ambiguity is collapsed into a clear spec, even a less capable model can execute it. Spend your tokens on WHAT and WHY, not on quoting entire files."*
 >
-> **Universal Alignment:** Invariants in [.kramak/ROUTER.md](.kramak/ROUTER.md) and schemas in [.kramak/schemas/work-item.schema.json](.kramak/schemas/work-item.schema.json) strictly govern all artifacts authored under this contract.
+> **Universal Alignment:** Invariants in [ROUTER.md](../ROUTER.md) and schemas in [work-item.schema.json](../schemas/work-item.schema.json) strictly govern all artifacts authored under this contract.
 
 ---
 

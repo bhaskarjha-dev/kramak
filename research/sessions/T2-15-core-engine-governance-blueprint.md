@@ -23,10 +23,10 @@ This document constitutes the authoritative **Core Engine, Verification & Govern
 - [T2-10: Capability Gate Reliability](T2-10-capability-gate-reliability.md) (Hybrid canary diagnostic, deterministic grading)
 - [T2-13: Guardrail & Grounding Confirmation Bundle](T2-13-guardrail-confirmation-bundle.md) (Grounded Verification, 3-tier Hard Scope Check, progress-aware Circuit Breaker, WAL State Reconciliation, repair-oriented Failure Taxonomy)
 
-The primary audience is a **Principal Architect** authoring the v1.1+ specification modifications across [`spec/PLANNER.md`](spec/PLANNER.md), [`spec/EXECUTOR.md`](spec/EXECUTOR.md), [`spec/PRINCIPLES.md`](spec/PRINCIPLES.md), and [`spec/state.schema.json`](spec/state.schema.json).
+The primary audience is a **Principal Architect** authoring the v1.1+ specification modifications across `planner/CORE.md`, `executor/CORE.md`, `ROUTER.md`, and `state.schema.json`.
 
 ### 1.2 Fixed Axiomatic Constraints
-Per [DECISIONS.md](DECISIONS.md) §2, all synthesis recommendations strictly respect the non-negotiable project boundaries:
+Per [DECISIONS.md](../DECISIONS.md) §2, all synthesis recommendations strictly respect the non-negotiable project boundaries:
 1. **C1 (Project Identity):** Kramak (क्रमक) retains its Sanskrit naming convention (*√kram* + *-aka*, "the agent who progresses methodically").
 2. **C2 (Zero Mandatory Runtime Dependencies):** The core control plane remains 100% pure Markdown specifications, JSON Schemas, and workspace templates. No mandatory background daemons, native binaries, or proprietary runtimes are introduced.
 3. **C3 (Model-Agnostic via Behavioral Assessment):** Kramak operates across any LLM without model-name string inspection or provider-specific allowlists.

@@ -30,12 +30,22 @@
     },
     "detail_level": {
       "type": "string",
-      "enum": ["guided", "directed", "outcome"],
+      "enum": [
+        "guided",
+        "directed",
+        "outcome"
+      ],
       "description": "Specification detail scaling tier: guided (high/red), directed (medium/yellow), outcome (low/green)"
     },
     "status": {
       "type": "string",
-      "enum": ["queued", "active", "done", "failed", "blocked"],
+      "enum": [
+        "queued",
+        "active",
+        "done",
+        "failed",
+        "blocked"
+      ],
       "description": "Current lifecycle status of the work item"
     },
     "files_targeted": {
@@ -74,7 +84,10 @@
       "description": "Deterministic testable criteria that must pass for work item verification"
     },
     "failure_diagnosis": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
         "category": {
           "type": "string",
@@ -95,12 +108,18 @@
         "error_trajectory": {
           "type": "array",
           "items": {
-            "type": ["string", "object"]
+            "type": [
+              "string",
+              "object"
+            ]
           },
           "description": "Chronological history of error outputs across failed attempts"
         }
       },
-      "required": ["category", "description"],
+      "required": [
+        "category",
+        "description"
+      ],
       "description": "Diagnostic record if the work item has failed"
     },
     "created_at": {
@@ -108,8 +127,19 @@
       "description": "ISO 8601 timestamp when the work item was generated"
     },
     "completed_at": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "ISO 8601 timestamp when the work item reached terminal done/failed status, or null"
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Optional CLI verification and test commands to validate acceptance criteria"
     }
   },
   "additionalProperties": false

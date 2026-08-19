@@ -23,7 +23,7 @@ Kramak (क्रमक) is an open-source, file-based, model-agnostic, and IDE-
 
 This research pipeline is **not** conventional pre-code software research (Kramak has no databases, microservices, auth providers, or cloud hosting by design). Its "architecture" is the **process framework itself**:
 - A deterministic finite state automaton (FSM) control plane executed in prose.
-- A cross-session state persistence contract ([state.json](templates/state.json) + JSON Schema).
+- A cross-session state persistence contract (state.json + JSON Schema).
 - A suite of grounding, scope-enforcement, and anti-hallucination mechanisms.
 - An adapter translation layer spanning 8 IDE ecosystems.
 - A market positioning claim asserting that "Layer 3: Process" is currently unstandardized.

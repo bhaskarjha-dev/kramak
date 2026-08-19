@@ -89,7 +89,7 @@ Append this 2-line hook to the bottom of your existing file:
 
 ```markdown
 ## Autonomous Process Control
-Before taking action, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow the active state in [.kramak/state.json](.kramak/state.json).
+Before taking action, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow the active state in `.kramak/state.json`.
 ```
 
 #### Path B — If this is a fresh project (or you want an IDE-native configuration):

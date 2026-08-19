@@ -478,8 +478,8 @@ Below is the drop-in baseline configuration generated at repository root:
 This repository uses the **Kramak Process Control Framework** for deterministic software engineering.
 
 ## Execution Rules
-1. Before taking any autonomous action, read [.kramak/ROUTER.md](.kramak/ROUTER.md).
-2. Check your active state and role in [.kramak/state.json](.kramak/state.json).
+1. Before taking any autonomous action, read [.kramak/ROUTER.md](../../.kramak/ROUTER.md).
+2. Check your active state and role in .kramak/state.json.
 3. Follow the 4 Non-Negotiable Invariants: Grounded Verification, Hard Scope Check, State Reconciliation, and Circuit Breaker.
 ```
 
@@ -677,7 +677,7 @@ To prevent breaking external tools or legacy agents that hardcode paths to `spec
 <!-- spec/PLANNER.md backward-compatibility shim -->
 # Forwarding Notice
 This specification has been modularized for progressive disclosure in v1.1+.
-Please read [.kramak/ROUTER.md](.kramak/ROUTER.md) and [.kramak/planner/CORE.md](.kramak/planner/CORE.md).
+Please read [.kramak/ROUTER.md](../../.kramak/ROUTER.md) and [.kramak/planner/CORE.md](../../.kramak/planner/CORE.md).
 ```
 
 ---

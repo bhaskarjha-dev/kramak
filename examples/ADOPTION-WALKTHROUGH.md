@@ -47,7 +47,7 @@ Since `task-vault` already has an `AGENTS.md` at root, simply append the 2-line 
 
 ```markdown
 ## Autonomous Process Control
-Before taking any action, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow [.kramak/state.json](.kramak/state.json).
+Before taking any action, read [.kramak/ROUTER.md](../.kramak/ROUTER.md) and follow .kramak/state.json.
 ```
 
 *(If you use Cursor or Claude Code, you can also drop in `.cursorrules` or `CLAUDE.md` from `adapters/`).*
