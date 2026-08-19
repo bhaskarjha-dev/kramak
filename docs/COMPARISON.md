@@ -38,7 +38,7 @@ While the Process layer contains multiple active projects (>200,000 combined Git
 |---|---|---|---|---|---|---|
 | **Primary Category** | **Runtime Process Control** | Spec-Driven Dev (SDD) | System Prompt Mode | Agile Persona Framework | Execution Orchestration | Delta Specifications |
 | **State Persistence** | **`state.json` (Draft 2020-12) + WAL** | Plain Markdown files | Markdown memory bank | Markdown story files | Markdown session logs | Markdown delta files |
-| **State Machine** | **8-State Closed FSM** | None (advisory slash commands) | None (advisory prompt mode) | 4-Phase loop (advisory) | Multi-agent wave loop | 3-Step delta lifecycle |
+| **State Machine** | **9-State Closed FSM** | None (advisory slash commands) | None (advisory prompt mode) | 4-Phase loop (advisory) | Multi-agent wave loop | 3-Step delta lifecycle |
 | **Scope Enforcement** | **3-Tier Hard Scope Check** (`git diff`) | Advisory | Advisory ("don't edit X") | Human-in-the-loop review | Sub-agent diff review | Advisory delta bounds |
 | **Verification Gate** | **Grounded Verification** (live grep) | Manual checklist (`/checklist`) | Unverified self-claim | Verification story | Sub-agent test runner | Test suite execution |
 | **Audit Loopback** | **Core FSM loopback** (`AUDIT ──► PLAN`) | Optional (`/speckit.converge`) | Advisory review mode | Optional module ("BMad Loop") | Sub-agent debugger | Manual delta merge |
@@ -53,9 +53,9 @@ While the Process layer contains multiple active projects (>200,000 combined Git
 - **Other Tools:** Rely on LLMs reading advisory prompt rules like *"Please do not modify files outside src/components"*. Under long contexts or high reasoning load, models frequently drift and violate advisory rules.
 - **Kramak:** Enforces a **mechanical git gate (Tier 1 Scope Check)**. The executor runs `git diff --name-only` against `files_targeted` and automatically reverts any unlisted modifications.
 
-### 2. Algebraically Closed 8-State Automaton vs. Open-Ended Loops
+### 2. Algebraically Closed 9-State Automaton vs. Open-Ended Loops
 - **Other Tools:** Operate in linear scripts or open-ended chat loops where models get stuck in circular fix loops after errors.
-- **Kramak:** Operates an **algebraically closed 8-state FSM** (`BOOTSTRAP`, `PLANNING`, `DISPATCH`, `EXECUTING`, `AUDITING`, `MERGE_QUEUE`, `WAITING`, `ESCALATED`, `COMPLETE`) with bounded retry budgets and a **Progress-Aware Circuit Breaker** that detects repeating error state hashes.
+- **Kramak:** Operates an **algebraically closed 9-state FSM** (`BOOTSTRAP`, `PLANNING`, `DISPATCH`, `EXECUTING`, `AUDITING`, `MERGE_QUEUE`, `WAITING`, `ESCALATED`, `COMPLETE`) with bounded retry budgets and a **Progress-Aware Circuit Breaker** that detects repeating error state hashes.
 
 ### 3. Model-Agnostic Capability Gating vs. Hardcoded Model Names
 - **Other Tools:** Hardcode specific model strings (e.g. `claude-3-5-sonnet-20241022`). When new models launch, tools break or require upstream updates.

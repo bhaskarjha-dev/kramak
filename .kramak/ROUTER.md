@@ -13,9 +13,9 @@ Recovery: rename `.tmp` or replay `.wal`.
 | executing | .kramak/executor/CORE.md | Execute WI |
 | auditing | .kramak/executor/CORE.md §AUDIT | Audit work |
 | merge_queue | .kramak/executor/CORE.md §MERGE | Merge queue |
-| waiting | — | nextAction → STOP |
-| escalated | — | escalation.reason → STOP |
-| complete | — | Summary → STOP |
+| waiting | .kramak/planner/CORE.md §RESUME | Check blockers & resume |
+| escalated | .kramak/planner/CORE.md §RESUME | Check diagnostic & resume |
+| complete | .kramak/planner/CORE.md §RESUME | Check inbox for new goals; STOP if clean |
 
 ## 3. Invariants
 1. **Grounded Verification:** Verify all claims via live grep/read. Never cite from memory.

@@ -171,7 +171,7 @@ graph TD
 
 ## 6. Procedural Canary Challenge Battery (CT-1 to CT-5)
 
-To evaluate model reasoning competence without hardcoding model names (Constraint C3), Kramak uses 5 procedurally generated, deterministically graded micro-challenges:
+To evaluate model reasoning competence without hardcoding model names (Constraint C3), Kramak uses 5 procedurally generated capability micro-challenges (functioning as prompt-calibrated reasoning primers in pure-spec mode, and graded programmatically when running via `@kramak/cli`):
 
 | Challenge ID | Evaluated Dimension | Generator Logic | Grader Verification |
 |---|---|---|---|

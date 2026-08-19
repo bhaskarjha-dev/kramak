@@ -53,10 +53,13 @@ When operating in parallel dispatch mode, each concurrent Work Item executes in 
 
 #### 1. Provision Worktree
 ```bash
-# Create isolated worktree directory and dedicated feature branch
+# 1. Clean stale worktree references from crashed or merged sessions
+git worktree prune
+
+# 2. Create isolated worktree directory and dedicated feature branch
 git worktree add .kramak/worktrees/WI-102 -b pipeline/WI-102
 
-# Verify worktree creation and active path
+# 3. Verify worktree creation and active path
 git worktree list
 ```
 
@@ -104,15 +107,17 @@ Enforce absolute boundary control across all execution tiers:
 #### Tier 1: Per-Worktree Scope Check (MANDATORY after EVERY code change)
 *Includes newly created (untracked) files per Amendment 7D (T2-13 §5.2):*
 
+> **Cross-Platform Verification Note:** AI coding agents perform set comparison natively by comparing the list of modified/untracked files from `git diff --name-only HEAD` and `git ls-files --others --exclude-standard` against the Work Item's declared `files_targeted` array. Below are reference snippets for POSIX Bash and Windows PowerShell:
+
 ```bash
+# --- POSIX / Bash Reference ---
 # 1. Capture all modified tracked files PLUS untracked new files (sorted uniquely)
 ACTUAL=$( (git diff --name-only HEAD; git ls-files --others --exclude-standard) | sort -u )
 
 # 2. Extract declared files from active Work Item specification
-DECLARED=$(grep -A 50 "files_targeted:" .kramak/work-items/active/WI-XXX.md | grep "^  - " | sed 's/^  - //' | tr -d '\r' | sort -u)
+DECLARED=$(grep -A 50 "files_targeted:" .kramak/work-items/WI-XXX.md | grep "^  - " | sed 's/^  - //' | tr -d '\r' | sort -u)
 
 # 3. Compare ACTUAL against DECLARED (detect unauthorized files)
-# In POSIX / Bash:
 UNAUTHORIZED=$(comm -23 <(echo "$ACTUAL") <(echo "$DECLARED"))
 
 if [ -n "$UNAUTHORIZED" ]; then
@@ -120,6 +125,17 @@ if [ -n "$UNAUTHORIZED" ]; then
   echo "$UNAUTHORIZED"
   # Trigger Recovery Path C (SCOPE-EXCEEDED)
 fi
+```
+
+```powershell
+# --- Windows PowerShell Reference ---
+$actual = @(git diff --name-only HEAD; git ls-files --others --exclude-standard) | Sort-Object -Unique
+$declared = (Get-Content .kramak/work-items/WI-XXX.json | ConvertFrom-Json).files_targeted
+$unauthorized = $actual | Where-Object { $declared -notcontains $_ }
+
+if ($unauthorized) {
+  Write-Error "SCOPE VIOLATION DETECTED! Unauthorized files: $unauthorized"
+}
 ```
 
 #### Tier 2: Pre-Flight Concurrency Check (PARALLEL Mode — Prior to Dispatch)
@@ -181,7 +197,7 @@ The executor dynamically detects runtime environments by checking indicator file
 ### 3.1 Purpose & Architectural Justification
 
 > **Why Git Alone Is Insufficient:**
-> Git records repository commit snapshots. However, Kramak state evolves *between* commits (e.g. moving a Work Item to `active/`, incrementing retry attempt counters, updating queue order, recording diagnostic error trajectories, and logging in-flight progress).
+> Git records repository commit snapshots. However, Kramak state evolves *between* commits (e.g. activating a Work Item, incrementing retry attempt counters, updating queue order, recording diagnostic error trajectories, and logging in-flight progress).
 >
 > If an agent session crashes or is terminated mid-task, Git would only restore to the last commit, losing intermediate state and causing redundant or conflicting re-execution.
 >

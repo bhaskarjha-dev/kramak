@@ -110,11 +110,11 @@ Each recovery path is a step-by-step executable procedure. Execute each step in 
    - **Case A2 (Pattern Modified):** If the surrounding code or function signature was modified (e.g. by an earlier WI or concurrent refactor):
      - If the drift is trivial (whitespace or comment edit), adjust the pattern and apply replacement.
      - If the drift is non-trivial (logic or signature altered), do NOT guess. Set diagnosis: `"code-drift: target file modified since WI creation"`.
-     - Mark WI as `failed`, append failure diagnosis to WI file, move to `.kramak/work-items/failed/`, update `state.json` via WAL, and route to `planning`.
+     - Mark WI as `failed`, append failure diagnosis to WI file, update WI `status: "failed"`, update `state.json` via WAL, and route to `planning`.
    - **Case A3 (Pattern Missing / File Deleted):** If the pattern or target file is gone:
      - Mark WI as `failed`.
      - Record failure diagnosis explaining missing symbols.
-     - Move WI to `failed/`, update `state.json` via WAL, and route to `planning` for re-planning.
+     - Mark WI `status: "failed"`, update `state.json` via WAL, and route to `planning` for re-planning.
 
 ---
 
@@ -141,7 +141,7 @@ Each recovery path is a step-by-step executable procedure. Execute each step in 
    - If verification fails after exhausting retry budget:
      - Record full chronological `error_trajectory` in WI failure diagnosis.
      - Revert uncommitted changes: `git checkout -- . && git clean -fd`.
-     - Move WI file from `active/` to `failed/`.
+     - Update WI file status to `status: "failed"`.
      - Update `state.json` via WAL (increment `totalFailed` and `consecutiveFailures`).
      - If `consecutiveFailures >= 3`, trip circuit breaker and route to `planning`.
 
@@ -155,14 +155,14 @@ Each recovery path is a step-by-step executable procedure. Execute each step in 
    ```bash
    ACTUAL=$( (git diff --name-only HEAD; git ls-files --others --exclude-standard) | sort -u )
    ```
-2. **Compare Against Declared Scope:** Read `files_targeted` from the active Work Item specification (`.kramak/work-items/active/WI-XXX.md`).
+2. **Compare Against Declared Scope:** Read `files_targeted` from the active Work Item specification (`.kramak/work-items/WI-XXX.md`).
 3. **Isolate Unlisted Files:** Compute set difference ($F_{\text{actual}} \setminus F_{\text{declared}}$).
 4. **Revert Unlisted Modifications:**
    - For each modified tracked unlisted file: `git checkout -- <file>`.
    - For each newly created untracked unlisted file: remove the file from filesystem (`rm <file>`).
 5. **Handle Required Out-of-Scope Changes:**
    - If the change to the unlisted file is strictly necessary for project correctness:
-     - Draft an ad-hoc follow-up Work Item file at `.kramak/work-items/queue/WI-XXX-adhoc.md`.
+     - Draft an ad-hoc follow-up Work Item file at `.kramak/work-items/WI-XXX-adhoc.md`.
      - Declare the necessary `files_targeted` and minimal acceptance criteria.
      - Insert the ad-hoc WI into `state.queue` immediately after current batch.
      - Update `state.json` via WAL.
@@ -181,14 +181,14 @@ Each recovery path is a step-by-step executable procedure. Execute each step in 
 3. **Execute Queue Reordering or Creation:**
    - **Branch D1 (Dependency WI Exists in Queue):**
      - Re-order `state.queue` in `state.json` via WAL so that the dependency WI is placed immediately before the current WI.
-     - Move current WI from `active/` back to `queue/`.
+     - Reset current WI status to `status: "queued"`.
      - Set `state.active: null`, `state.phase: "executing"`.
      - Resume execution with the dependency WI.
    - **Branch D2 (No WI Exists for Missing Dependency):**
      - If the missing dependency is a package/manifest installation:
-       - Create a new Work Item file `.kramak/work-items/queue/WI-XXX-dep.md` with `detail_level: "directed"`, targeting the package manifest (`package.json`, `pyproject.toml`, `Cargo.toml`).
+       - Create a new Work Item file `.kramak/work-items/WI-XXX-dep.md` with `detail_level: "directed"`, targeting the package manifest (`package.json`, `pyproject.toml`, `Cargo.toml`).
        - Insert `WI-XXX-dep` into `state.queue` ahead of current WI.
-       - Move current WI from `active/` back to `queue/`.
+       - Reset current WI status to `status: "queued"`.
        - Set `state.active: null`, update `state.json` via WAL, and resume execution.
      - If the missing dependency requires architectural changes:
        - Mark current WI as `failed` with category `dependency-missing`.
@@ -211,7 +211,7 @@ Each recovery path is a step-by-step executable procedure. Execute each step in 
    - **Suggested fix:** [Recommend specific interface definitions and detail tier elevation: 🟢 Outcome → 🟡 Directed, or 🟡 Directed → 🔴 Guided]
    ```
 4. **Revert Uncommitted Changes:** `git checkout -- . && git clean -fd`.
-5. **Move WI File:** Move file from `.kramak/work-items/active/` to `.kramak/work-items/failed/`.
+5. **Update Status:** Set `status: "failed"` in `.kramak/work-items/WI-XXX.md`.
 6. **Update State Plane:** Update `state.json` via WAL:
    - Set `state.active: null`.
    - Add WI record to `state.failed` array with category `ambiguous-spec`.
@@ -353,7 +353,7 @@ When a Work Item fails, its `failure_diagnosis.error_trajectory` must strictly c
 
 ### 4.2 Markdown WI Failure Diagnosis Format
 
-Append this markdown section to the end of the failed Work Item file before moving it to `.kramak/work-items/failed/<WI-ID>.md`:
+Append this markdown section to the end of the failed Work Item file in `.kramak/work-items/<WI-ID>.md`:
 
 ```markdown
 ## Failure Diagnosis
@@ -372,6 +372,6 @@ Append this markdown section to the end of the failed Work Item file before movi
 ### 4.3 Diagnostic Consumption by Planner
 
 When the Planner session starts following a failure:
-1. **Step 1:** Planner reads `state.json -> failed` and all files in `.kramak/work-items/failed/`.
+1. **Step 1:** Planner reads `state.json -> failed` and failed items in `.kramak/work-items/`.
 2. **Step 2:** Planner analyzes `error_trajectory` to determine if the failure was an interface misunderstanding, missing dependency, or specification ambiguity.
-3. **Step 3:** Planner designs a targeted remediation strategy without repeating the exact failing pattern, resetting circuit breaker metrics upon successful plan creation.
+3. **Step 3:** Planner designs a targeted remediation strategy without repeating the exact failing pattern. (Circuit breaker metrics and retry counters reset only upon verified passing audit in executor/CORE.md).

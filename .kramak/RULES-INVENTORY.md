@@ -54,8 +54,8 @@
 
 | # | Rule / Constraint | Destination |
 |---|---|---|
-| 18 | If the workspace has 0 source files, 0 design/requirement docs, and INBOX.md has no unprocessed instructions, set `state.phase: "waiting"`. | `PLANNER-CORE` |
-| 19 | On empty workspace detection, set `state.nextAction` instructing the user to describe the project in `INBOX.md`. | `PLANNER-CORE` |
+| 18 | If the workspace has 0 source files, 0 design/requirement docs, and .kramak/inbox/ has no unprocessed instructions, set `state.phase: "waiting"`. | `PLANNER-CORE` |
+| 19 | On empty workspace detection, set `state.nextAction` instructing the user to describe the project in `.kramak/inbox/`. | `PLANNER-CORE` |
 | 20 | Output a single clear sentence to the user requesting project requirements. | `PLANNER-CORE` |
 | 21 | **STOP immediately** on empty workspace; do not hallucinate roadmaps or plans without initial user intent. | `PLANNER-CORE` |
 
@@ -74,7 +74,7 @@
 
 | # | Rule / Constraint | Destination |
 |---|---|---|
-| 28 | **Mandatory Reading Order:** Read 1. Roadmap -> 2. `HUMAN-TASKS.md` -> 3. `state.json` -> 4. `PLANNING-LOG.md` -> 5. `PRINCIPLES.md` -> 6. `INBOX.md` -> 7. `done/` -> 8. `failed/`. | `PLANNER-CORE` |
+| 28 | **Mandatory Reading Order:** Read 1. Roadmap -> 2. `HUMAN-TASKS.md` -> 3. `state.json` -> 4. `PROGRESS.md` -> 5. `PRINCIPLES.md` -> 6. `.kramak/inbox/` -> 7. `done/` -> 8. `failed/`. | `PLANNER-CORE` |
 | 29 | **Anti-Anchoring Guard:** Roadmap and `HUMAN-TASKS.md` MUST be read before `state.json` so the planner forms an independent evaluation before seeing the previous session's opinion. | `PLANNER-CORE` |
 | 30 | Directional Context: Read product spec and conventions when planning features; read deployment docs when preparing deployment; read roadmap when planning post-deployment. | `PLANNER-CORE` |
 | 31 | On-Demand Context: Read project docs and conventions only when specifically relevant to the current batch. | `PLANNER-CORE` |
@@ -83,13 +83,13 @@
 
 | # | Rule / Constraint | Destination |
 |---|---|---|
-| 32 | Process all unprocessed items in `INBOX.md` with top priority before starting new feature planning. | `PLANNER-CORE` |
+| 32 | Process all unprocessed items in `.kramak/inbox/` with top priority before starting new feature planning. | `PLANNER-CORE` |
 | 33 | INBOX `bug`: During BUILD/SHIP, create a WI only if security or build-blocking (otherwise defer to ITERATE); during ITERATE, create a WI immediately. | `PLANNER-CORE` |
 | 34 | INBOX `insight`: Update relevant project documentation directly. | `PLANNER-CORE` |
 | 35 | INBOX `credential`: Mark corresponding `HUMAN-TASKS.md` item as done and resume dependent work. | `PLANNER-CORE` |
 | 36 | INBOX `direction`: Re-evaluate priorities, potentially restructuring the roadmap and batch plan. | `PLANNER-CORE` |
 | 37 | INBOX `data`: Read and integrate into documentation or specifications. | `PLANNER-CORE` |
-| 38 | Move all processed items to the "Processed" section in `INBOX.md` with an action summary note. | `PLANNER-CORE` |
+| 38 | Move all processed items to the "Processed" section in `.kramak/inbox/` with an action summary note. | `PLANNER-CORE` |
 
 ### 7. Strategic Reorientation (`.kramak/planner/CORE.md` lines 165â€“226)
 
@@ -124,9 +124,9 @@
 | # | Rule / Constraint | Destination |
 |---|---|---|
 | 57 | Apply meta-cognition: reason into the right perspective from first principles rather than relying on static role assignments. | `PLANNER-CORE` |
-| 58 | **PERCEIVE Checklist:** Review `productPhase`, last perspective from `PLANNING-LOG.md`, consecutive perspective count, changes since last session, `INBOX.md`, human tasks, and `lastAudit`. | `PLANNER-CORE` |
+| 58 | **PERCEIVE Checklist:** Review `productPhase`, last perspective from `PROGRESS.md`, consecutive perspective count, changes since last session, `.kramak/inbox/`, human tasks, and `lastAudit`. | `PLANNER-CORE` |
 | 59 | **REASON Questions:** Identify biggest project risk, biggest opportunity, neglected perspectives, 10-person hire priority, and today's user complaints. | `PLANNER-CORE` |
-| 60 | **DECIDE Commitment:** Formulate and record perspective in `PLANNING-LOG.md` (perspective name, rationale, last 3 perspectives, when last taken, biggest risk, biggest opportunity). | `PLANNER-CORE` |
+| 60 | **DECIDE Commitment:** Formulate and record perspective in `PROGRESS.md` (perspective name, rationale, last 3 perspectives, when last taken, biggest risk, biggest opportunity). | `PLANNER-CORE` |
 | 61 | **Perspective Diversity Check:** If 3+ consecutive sessions used the same perspective, evaluate alternative viewpoints and document rationale if continuing. | `PLANNER-CORE` |
 | 62 | Archetype Flexibility: Draw from building, product, operational, growth, scaling archetypes or invent emergent perspectives as demanded by project state. | `PLANNER-CORE` |
 
@@ -141,7 +141,7 @@
 | 67 | SHIP $\rightarrow$ ITERATE Transition: Transition when product is deployed and accessible to real users. | `PLANNER-CORE` |
 | 68 | **ITERATE Priorities:** 1. Production Fire $\rightarrow$ 2. Security Vuln $\rightarrow$ 3. User-Reported Bugs $\rightarrow$ 4. Metrics-Driven Improvements $\rightarrow$ 5. Feature Enhancements $\rightarrow$ 6. New Features $\rightarrow$ 7. Performance $\rightarrow$ 8. Polish. | `PLANNER-CORE` |
 | 69 | **Polish Ceiling Rule:** When build passes and linter has 0 errors, stop polishing. Lint warnings do not block deployment. Standard WIs $\le 5$ files, $\le 50$ lines. Exceptions require ðŸ”´ Guided + justification. | `ROUTER`, `PLANNER-CORE` |
-| 70 | **Planner Whitelist:** Planner may directly modify `.kramak/` files, `state.json`, `queue/`, `plans/`, `INBOX.md`, docs, roadmaps, `AGENTS.md`, and skills. | `PLANNER-CORE` |
+| 70 | **Planner Whitelist:** Planner may directly modify `.kramak/` files, `state.json`, `.kramak/work-items/`, `plans/`, `.kramak/inbox/`, docs, roadmaps, `AGENTS.md`, and skills. | `PLANNER-CORE` |
 | 71 | **Planner Blacklist:** Planner MUST NOT directly modify source code, config files requiring tests, database schemas/models, or package dependencies. Create WIs instead. | `PLANNER-CORE` |
 | 72 | **Research Protocol:** Use web search for APIs/libraries, read official documentation, read actual source files, and grep codebase for pattern references before planning. | `ROUTER`, `PLANNER-CORE` |
 
@@ -171,7 +171,7 @@
 
 | # | Rule / Constraint | Destination |
 |---|---|---|
-| 85 | File naming: Create `queue/WI-XXX.md` using batch-scoped numbering (Batch 1 = WI-101..., Batch 2 = WI-201...). | `PLANNER-CORE`, `PLANNER-MODULE:output-contract` |
+| 85 | File naming: Create `.kramak/work-items/WI-XXX.md` using batch-scoped numbering (Batch 1 = WI-101..., Batch 2 = WI-201...). | `PLANNER-CORE`, `PLANNER-MODULE:output-contract` |
 | 86 | Core objective: Collapse ambiguity so even less capable models can execute accurately. Focus tokens on WHAT and WHY. | `PLANNER-CORE`, `PLANNER-MODULE:output-contract` |
 | 87 | **Goldilocks Rule:** Scale specification detail to risk: ðŸ”´ Guided (Critical), ðŸŸ¡ Directed (Medium), ðŸŸ¢ Outcome (Low). | `PLANNER-CORE`, `PLANNER-MODULE:output-contract` |
 | 88 | **Distribution Guideline:** Most WIs should be ðŸŸ¡ Directed or ðŸŸ¢ Outcome. If >50% are ðŸ”´ Guided, the plan is over-specified. | `PLANNER-CORE`, `PLANNER-MODULE:output-contract` |
@@ -217,7 +217,7 @@
 
 | # | Rule / Constraint | Destination |
 |---|---|---|
-| 116 | On returning from execution: read `state.json -> lastAudit` and `INBOX.md` for audit findings and strategic concerns. | `PLANNER-CORE` |
+| 116 | On returning from execution: read `state.json -> lastAudit` and `.kramak/inbox/` for audit findings and strategic concerns. | `PLANNER-CORE` |
 | 117 | Incorporate audit findings into the PERCEIVE $\rightarrow$ REASON $\rightarrow$ DECIDE cycle. | `PLANNER-CORE` |
 | 118 | Check for `productPhase` advancement (BUILD $\rightarrow$ SHIP, SHIP $\rightarrow$ ITERATE, ITERATE $\rightarrow$ BUILD) and update `state.productPhase`. | `PLANNER-CORE` |
 | 119 | **Circuit Breaker Rule:** If `circuitBreakerTripped` is true or `consecutiveFailures >= 3`, STOP. Do not re-queue the failing pattern or retry the same approach. | `ROUTER`, `PLANNER-CORE` |
@@ -283,12 +283,12 @@
 | 164 | Bootstrap Scenario 2 (Existing with Context): Read `AGENTS.md`, scan workspace, detect toolchain, create `.kramak/` structure, set `phase: "planning"`. | `PLANNER-CORE` |
 | 165 | Bootstrap Scenario 3 (Existing without Context): Scan workspace, detect toolchain, auto-generate `AGENTS.md`, scaffold `.kramak/`, set `phase: "planning"`. | `PLANNER-CORE` |
 | 166 | Bootstrap Scenario 4 (New with Requirements): Extract requirements, generate `AGENTS.md`, scaffold `.kramak/`, set `phase: "planning"` for batch 1 scaffolding. | `PLANNER-CORE` |
-| 167 | Bootstrap Scenario 5 (Empty Workspace): Scaffold with `phase: "waiting"`, prompt user for requirements in `INBOX.md`, STOP. | `PLANNER-CORE` |
+| 167 | Bootstrap Scenario 5 (Empty Workspace): Scaffold with `phase: "waiting"`, prompt user for requirements in `.kramak/inbox/`, STOP. | `PLANNER-CORE` |
 | 168 | Toolchain Detection: Detect build, test, lint, and dev commands across Node, Deno, Python, Rust, Go, Elixir, Swift, .NET, PHP, Java, Ruby ecosystems. | `PLANNER-CORE`, `PLANNER-MODULE:domain-conventions` |
 | 169 | Monorepo Orchestration: Store root build/lint in `toolchain.checkCommands`; specify package-scoped checks in individual WIs. | `PLANNER-CORE`, `PLANNER-MODULE:domain-conventions` |
 | 170 | Git Initialization: Run `git init`, create `.gitignore`, make initial commit if workspace is not a git repo. | `PLANNER-CORE` |
 | 171 | Crash & WAL Recovery: Run level-triggered state reconciliation on bootstrap; replay `.wal` or rename `.tmp` files; repair orphaned worktrees. | `ROUTER`, `PLANNER-CORE` |
-| 172 | Dispatch Budget = 1 (Sequential Baseline): Move WIs from `plans/` to `queue/`, transition `state.phase: "executing"`. | `PLANNER-CORE` |
+| 172 | Dispatch Budget = 1 (Sequential Baseline): Save WIs in `.kramak/work-items/`, transition `state.phase: "executing"`. | `PLANNER-CORE` |
 | 173 | Dispatch Budget > 1 (Parallel Mode): Run Tier 2 Pre-flight check (verify zero file-scope intersection across concurrent WIs), provision git worktrees at `.kramak/worktrees/<id>`, init WI state shards at `.kramak/work-items/<id>.json`, transition `state.phase: "dispatch"`. | `PLANNER-CORE` |
 | 174 | State Transition Guard Matrix: Enforce formal preconditions for `BOOTSTRAP -> PLANNING`, `PLANNING -> EXECUTING`, `PLANNING -> DISPATCH`, `PLANNING -> WAITING`, `PLANNING -> ESCALATED`. | `ROUTER`, `PLANNER-CORE` |
 | 175 | **Resume Drift Check (Amendment 4B):** When resuming from `WAITING`, compare current project state (checksums, test results) against pre-wait snapshot; if drift detected, re-run full ORIENT before proceeding. | `PLANNER-CORE` |

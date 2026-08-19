@@ -1,6 +1,6 @@
 # Planner Output Contract — Work Item & Batch Plan Specification
 
-> **Module Role:** On-demand specification contract loaded when the Planner authors Work Items (`queue/WI-XXX.md`) and Batch Plans (`plans/PLAN-batch-XX.md`).
+> **Module Role:** On-demand specification contract loaded when the Planner authors Work Items (`.kramak/work-items/WI-XXX.md`) and Batch Plans (`plans/PLAN-batch-XX.md`).
 >
 > **The Planning-to-Execution Principle:**
 > *"Your job is to collapse ambiguity, not write code. Once ambiguity is collapsed into a clear spec, even a less capable model can execute it. Spend your tokens on WHAT and WHY, not on quoting entire files."*
@@ -11,7 +11,7 @@
 
 ## 1. Work Item Specification Format
 
-Every Work Item is an autonomous execution contract written to `.kramak/work-items/queue/WI-XXX.md` (or `queue/WI-XXX.md` in legacy single-tier layouts).
+Every Work Item is an autonomous execution contract written to `.kramak/work-items/WI-XXX.md` (or `.kramak/work-items/WI-XXX.json`).
 
 ### 1.1 Batch-Scoped Numbering
 Use 3-digit batch-scoped identifiers:

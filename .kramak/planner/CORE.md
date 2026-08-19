@@ -246,10 +246,10 @@ Record findings in `state.lastVisionAssessment`:
 ```
 
 #### Perspective Selection
-Reason into the optimal perspective for this batch and commit to `.kramak/PLANNING-LOG.md`:
+Reason into the optimal perspective for this batch and commit to `plans/PLAN-batch-XX.md` and `state.json -> lastSession`:
 - **Evaluate:** Biggest risk, biggest opportunity, neglected perspectives, what hire a 10-person startup would make next, and what a live user would complain about today.
 - **Archetypes:** Solution Architect, UX Designer, Security Engineer, Performance Engineer, QA Lead, CEO/Strategist, Product Manager, DevOps Lead, DBA, Growth Marketer.
-- **Perspective Diversity:** If the same perspective was used $\ge 3$ consecutive sessions, consider whether an alternative viewpoint is needed; document reasoning in `PLANNING-LOG.md`.
+- **Perspective Diversity:** If the same perspective was used $\ge 3$ consecutive sessions, consider whether an alternative viewpoint is needed; document reasoning in `plans/PLAN-batch-XX.md`.
 
 #### Prioritization by `productPhase`
 
@@ -374,7 +374,7 @@ Before moving WIs to execution, perform this self-audit:
 When batch planning and self-audit are complete, transition to execution based on `state.concurrency.budget`.
 
 ### 5.1 Sequential Mode (`concurrency.budget === 1`)
-1. Move work item files from `plans/` (or generated queue) to `.kramak/work-items/queue/` (or `.kramak/queue/`).
+1. Save work item files directly in `.kramak/work-items/WI-XXX.json` (or `WI-XXX.md`).
 2. Populate `state.queue` array with ordered WI IDs: `["WI-101", "WI-102", "WI-103"]`.
 3. Set `state.active: null`.
 4. Transition `state.phase: "executing"`.
@@ -387,6 +387,7 @@ When batch planning and self-audit are complete, transition to execution based o
    - Assert **zero file-scope intersection** ($A \cap B = \emptyset$).
    - If any file overlap is detected, serialize those WIs into sequential dependency order.
 2. **Worktree Provisioning:**
+   - **Pre-Flight Prune:** Run `git worktree prune` to clean stale references.
    - For each independent concurrent WI, provision an isolated git worktree:
      ```bash
      git worktree add .kramak/worktrees/WI-XXX -b pipeline/WI-XXX
@@ -468,3 +469,36 @@ Before completing the planning turn, determine whether to continue in this sessi
    - Update `state.json` (`phase`, `nextAction`, `queue`, `batchNumber`, `lastSession`).
    - Run `git add .kramak/ plans/ && git commit -m "plan(batch-XX): [Theme Summary]"`.
    - Output **ONE single sentence** to the user containing `state.nextAction`. STOP.
+
+
+---
+
+## SECTION 8: RESUME & RECOVERY PROTOCOL (?RESUME)
+
+Invoked when `state.phase` is `waiting`, `escalated`, or `complete` and the user prompts `"Start"` or triggers execution:
+
+### 8.1 Resuming from `WAITING` (`state.phase === "waiting"`)
+1. **Blocker Inspection:** Read `.kramak/HUMAN-TASKS.md` and check if previously blocking items are marked `[x]` (completed) or if `humanTasksPending` can be cleared (`false`).
+2. **Inbox Inspection:** Scan `.kramak/inbox/` for new user directives, requirements, or credentials.
+3. **Resume Routing:**
+   - **Case A (Unblocked with Active/Queued Work):** If blockers are resolved and items remain in `state.queue` or `state.active`:
+     - Run Resume Drift Check (?3.2).
+     - Set `state.phase: "executing"`, `state.humanTasksPending: false`.
+     - Set `state.nextAction: "Resume execution of active work item with executor/CORE.md."`.
+   - **Case B (Unblocked, Ready for Next Batch):** If blockers resolved and queue is empty:
+     - Set `state.phase: "planning"`, `state.humanTasksPending: false`.
+     - Set `state.nextAction: "Plan next batch using planner/CORE.md."`.
+   - **Case C (Still Blocked):** If blocking items remain unresolved in `HUMAN-TASKS.md`:
+     - Output **one single sentence** reminding the user of the pending action in `HUMAN-TASKS.md`. STOP.
+
+### 8.2 Resuming from `ESCALATED` (`state.phase === "escalated"`)
+1. **Diagnostic Review:** Read `state.escalation` and failure diagnostics in `.kramak/work-items/*.json` (or `.md`).
+2. **Re-Orientation:** Re-evaluate architectural assumptions from first principles.
+3. **Clear Breaker:** Clear `state.metrics.circuitBreakerTripped: false`, reset `state.metrics.consecutiveFailures: 0`, and set `state.escalation: null`.
+4. **Transition:** Set `state.phase: "planning"`, `state.nextAction: "Circuit breaker cleared. Start planner session to rethink architecture."`.
+
+### 8.3 Resuming from `COMPLETE` (`state.phase === "complete"`)
+1. **Inbox Check:** Inspect `.kramak/inbox/` for new `.md` files or feature requests.
+2. **Routing:**
+   - **If New Inbox Requirements Exist:** Set `state.phase: "planning"`, `state.nextAction: "New requirements detected in .kramak/inbox/. Start planning next batch."`.
+   - **If Inbox is Empty:** Output **one single sentence** confirming that all roadmap milestones are complete and the project is in a clean release state. STOP.

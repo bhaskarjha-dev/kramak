@@ -11,7 +11,7 @@
 ### 1.1 Concrete Trigger Condition
 Evaluate workspace files. If the project root has **0 files matching any of the following code extensions:**
 `*.py`, `*.js`, `*.ts`, `*.tsx`, `*.jsx`, `*.go`, `*.rs`, `*.java`, `*.rb`, `*.cpp`, `*.c`, `*.cs`, `*.php`, `*.swift`, `*.kt`, `*.scala`, `*.ex`, `*.exs`
-**AND** `.kramak/inbox/` (or `INBOX.md`) contains 0 unprocessed user requirements or instructions.
+**AND** `.kramak/inbox/`  contains 0 unprocessed user requirements or instructions.
 
 ### 1.2 Deterministic Actions
 1. Set `state.phase: "waiting"`.
@@ -162,7 +162,7 @@ If you identify documentation errors, outdated `AGENTS.md` conventions, or skill
 | **Unresolved architectural or design decision needed** | Read project docs and principles. Make the design decision, document rationale in the plan. |
 | **Queue still contains unexecuted WIs from last batch** | Leave phase as `executing`—do not overwrite queue. Instruct user to run executor. |
 | **All roadmap items are completed** | Envision what comes next using the 5 Strategic Lenses, update roadmap, advance `productPhase`. |
-| **Executor repeatedly fails on the same pattern** | Inspect failure diagnostic in `failed/`; upgrade WI spec to 🔴 **Guided** and add explicit guardrails. |
+| **Executor repeatedly fails on the same pattern** | Inspect failure diagnostic in `.kramak/work-items/`; upgrade WI spec to 🔴 **Guided** and add explicit guardrails. |
 | **A new tool or skill would improve pipeline execution** | Write a WI for tool installation; author `.kramak/` skill specifications directly. |
 | **Project requires a fundamentally different architecture** | Document architectural justification in plan; structure migration as phased, dependent WIs. |
 | **Uncertain about an architectural decision** | Flag WI with `Risk: High`, document trade-offs in Intent, and specify a safe fallback. |

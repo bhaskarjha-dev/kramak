@@ -18,7 +18,7 @@
 5. **Do NOT ask the user questions.** Resolve decisions from the WI specification, codebase patterns, or fail to the planner.
 6. **Do NOT suppress reasoning tokens.** Reasoning happens through tokens—never tell yourself to think less.
 7. **Do NOT commit with a dirty working tree.** Clean up untracked or unrelated edits before staging.
-8. **Do NOT delete or overwrite `done/` files.** They form the permanent batch audit trail.
+8. **Do NOT delete or overwrite completed Work Item files.** They form the permanent batch audit trail.
 9. **Do NOT guess import paths or exports.** Grep for exact symbols in source modules.
 10. **Do NOT ignore failing tests.** Fix the root cause within scope, or classify and fail the item.
 
@@ -38,24 +38,23 @@ Invoked when `state.phase === "executing"`.
 1. Read `.kramak/state.json`.
 2. Inspect active queue and filesystem state:
    - **If `state.active` is set:**
-     - Check `.kramak/work-items/active/<WI-ID>.md` (or `.kramak/active/<WI-ID>.md`). If present, resume this in-flight WI.
+     - Check `.kramak/work-items/<WI-ID>.json` (or `.md`). If present, resume this in-flight WI.
      - Inspect uncommitted changes with `git status` / `git diff`. If changes are corrupted or divergent, reset with `git checkout -- . && git clean -fd` and restart execution of the active WI; if valid progress, continue.
-     - If the file is in `queue/` instead of `active/`, move it to `active/` and resume.
    - **If `state.active` is null:**
      - Pick the first WI ID from `state.queue` array.
      - If `state.queue` is empty:
        - If parallel worktrees are active (`concurrency.budget > 1`), check shard completion status.
-       - If all WIs are in `done/`, transition `state.phase: "auditing"` (or `"merge_queue"`) and proceed to **SECTION 2** or **SECTION 3**.
+       - If all batch WIs are completed in `state.completed`, transition `state.phase: "auditing"` (or `"merge_queue"`) and proceed to **SECTION 2** or **SECTION 3**.
 3. Check `.kramak/HUMAN-TASKS.md`:
    - If the selected WI depends on an unresolved blocking human task (`humanTasksPending: true`), skip to the next independent item in `state.queue`.
    - If all remaining queued items are blocked, set `state.phase: "waiting"`, `state.nextAction: "Pipeline paused. Unresolved blocking human tasks in HUMAN-TASKS.md."`; STOP.
 
 ### 1.2 Preparation & Pre-Execution Scope Intercept
-1. Read the target WI file (`.kramak/work-items/queue/<WI-ID>.md` or `active/<WI-ID>.md`) completely.
+1. Read the target WI file (`.kramak/work-items/<WI-ID>.json` or `<WI-ID>.md`) completely.
 2. Read all files listed in `files_targeted` and context sections to establish codebase ground truth.
 3. Verify git working tree is clean (`git status`).
 4. Verify active branch matches `state.currentBranch` (or dedicated worktree branch `pipeline/<WI-ID>`).
-5. Move WI file from `queue/` to `active/`.
+5. Set `status: "active"` in the target WI file frontmatter/property.
 6. Update `state.json` via **ROUTER.md Invariant 4 (WAL Writes)**:
    - Set `active: "<WI-ID>"`.
    - Remove `<WI-ID>` from `queue` array.
@@ -131,11 +130,11 @@ Before running `git commit`, execute the mandatory safety checklist:
 
 1. **Scope Gate Check:** Run `git diff --name-only`. If any touched file is not in `files_targeted`:
    - Revert unlisted file: `git checkout -- <file>` (or `rm <new_unlisted_file>`).
-   - If change was strictly necessary, log an ad-hoc follow-up WI in `queue/`.
+   - If change was strictly necessary, record a follow-up WI specification in `.kramak/work-items/`.
 2. Stage modified files: `git add <files_targeted>`.
 3. Commit with prescribed message from WI, or standard conventional commit:
    - `fix(<scope>): <title>` or `feat(<scope>): <title>`.
-4. Move WI file from `active/` to `done/`.
+4. Update WI file status to `status: "completed"`, `completed_at: "<ISO-TIMESTAMP>"`.
 5. Update `state.json` via WAL:
    ```json
    {
@@ -174,7 +173,7 @@ If execution or verification fails irrecoverably:
    - **Error Trajectory:** [Summary of attempts and error outputs]
    ```
 3. Revert uncommitted changes: `git checkout -- . && git clean -fd`.
-4. Move WI file from `active/` to `failed/`.
+4. Update WI file status to `status: "failed"`.
 5. Update `state.json` via WAL:
    ```json
    {
@@ -213,16 +212,16 @@ Invoked when `state.phase === "auditing"` (or when execution batch queue is drai
 > The auditor executes tests, builds, and verifies diffs against concrete criteria. It does NOT perform subjective "looks good" code reviews. Pass/fail decisions must be anchored in executable command outputs.
 
 ### 2.2 Technical Audit Procedure
-1. Read all completed WIs in `done/` for the current batch.
+1. Read all completed WIs in `.kramak/work-items/` for the current batch.
 2. Run full repository build: `toolchain.buildCommand`.
 3. Run full project test and lint suites: `toolchain.checkCommands`.
-4. For each completed WI in `done/`:
+4. For each completed WI:
    - Re-verify all `acceptance_criteria` against live code and tests.
    - Verify Tier 1 Scope Compliance: inspect `git log` and diffs to confirm no unauthorized files were modified.
    - In parallel mode: execute **Tier 3 Merge Re-verification** against the integration branch HEAD.
 5. **Audit Remediation & Issue Handling:**
    - **Minor/Mechanical Fixes (Lint, type annotations, minor test assertions):** Fix directly in code, verify, and commit with `fix(audit): <description>`.
-   - **Strategic / Architecture Flaws (Spec defects, design drift):** Record actionable findings in `.kramak/inbox/` (or `INBOX.md`) for the planner.
+   - **Strategic / Architecture Flaws (Spec defects, design drift):** Record actionable findings in `.kramak/inbox/` for the planner.
 6. Generate Audit Report at `plans/AUDIT-batch-NN.md`.
 
 ### 2.3 Audit Outcomes & Transitions
@@ -241,8 +240,8 @@ Update `state.lastAudit` in `state.json`:
 |---|---|---|---|
 | **All Criteria Pass** | Sequential (`budget == 1`) | `planning` (or `complete`) | If roadmap items remain: set `phase: "planning"`, `nextAction: "Start planner for Batch N+1."`. If project finished: set `phase: "complete"`. |
 | **All Criteria Pass** | Parallel (`budget > 1`) | `merge_queue` | Set `phase: "merge_queue"`, `nextAction: "Serialize and merge completed worktree branches."`. |
-| **Defect Found (Retry Budget > 0)** | Any | `executing` | Re-open WI to `active/`, decrement budget, set `phase: "executing"`, `nextAction: "Retry failed verification on WI-XXX."`. |
-| **Spec Flaw / Budget Exhausted** | Any | `planning` | Move WI to `failed/`, set `phase: "planning"`, `nextAction: "Audit failed on specification defect. Start planner session."`. |
+| **Defect Found (Retry Budget > 0)** | Any | `executing` | Re-open WI (`status: "active"`), decrement budget, set `phase: "executing"`, `nextAction: "Retry failed verification on WI-XXX."`. |
+| **Spec Flaw / Budget Exhausted** | Any | `planning` | Mark WI `status: "failed"`, set `phase: "planning"`, `nextAction: "Audit failed on specification defect. Start planner session."`. |
 | **Complex Diagnosis Needed** | Any | — | Load on-demand module [error-recovery.md](error-recovery.md). |
 
 ---

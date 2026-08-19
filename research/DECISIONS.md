@@ -47,7 +47,7 @@ The following foundational principles are fixed by authorial convention and core
 
 | ID | Title | Door Type | Track | Status | Chosen Option / Resolution | Informing Sessions | Validated Innovations |
 |---|---|:---:|:---:|:---:|---|---|---|
-| **D-001** | Core FSA State Topology & Role Separation | 🔒 One-Way | Track B | `accepted` | 7-State Closed FSM with Bounded Retries & Pareto Role Split | T2-05, T2-02, T2-15, T2-16 | #3 (Perspective Planning) |
+| **D-001** | Core FSA State Topology & Role Separation | 🔒 One-Way | Track B | `accepted` | 9-State Closed FSM (7-state baseline + DISPATCH/MERGE_QUEUE) with Bounded Retries & Pareto Role Split | T2-05, T2-02, T2-15, T2-16 | #3 (Perspective Planning) |
 | **D-002** | Multi-Agent Orchestration & Parallel Execution | 🔁 Two-Way | Track A | `accepted — review at trigger` | Option B: Sequential Default + Worktree-Isolated Extension | T2-06, T2-02, T2-03, T2-15, T2-16 | Post-v1.0.0 Roadmap |
 | **D-003** | State Persistence, Invariants & Schema Versioning | 🔒 One-Way | Track B | `accepted` | SemVer JSON Schema Draft 2020-12 + WAL Atomic Writes | T2-04, T2-05, T2-15, T2-16 | #7 (State Reconciliation) |
 | **D-004** | Model-Agnostic Capability Gating & Calibration | 🔒 One-Way | Track B | `accepted` | Hybrid Gate: Stage 1 Self-Report + Stage 2 Canary Battery | T2-10, T2-04, T2-15, T2-16 | #12 (Capability Gate) |

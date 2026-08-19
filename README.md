@@ -181,7 +181,7 @@ Kramak operates across any AI coding environment via a tiered adapter architectu
 - 💡 **[Adoption Walkthrough](examples/ADOPTION-WALKTHROUGH.md)** — Step-by-step example on an existing codebase.
 - ❓ **[Frequently Asked Questions](docs/FAQ.md)** — Architectural answers, multi-IDE handoffs, and edge cases.
 - 📊 **[Comparative Analysis](docs/COMPARISON.md)** — Kramak vs Spec Kit, BMAD, RIPER-5, and OpenSpec.
-- 📐 **[Formal Specification](docs/SPECIFICATION.md)** — 8-State FSM definition, invariants, and schemas.
+- 📐 **[Formal Specification](docs/SPECIFICATION.md)** — 9-State FSM definition, invariants, and schemas.
 
 ---
 

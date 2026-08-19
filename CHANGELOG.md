@@ -10,10 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### The Process Control Transformation
 
-Kramak v1.1.0 represents a comprehensive architectural overhaul, restructuring the framework into a progressive-disclosure specification, establishing formal JSON Schema Draft 2020-12 validation contracts, introducing an 8-state closed-loop FSM, and refining positioning as **Layer 3 — Process Control** in the AAIF agentic stack.
+Kramak v1.1.0 represents a comprehensive architectural overhaul, restructuring the framework into a progressive-disclosure specification, establishing formal JSON Schema Draft 2020-12 validation contracts, introducing an 9-state closed-loop FSM, and refining positioning as **Layer 3 — Process Control** in the AAIF agentic stack.
 
 ### Added
-- **8-State Closed-Loop FSM:** Upgraded core automaton from 5 states to an algebraically closed 8-state control plane (`BOOTSTRAP`, `PLANNING`, `DISPATCH`, `EXECUTING`, `AUDITING`, `MERGE_QUEUE`, `WAITING`, `ESCALATED`, `COMPLETE`) with bounded retry budgets.
+- **9-State Closed-Loop FSM:** Upgraded core automaton from 5 states to an algebraically closed 9-state control plane (`BOOTSTRAP`, `PLANNING`, `DISPATCH`, `EXECUTING`, `AUDITING`, `MERGE_QUEUE`, `WAITING`, `ESCALATED`, `COMPLETE`) with bounded retry budgets.
 - **Progressive Disclosure Architecture:** Restructured monolithic specifications into a sub-2KB eager router (`.kramak/ROUTER.md`), core role specifications (`planner/CORE.md`, `executor/CORE.md`), and on-demand reference playbooks.
 - **JSON Schema Draft 2020-12 Contracts:** Added strict machine-readable schemas for `.kramak/schemas/state.schema.json`, `.kramak/schemas/work-item.schema.json`, and `.kramak/schemas/work-item-state.schema.json`.
 - **Universal AAIF Baseline:** Generated universal `.kramak/AGENTS.md` (Context) and `.kramak/SKILL.md` (Skills) standard bridges at project root.

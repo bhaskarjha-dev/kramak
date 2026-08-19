@@ -14,7 +14,11 @@
 
 ## 1. Procedural Canary Challenge Battery (CT-1 to CT-5)
 
-All challenges are generated dynamically at runtime with randomized parameters and evaluated using deterministic algorithmic checkers (D-004).
+All challenges are generated dynamically at runtime with randomized parameters and evaluated to calibrate reasoning depth (D-004).
+
+> **Dual Execution Mode:**
+> - **In Pure-Specification Mode (Zero Dependencies):** Challenges function as **Prompt-Calibrated Capability Primers** where the model solves procedural tasks in-memory to prime reasoning attention, calibrate confidence, and set safe batch horizons.
+> - **In Programmatic Mode (with companion `@kramak/cli`):** Challenges are generated with pseudo-random seeds and scored via external deterministic test harnesses.
 
 ```mermaid
 graph TD
