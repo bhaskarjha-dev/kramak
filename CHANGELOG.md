@@ -6,6 +6,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.1.0] — 2026-08-19
+
+### The Process Control Transformation
+
+Kramak v1.1.0 represents a comprehensive architectural overhaul, restructuring the framework into a progressive-disclosure specification, establishing formal JSON Schema Draft 2020-12 validation contracts, introducing an 8-state closed-loop FSM, and refining positioning as **Layer 3 — Process Control** in the AAIF agentic stack.
+
+### Added
+- **8-State Closed-Loop FSM:** Upgraded core automaton from 5 states to an algebraically closed 8-state control plane (`BOOTSTRAP`, `PLANNING`, `DISPATCH`, `EXECUTING`, `AUDITING`, `MERGE_QUEUE`, `WAITING`, `ESCALATED`, `COMPLETE`) with bounded retry budgets.
+- **Progressive Disclosure Architecture:** Restructured monolithic specifications into a sub-2KB eager router (`.kramak/ROUTER.md`), core role specifications (`planner/CORE.md`, `executor/CORE.md`), and on-demand reference playbooks.
+- **JSON Schema Draft 2020-12 Contracts:** Added strict machine-readable schemas for `.kramak/schemas/state.schema.json`, `.kramak/schemas/work-item.schema.json`, and `.kramak/schemas/work-item-state.schema.json`.
+- **Universal AAIF Baseline:** Generated universal `.kramak/AGENTS.md` (Context) and `.kramak/SKILL.md` (Skills) standard bridges at project root.
+- **Canary Capability Gate (CT-1 to CT-5):** Replaced subjective model self-assessment with 5 procedurally generated, deterministically graded micro-challenges (DAG scheduling, plan-bug detection, state tracking, instruction hierarchy, paraphrase consistency).
+- **Anti-Bias Guard (G1–G6):** Upgraded the 5-point checklist into a hardened 6-step governance framework with history diffs, rollback cross-checks, dual-model critique passes, immutable ledger logging, and risk-tiered human approval gates.
+- **Immutable Self-Modification Ledger:** Added `.kramak/ledger/FORMAT.md` and append-only `.kramak/ledger/self-modifications.jsonl` to track pipeline self-improvements.
+- **3-Tier Hard Scope Check:** Added Tier 1 worktree diff verification, Tier 2 pre-flight glob exclusion verification, and Tier 3 post-merge re-validation.
+- **Write-Ahead Logging (WAL):** Atomic state updates via `.kramak/state.json.tmp` flushes and renames, with level-triggered state reconciliation.
+- **Parallel Worktree Execution & Merge Queue:** Added git-worktree isolation (`.kramak/worktrees/<id>`), single-writer state shards (`.kramak/work-items/WI-XXX.json`), and a serialized FIFO merge queue for concurrent Work Items.
+- **On-Demand Reference Playbooks:**
+  - `.kramak/planner/edge-cases.md` (refactors >10 files, migrations, deprecations)
+  - `.kramak/planner/output-contract.md` (Work Item JSON/Markdown authoring rules)
+  - `.kramak/planner/domain-conventions.md` (monorepos, polyglot environments)
+  - `.kramak/executor/error-recovery.md` (diagnostic and rollback playbooks)
+  - `.kramak/executor/tool-playbooks.md` (git, patch, build tool execution patterns)
+  - `.kramak/executor/PROGRESS.md` (dynamic execution session scratchpad)
+- **Standardized Templates:** Added `.kramak/templates/WORK-ITEM.template.md`, `HUMAN-TASKS.template.md`, and `RETROSPECTIVE.template.md`.
+- **Founding Architecture Document (FAD):** Sealed `FOUNDING-ARCHITECTURE.md` as the authoritative architectural baseline.
+
+### Changed
+- **Positioning & Tagline:** Repositioned from *"The missing SDLC for AI agents"* to *"Kramak: process control for autonomous coding agents — Layer 3: Process, alongside AGENTS.md (context) and MCP (connectivity)"* (Decision D-008). Retained "Agentic SDLC" as secondary SEO keyword.
+- **Primary Workspace Directory:** Migrated pipeline workspace from `.agents/pipeline/` to `.kramak/`.
+- **Adapter Portfolio Restructuring:**
+  - **Tier 1 (Deep):** Claude Code (`CLAUDE.md` with `@.kramak/AGENTS.md` bridge) and Cursor (`.cursor/rules/kramak-core.mdc` with glob-scoped matching).
+  - **Tier 2 (Monitor):** Google Antigravity (`GEMINI.md` / `SKILL.md`) and GitHub Copilot (`.github/copilot-instructions.md`).
+  - **Tier 3 (Thin):** Devin Desktop (`AGENTS.md`), Cline (`.clinerules`), and Aider (`CONVENTIONS.md`).
+- **Tooling Boundary (EditorConfig Model):** Decoupled executable tooling into the standalone companion repository [`kramak-cli`](https://github.com/bhaskarjha-dev/kramak-cli) per Decision D-009. The core `kramak` repository contains exclusively pure Markdown and JSON Schemas.
+- **Complete Documentation Overhaul:** Rewrote `README.md`, `docs/GETTING-STARTED.md`, `docs/COMPARISON.md`, `docs/SPECIFICATION.md`, `docs/FAQ.md`, and `CONTRIBUTING.md`.
+
+### Deprecated
+- **`spec/` Monolithic Paths:** Monolithic files (`spec/PLANNER.md`, `spec/EXECUTOR.md`, `spec/PRINCIPLES.md`, `spec/state.schema.json`) replaced by stub forwarding notices pointing to `.kramak/`.
+- **Standalone Root Scripts:** `init.sh`, `init.ps1`, and `validate.js` replaced with 90-day redirection shims pointing to `@kramak/cli` and manual copy-paste instructions.
+- **Roo Code Adapter:** Formally deprecated following upstream project shutdown; redirected to Cline adapter.
+
+---
+
 ## [1.0.0] — 2026-08-12
 
 ### The Public Release
@@ -34,23 +78,3 @@ Kramak (formerly "Builoop") — the missing SDLC for AI agents. This is the firs
 - Cursor (.mdc rule)
 - Claude Code (CLAUDE.md section)
 - Generic (any AI tool with file access)
-
-### Design Evolution (Pre-Release)
-The methodology evolved through 24 iterations during development:
-- Research-grounded corrections replacing assumptions with evidence
-- Anti-bias self-audit of planning redesign
-- Hierarchical planning with spec detail scaling
-- Capability gate check for model self-assessment
-- Session continuity intelligence (adaptive phase transitions)
-- Phase-aware priorities with neighborhood cleanup
-- Polish ceiling rule (stop lint perfectionism)
-- Strategic reorientation (planner never follows state blindly)
-- Bounded autonomy (anti-sycophancy correction)
-- Model-type hard gate (expensive models don't do execution)
-- Blocked fallback (productive use of blocked time)
-- Strategic vision + project discovery
-- Dynamic governance (anti-orphan, trajectory retries, scoped breaker)
-- Planner-executor separation of concerns
-- Objective degradation metrics (replacing subjective self-assessment)
-- Intent-based perspective architecture (replacing role cycling)
-- Executor-driven auditing (replacing planner audit)
