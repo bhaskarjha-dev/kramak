@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StateSchema",
+  "description": "Kramak v1.1 — Master State Schema. Content populated in Phase 3."
+}
