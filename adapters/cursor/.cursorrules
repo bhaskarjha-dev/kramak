@@ -1,0 +1,18 @@
+<!-- Kramak Adapter: Cursor | Tier 1 (Deep) -->
+# Kramak (क्रमक) — Cursor Rules
+# Universal Base: .kramak/AGENTS.md | .kramak/SKILL.md
+
+When triggered ("Start", "begin", "continue", "go"):
+1. Read `.kramak/state.json` (if missing, initialize with `phase: "bootstrap"`).
+2. Read `.kramak/ROUTER.md` for non-negotiable invariants and phase routing.
+
+## .mdc Progressive Loading Rules
+- **Rule 1 (Always Active):** Load `.kramak/ROUTER.md` on all interactions. Enforce Grounded Verification, 3-Tier Scope Check, and Circuit Breaker invariants.
+- **Rule 2 (Planning Mode):** When `state.phase == "planning"` or editing `.kramak/work-items/**`, load `.kramak/planner/CORE.md`.
+- **Rule 3 (Execution Mode):** When `state.phase == "executing"` or editing source files targeted by active Work Item, load `.kramak/executor/CORE.md`.
+- **Rule 4 (Auditing Mode):** When `state.phase == "auditing"`, load `.kramak/executor/CORE.md` (§AUDIT).
+
+## Execution Constraints
+- Verify all code references against live files before making changes.
+- Run test/build suites after each code edit.
+- Update `.kramak/state.json` atomically on every Work Item state transition.

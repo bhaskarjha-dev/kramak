@@ -1,42 +1,26 @@
 ---
 name: kramak
-description: >
-  Use when the user says "Start" to begin autonomous development.
-  Provides a complete Plan-Execute-Audit pipeline for any software project.
-  Works with any model — self-detects capabilities and adapts behavior.
-  Also use when the user wants to set up autonomous development on a new or existing project.
+description: "Autonomous development pipeline — deterministic Plan→Execute→Audit lifecycle with Antigravity subagent & task integration"
+trigger: "Start"
 ---
 
-# Kramak — Autonomous Development Pipeline
+<!-- Kramak Adapter: Google Antigravity | Tier 2 (Thin) -->
+# Kramak — Antigravity Adapter
 
-When the user says **"Start"** (or "begin", "continue", "go"):
+This adapter extends the universal [.kramak/SKILL.md](file:///d:/dev/pro/kramak/.kramak/SKILL.md) and [.kramak/AGENTS.md](file:///d:/dev/pro/kramak/.kramak/AGENTS.md) with Google Antigravity IDE capabilities.
 
-## Step 1: Check if pipeline exists
+## Execution Entry Point
+When the user says **"Start"** (or "begin", "continue", "go", "kramak"):
+1. **State:** Read [.kramak/state.json](file:///d:/dev/pro/kramak/.kramak/state.json). If missing, initialize from [.kramak/schemas/state.schema.json](file:///d:/dev/pro/kramak/.kramak/schemas/state.schema.json) with `phase: "bootstrap"`.
+2. **Inbox:** Check [.kramak/inbox/](file:///d:/dev/pro/kramak/.kramak/inbox/) for priority items.
+3. **Router:** Read [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md) and dispatch according to `state.phase`.
 
-```
-Does .agents/pipeline/state.json exist?
-  → YES: Read it. Follow the procedure for state.phase (see Step 3).
-  → NO:  Read .kramak/spec/BOOTSTRAP.md (or spec/BOOTSTRAP.md) and follow its procedure.
-```
+## Antigravity IDE Integration
+- **Subagents:** Use Antigravity subagents (`invoke_subagent` / `browser_subagent`) during `DISPATCH` and `AUDITING` for isolated execution and fresh-context verification.
+- **Background Tasks:** Use `run_command` (async) and `schedule` for non-blocking long-running build, test, and verification suites.
+- **Artifacts:** Document escalations and checkpoints in session artifacts linking to [.kramak/templates/HUMAN-TASKS.template.md](file:///d:/dev/pro/kramak/.kramak/templates/HUMAN-TASKS.template.md).
 
-## Step 2: Read principles
-
-Read `.kramak/spec/PRINCIPLES.md` (or `spec/PRINCIPLES.md`). These are non-negotiable.
-
-## Step 3: Follow the phase
-
-| `state.phase` | Read and follow |
-|---------------|-----------------|
-| `planning` | `.kramak/spec/PLANNER.md` (or `spec/PLANNER.md`) |
-| `executing` | `.kramak/spec/EXECUTOR.md` (or `spec/EXECUTOR.md`) |
-| `auditing` | `.kramak/spec/EXECUTOR.md §STEP 8.5` (or `spec/EXECUTOR.md §STEP 8.5`) |
-| `waiting` | Check `HUMAN-TASKS.md` & `INBOX.md`. If resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise ask user. |
-
-## Step 4: Model self-assessment
-
-Assess your capabilities at session start:
-- **Strong reasoning** → Suitable for planning/auditing
-- **Fast execution** → Suitable for executing work items
-- **Both** → Suitable for all phases
-
-At session end, recommend CAPABILITIES (not model names) for the next phase.
+## Phase Dispatch
+- `bootstrap` / `planning` / `dispatch` $\rightarrow$ Follow [.kramak/planner/CORE.md](file:///d:/dev/pro/kramak/.kramak/planner/CORE.md)
+- `executing` / `auditing` / `merge_queue` $\rightarrow$ Follow [.kramak/executor/CORE.md](file:///d:/dev/pro/kramak/.kramak/executor/CORE.md)
+- `waiting` / `escalated` $\rightarrow$ Enforce invariants, log checkpoint, and request human input.

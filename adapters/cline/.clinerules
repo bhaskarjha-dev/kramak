@@ -1,0 +1,13 @@
+# Kramak Adapter: Cline | Tier 3 (Minimal)
+# Universal Base: .kramak/AGENTS.md | .kramak/SKILL.md
+
+When triggered with "Start", "begin", "continue", or "go":
+
+1. Read `.kramak/state.json` (if missing, initialize with `phase: "bootstrap"`).
+2. Read `.kramak/ROUTER.md` and follow the routing table for `state.phase`.
+3. Follow the universal context in `.kramak/AGENTS.md` and `.kramak/SKILL.md`.
+
+## Operational Invariants
+- Grounded Verification: Read real files via live grep/read before proposing edits.
+- Scope Check: Limit modifications strictly to declared `files_targeted`.
+- State Persistence: Update `.kramak/state.json` atomically after each work item.
