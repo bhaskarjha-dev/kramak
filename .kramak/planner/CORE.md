@@ -4,7 +4,7 @@
 >
 > **Core Mission:** Complete autonomous software development. Every token must advance the project toward production-ready code.
 >
-> **Reference:** Universal invariants in [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md) apply across all phases.
+> **Reference:** Universal invariants in [.kramak/ROUTER.md](.kramak/ROUTER.md) apply across all phases.
 
 ---
 
@@ -95,7 +95,7 @@ Record self-assessment in `state.capabilityGate.stage1`:
 ```
 
 ### Stage 2: Canary Challenge Battery (Binding)
-Load on-demand module [.kramak/planner/capability-gate.md](file:///d:/dev/pro/kramak/.kramak/planner/capability-gate.md) when executing Canary evaluation.
+Load on-demand module [.kramak/planner/capability-gate.md](.kramak/planner/capability-gate.md) when executing Canary evaluation.
 
 The battery evaluates 5 procedural challenge dimensions (CT-1 through CT-5):
 - **CT-1 (DAG Scheduling):** Constraint-satisfaction topological ordering under worker limits.
@@ -200,12 +200,12 @@ graph LR
 1. **Inspect Actual Code:** Use `grep_search` and `view_file` to read live source files. Never assume code structures or API signatures from memory (per **ROUTER.md: Invariant 1**).
 2. **Verify Every Reference:** Confirm target files exist, check import paths, inspect current function signatures, and verify call sites.
 3. **Trigger On-Demand Modules (Checkable Concrete Conditions):**
-   - **Load [.kramak/planner/edge-cases.md](file:///d:/dev/pro/kramak/.kramak/planner/edge-cases.md)** if ANY of these conditions are true:
+   - **Load [.kramak/planner/edge-cases.md](.kramak/planner/edge-cases.md)** if ANY of these conditions are true:
      - `state.projectStructure` is null or corrupted.
      - Project root contains 0 source code files.
      - More than 1 `package.json`, `go.mod`, or `Cargo.toml` exists in the workspace.
      - Multiple programming language runtimes are detected (e.g., Python backend + TypeScript frontend).
-   - **Load [.kramak/planner/domain-conventions.md](file:///d:/dev/pro/kramak/.kramak/planner/domain-conventions.md)** if:
+   - **Load [.kramak/planner/domain-conventions.md](.kramak/planner/domain-conventions.md)** if:
      - The project uses a framework, runtime, or monorepo orchestrator (Turborepo, Nx, Cargo workspace) requiring specialized build conventions.
 
 ---
@@ -316,7 +316,7 @@ Create `plans/PLAN-batch-XX.md`:
 ```
 
 #### Work Item Detail Scaling (The Goldilocks Rule)
-Load on-demand module [.kramak/planner/output-contract.md](file:///d:/dev/pro/kramak/.kramak/planner/output-contract.md) for full WI schemas and formatting templates.
+Load on-demand module [.kramak/planner/output-contract.md](.kramak/planner/output-contract.md) for full WI schemas and formatting templates.
 
 | Risk Tier | Mode | Planner Effort | Executor Freedom | Scope |
 |---|---|---|---|---|

@@ -15,18 +15,18 @@ confidence: High
 
 ### 1.1 Purpose and Scope
 This document constitutes the authoritative **Core Engine, Verification & Governance Hardening Blueprint** for Kramak v1.1+. It synthesizes findings and verdicts from seven upstream foundational research sessions into a single, cohesive, drop-in engineering specification:
-- [T2-02: Agentic Software Engineering Literature](file:///d:/dev/pro/kramak/research/sessions/T2-02-orchestration-research-literature.md) (Structural vs Routing vs Control-Plane claims)
-- [T2-04: Evidentiary Audit of Citations & Parameters](file:///d:/dev/pro/kramak/research/sessions/T2-04-evidentiary-audit.md) (Parameter calibration, METR time horizons, Polish Ceiling)
-- [T2-05: Core Loop Retrospective & FSA Topology](file:///d:/dev/pro/kramak/research/sessions/T2-05-core-loop-retrospective.md) (7-state FSM, bounded retries, trace preservation)
-- [T2-06: Multi-Agent & Parallel Evolution](file:///d:/dev/pro/kramak/research/sessions/T2-06-multiagent-parallel-evolution.md) (Git-worktree isolation, serialized merge queue, state sharding)
-- [T2-07: Self-Improvement Governance](file:///d:/dev/pro/kramak/research/sessions/T2-07-self-improvement-governance.md) (Hardened Anti-Bias Guard G1–G6, immutable rollback ledger)
-- [T2-10: Capability Gate Reliability](file:///d:/dev/pro/kramak/research/sessions/T2-10-capability-gate-reliability.md) (Hybrid canary diagnostic, deterministic grading)
-- [T2-13: Guardrail & Grounding Confirmation Bundle](file:///d:/dev/pro/kramak/research/sessions/T2-13-guardrail-confirmation-bundle.md) (Grounded Verification, 3-tier Hard Scope Check, progress-aware Circuit Breaker, WAL State Reconciliation, repair-oriented Failure Taxonomy)
+- [T2-02: Agentic Software Engineering Literature](T2-02-orchestration-research-literature.md) (Structural vs Routing vs Control-Plane claims)
+- [T2-04: Evidentiary Audit of Citations & Parameters](T2-04-evidentiary-audit.md) (Parameter calibration, METR time horizons, Polish Ceiling)
+- [T2-05: Core Loop Retrospective & FSA Topology](T2-05-core-loop-retrospective.md) (7-state FSM, bounded retries, trace preservation)
+- [T2-06: Multi-Agent & Parallel Evolution](T2-06-multiagent-parallel-evolution.md) (Git-worktree isolation, serialized merge queue, state sharding)
+- [T2-07: Self-Improvement Governance](T2-07-self-improvement-governance.md) (Hardened Anti-Bias Guard G1–G6, immutable rollback ledger)
+- [T2-10: Capability Gate Reliability](T2-10-capability-gate-reliability.md) (Hybrid canary diagnostic, deterministic grading)
+- [T2-13: Guardrail & Grounding Confirmation Bundle](T2-13-guardrail-confirmation-bundle.md) (Grounded Verification, 3-tier Hard Scope Check, progress-aware Circuit Breaker, WAL State Reconciliation, repair-oriented Failure Taxonomy)
 
-The primary audience is a **Principal Architect** authoring the v1.1+ specification modifications across [`spec/PLANNER.md`](file:///d:/dev/pro/kramak/spec/PLANNER.md), [`spec/EXECUTOR.md`](file:///d:/dev/pro/kramak/spec/EXECUTOR.md), [`spec/PRINCIPLES.md`](file:///d:/dev/pro/kramak/spec/PRINCIPLES.md), and [`spec/state.schema.json`](file:///d:/dev/pro/kramak/spec/state.schema.json).
+The primary audience is a **Principal Architect** authoring the v1.1+ specification modifications across [`spec/PLANNER.md`](spec/PLANNER.md), [`spec/EXECUTOR.md`](spec/EXECUTOR.md), [`spec/PRINCIPLES.md`](spec/PRINCIPLES.md), and [`spec/state.schema.json`](spec/state.schema.json).
 
 ### 1.2 Fixed Axiomatic Constraints
-Per [DECISIONS.md](file:///d:/dev/pro/kramak/research/DECISIONS.md) §2, all synthesis recommendations strictly respect the non-negotiable project boundaries:
+Per [DECISIONS.md](DECISIONS.md) §2, all synthesis recommendations strictly respect the non-negotiable project boundaries:
 1. **C1 (Project Identity):** Kramak (क्रमक) retains its Sanskrit naming convention (*√kram* + *-aka*, "the agent who progresses methodically").
 2. **C2 (Zero Mandatory Runtime Dependencies):** The core control plane remains 100% pure Markdown specifications, JSON Schemas, and workspace templates. No mandatory background daemons, native binaries, or proprietary runtimes are introduced.
 3. **C3 (Model-Agnostic via Behavioral Assessment):** Kramak operates across any LLM without model-name string inspection or provider-specific allowlists.

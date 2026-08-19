@@ -2,7 +2,7 @@
 
 > **Module Role:** On-demand operational playbook loaded when `planner/CORE.md` detects edge conditions, workspace structural anomalies, session fatigue, or execution deadlocks.
 >
-> **Universal Alignment:** Enforces invariants established in [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md) and architectural decisions in [research/DECISIONS.md](file:///d:/dev/pro/kramak/research/DECISIONS.md) (D-001, D-010, D-011).
+> **Universal Alignment:** Enforces invariants established in [.kramak/ROUTER.md](.kramak/ROUTER.md) and architectural decisions in [research/DECISIONS.md](research/DECISIONS.md) (D-001, D-010, D-011).
 
 ---
 

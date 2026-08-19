@@ -23,7 +23,7 @@ Kramak (क्रमक) is an open-source, file-based, model-agnostic, and IDE-
 
 This research pipeline is **not** conventional pre-code software research (Kramak has no databases, microservices, auth providers, or cloud hosting by design). Its "architecture" is the **process framework itself**:
 - A deterministic finite state automaton (FSM) control plane executed in prose.
-- A cross-session state persistence contract ([state.json](file:///d:/dev/pro/kramak/templates/state.json) + JSON Schema).
+- A cross-session state persistence contract ([state.json](templates/state.json) + JSON Schema).
 - A suite of grounding, scope-enforcement, and anti-hallucination mechanisms.
 - An adapter translation layer spanning 8 IDE ecosystems.
 - A market positioning claim asserting that "Layer 3: Process" is currently unstandardized.
@@ -50,14 +50,14 @@ research/
 
 ### Execution Protocol
 
-1. **Running Sessions:** Open [PROMPT-LIBRARY.md](file:///d:/dev/pro/kramak/research/PROMPT-LIBRARY.md), select the prompt for the target session (e.g., `T2-01`), and copy the entire prompt into a frontier model with live web search / deep research enabled (Gemini 1.5 Pro/2.0, Claude 3.5 Sonnet/Opus, or GPT-4o/o3 Deep Research).
+1. **Running Sessions:** Open [PROMPT-LIBRARY.md](PROMPT-LIBRARY.md), select the prompt for the target session (e.g., `T2-01`), and copy the entire prompt into a frontier model with live web search / deep research enabled (Gemini 1.5 Pro/2.0, Claude 3.5 Sonnet/Opus, or GPT-4o/o3 Deep Research).
 2. **Providing Upstream Context:** For sessions with prerequisites, attach or paste the referenced session output from `sessions/` into the prompt before executing.
 3. **Saving Outputs:** Save the complete output to `sessions/T2-##-[slug].md` using the exact filename specified in the session matrix.
-4. **Updating Decisions:** As Layer 1 sessions conclude, update the matching decision record in [DECISIONS.md](file:///d:/dev/pro/kramak/research/DECISIONS.md). Move status from `proposed` → `under-review` → `accepted` / `deferred` / `rejected`, recording the verified hypothesis and evidence grade.
-5. **Resolving Conflicts:** If two sessions reach contradictory conclusions, instantiate [templates/CONFLICT-RESOLUTION.template.md](file:///d:/dev/pro/kramak/research/templates/CONFLICT-RESOLUTION.template.md) and execute an Analysis of Competing Hypotheses (ACH) matrix.
+4. **Updating Decisions:** As Layer 1 sessions conclude, update the matching decision record in [DECISIONS.md](DECISIONS.md). Move status from `proposed` → `under-review` → `accepted` / `deferred` / `rejected`, recording the verified hypothesis and evidence grade.
+5. **Resolving Conflicts:** If two sessions reach contradictory conclusions, instantiate [templates/CONFLICT-RESOLUTION.template.md](templates/CONFLICT-RESOLUTION.template.md) and execute an Analysis of Competing Hypotheses (ACH) matrix.
 6. **Synthesizing Blueprints:** Execute Layer 2 synthesis sessions (`T2-14` and `T2-15`) to create concrete spec-delta roadmaps.
-7. **Compiling the FAD:** Execute `T2-16` to populate [templates/FOUNDING-ARCHITECTURE.template.md](file:///d:/dev/pro/kramak/research/templates/FOUNDING-ARCHITECTURE.template.md) as the authoritative reference for all subsequent spec edits.
-8. **Executing the Exit Gate:** Complete [templates/PHASE-0-GATE.template.md](file:///d:/dev/pro/kramak/research/templates/PHASE-0-GATE.template.md) across Track A and Track B before authoring v1.1+ code/spec modifications.
+7. **Compiling the FAD:** Execute `T2-16` to populate [templates/FOUNDING-ARCHITECTURE.template.md](templates/FOUNDING-ARCHITECTURE.template.md) as the authoritative reference for all subsequent spec edits.
+8. **Executing the Exit Gate:** Complete [templates/PHASE-0-GATE.template.md](templates/PHASE-0-GATE.template.md) across Track A and Track B before authoring v1.1+ code/spec modifications.
 
 ---
 
@@ -244,7 +244,7 @@ WAVE 4 (Sink Compilation & Exit Gate)
 
 ## 6. Phase 0 Exit Gate Protocol
 
-Phase 0 is complete only when every decision in [DECISIONS.md](file:///d:/dev/pro/kramak/research/DECISIONS.md) clears its assigned gate track in [templates/PHASE-0-GATE.template.md](file:///d:/dev/pro/kramak/research/templates/PHASE-0-GATE.template.md):
+Phase 0 is complete only when every decision in [DECISIONS.md](DECISIONS.md) clears its assigned gate track in [templates/PHASE-0-GATE.template.md](templates/PHASE-0-GATE.template.md):
 
 ### Track A — Fast-Track Gate (Two-Way Doors: D-002, D-005, D-007, D-011)
 - [ ] Logged in Decision Registry with `door_type: two-way`.
@@ -254,7 +254,7 @@ Phase 0 is complete only when every decision in [DECISIONS.md](file:///d:/dev/pr
 
 ### Track B — Rigorous 9-Step Gate (One-Way Doors: D-001, D-003, D-004, D-006, D-008, D-009, D-010)
 - [ ] **B1. DAG Closure:** All required session files exist in `sessions/` with `status: complete`.
-- [ ] **B2. Contradiction Resolution:** All cross-model and cross-session divergences resolved via ACH matrix in [templates/CONFLICT-RESOLUTION.template.md](file:///d:/dev/pro/kramak/research/templates/CONFLICT-RESOLUTION.template.md).
+- [ ] **B2. Contradiction Resolution:** All cross-model and cross-session divergences resolved via ACH matrix in [templates/CONFLICT-RESOLUTION.template.md](templates/CONFLICT-RESOLUTION.template.md).
 - [ ] **B3. Evidentiary Threshold:** Zero uncorroborated Grade C/D/E claims underpin irreversible architectural pillars.
 - [ ] **B4. Verification Integrity:** 100% of critical citations verified (`verification_method: fetched` or `cached`). Zero `recalled` citations support any Type 1 decision.
 - [ ] **B5. Rejected Alternatives:** Detailed causal reasons documented for all rejected options.
@@ -267,7 +267,7 @@ Phase 0 is complete only when every decision in [DECISIONS.md](file:///d:/dev/pr
 
 ## 7. Universal Evidence Standard
 
-Every research prompt in [PROMPT-LIBRARY.md](file:///d:/dev/pro/kramak/research/PROMPT-LIBRARY.md) mandates the following evidence classification:
+Every research prompt in [PROMPT-LIBRARY.md](PROMPT-LIBRARY.md) mandates the following evidence classification:
 
 ```
 Base Scale:
@@ -306,8 +306,8 @@ Kramak differs from traditional software projects that have databases, API gatew
 
 ## Appendix B: Pre-Execution Checklist
 
-Before launching session prompts from [PROMPT-LIBRARY.md](file:///d:/dev/pro/kramak/research/PROMPT-LIBRARY.md):
+Before launching session prompts from [PROMPT-LIBRARY.md](PROMPT-LIBRARY.md):
 1. Verify that `research/sessions/` directory exists.
-2. Confirm that [templates/DECISIONS.template.md](file:///d:/dev/pro/kramak/research/templates/DECISIONS.template.md) and [templates/FOUNDING-ARCHITECTURE.template.md](file:///d:/dev/pro/kramak/research/templates/FOUNDING-ARCHITECTURE.template.md) are available.
+2. Confirm that [templates/DECISIONS.template.md](templates/DECISIONS.template.md) and [templates/FOUNDING-ARCHITECTURE.template.md](templates/FOUNDING-ARCHITECTURE.template.md) are available.
 3. Ensure research AI model has live search / browser tool access enabled.
 4. Begin with **Wave 1** sessions (`T2-01`, `T2-02`, `T2-03`, `T2-04`).

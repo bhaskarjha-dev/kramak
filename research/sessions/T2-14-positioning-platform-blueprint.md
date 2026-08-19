@@ -17,7 +17,7 @@ confidence: High
 
 ## 1. Synthesis Mandate
 
-This blueprint bridges Phase 0 research into Phase 1 implementation by unifying the verdicts of four foundational Layer 1 research spikes—**Specification Density & Progressive Disclosure** ([T2-08](file:///d:/dev/pro/kramak/research/sessions/T2-08-spec-density-progressive-disclosure.md)), **Pure Methodology vs. Companion Tooling** ([T2-09](file:///d:/dev/pro/kramak/research/sessions/T2-09-pure-methodology-tooling.md)), **Adapter Portfolio Strategy** ([T2-11](file:///d:/dev/pro/kramak/research/sessions/T2-11-adapter-strategy.md)), and **Naming & Positioning Statement** ([T2-12](file:///d:/dev/pro/kramak/research/sessions/T2-12-naming-positioning.md))—grounded in the competitive baseline established in [T2-01](file:///d:/dev/pro/kramak/research/sessions/T2-01-competitive-landscape.md).
+This blueprint bridges Phase 0 research into Phase 1 implementation by unifying the verdicts of four foundational Layer 1 research spikes—**Specification Density & Progressive Disclosure** ([T2-08](T2-08-spec-density-progressive-disclosure.md)), **Pure Methodology vs. Companion Tooling** ([T2-09](T2-09-pure-methodology-tooling.md)), **Adapter Portfolio Strategy** ([T2-11](T2-11-adapter-strategy.md)), and **Naming & Positioning Statement** ([T2-12](T2-12-naming-positioning.md))—grounded in the competitive baseline established in [T2-01](T2-01-competitive-landscape.md).
 
 ### 1.1 Operating Constraints & Boundary Principles
 
@@ -478,8 +478,8 @@ Below is the drop-in baseline configuration generated at repository root:
 This repository uses the **Kramak Process Control Framework** for deterministic software engineering.
 
 ## Execution Rules
-1. Before taking any autonomous action, read [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md).
-2. Check your active state and role in [.kramak/state.json](file:///d:/dev/pro/kramak/.kramak/state.json).
+1. Before taking any autonomous action, read [.kramak/ROUTER.md](.kramak/ROUTER.md).
+2. Check your active state and role in [.kramak/state.json](.kramak/state.json).
 3. Follow the 4 Non-Negotiable Invariants: Grounded Verification, Hard Scope Check, State Reconciliation, and Circuit Breaker.
 ```
 
@@ -677,7 +677,7 @@ To prevent breaking external tools or legacy agents that hardcode paths to `spec
 <!-- spec/PLANNER.md backward-compatibility shim -->
 # Forwarding Notice
 This specification has been modularized for progressive disclosure in v1.1+.
-Please read [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md) and [.kramak/planner/CORE.md](file:///d:/dev/pro/kramak/.kramak/planner/CORE.md).
+Please read [.kramak/ROUTER.md](.kramak/ROUTER.md) and [.kramak/planner/CORE.md](.kramak/planner/CORE.md).
 ```
 
 ---
@@ -732,12 +732,12 @@ This ledger establishes complete traceability from every section of this bluepri
 
 | Blueprint Section | Primary Decision | Source Sessions | Addressed Innovation / Mechanism | Supporting Evidence Grade |
 |---|:---:|:---:|---|:---:|
-| **§3.1 / §5.1 (Positioning Suite)** | **D-008** | [T2-12](file:///d:/dev/pro/kramak/research/sessions/T2-12-naming-positioning.md), [T2-01](file:///d:/dev/pro/kramak/research/sessions/T2-01-competitive-landscape.md) | Category Framing (Layer 3: Process alongside AAIF AGENTS.md & MCP) | **Grade A/B** (AAIF Charter, GitHub Spec Kit docs, naming precedent studies) |
-| **§3.2 / §5.2 / §5.3 (Spec Hierarchy)** | **D-007** | [T2-08](file:///d:/dev/pro/kramak/research/sessions/T2-08-spec-density-progressive-disclosure.md), [T2-01](file:///d:/dev/pro/kramak/research/sessions/T2-01-competitive-landscape.md) | #4 (Spec Detail Scaling), Anthropic "Right Altitude", Progressive Disclosure | **Grade A** (Chroma long-context benchmark, Anthropic prompt engineering guidelines) |
-| **§3.3 / §5.4 (Tooling Boundary)** | **D-009** | [T2-09](file:///d:/dev/pro/kramak/research/sessions/T2-09-pure-methodology-tooling.md), [T2-01](file:///d:/dev/pro/kramak/research/sessions/T2-01-competitive-landscape.md) | Zero-Dependency Identity, EditorConfig Core/Plugin Architecture Model | **Grade A** (EditorConfig governance, SemVer specification history, npm security audits) |
-| **§3.4 / §5.5 (Adapter Portfolio)** | **D-005** | [T2-11](file:///d:/dev/pro/kramak/research/sessions/T2-11-adapter-strategy.md), [T2-03](file:///d:/dev/pro/kramak/research/sessions/T2-03-ide-ecosystem-scan.md) | #11 (Auto-Bootstrap across toolchains), AAIF Universal Core, Tiered Maintenance | **Grade A/B** (Anthropic Claude Code memory specs, Cursor .mdc docs, Roo Code EOL) |
-| **§4.3 / §5.3 (Immutable Invariants)** | **D-010** | [T2-13](file:///d:/dev/pro/kramak/research/sessions/T2-13-guardrail-confirmation-bundle.md), [T2-04](file:///d:/dev/pro/kramak/research/sessions/T2-04-evidentiary-audit.md) | #1 (Grounded Verification), #6 (Hard Scope Check), #7 (State Reconciliation), #8 (Circuit Breaker) | **Grade A/B** (Distributed systems crash recovery, OWASP AI Agent Security guidelines) |
-| **§5.6 (Adopter Migration)** | **D-003** | [T2-04](file:///d:/dev/pro/kramak/research/sessions/T2-04-evidentiary-audit.md), [T2-08](file:///d:/dev/pro/kramak/research/sessions/T2-08-spec-density-progressive-disclosure.md) | Schema Versioning & Forward Compatibility Policy | **Grade A** (JSON Schema draft 2020-12 specification standards) |
+| **§3.1 / §5.1 (Positioning Suite)** | **D-008** | [T2-12](T2-12-naming-positioning.md), [T2-01](T2-01-competitive-landscape.md) | Category Framing (Layer 3: Process alongside AAIF AGENTS.md & MCP) | **Grade A/B** (AAIF Charter, GitHub Spec Kit docs, naming precedent studies) |
+| **§3.2 / §5.2 / §5.3 (Spec Hierarchy)** | **D-007** | [T2-08](T2-08-spec-density-progressive-disclosure.md), [T2-01](T2-01-competitive-landscape.md) | #4 (Spec Detail Scaling), Anthropic "Right Altitude", Progressive Disclosure | **Grade A** (Chroma long-context benchmark, Anthropic prompt engineering guidelines) |
+| **§3.3 / §5.4 (Tooling Boundary)** | **D-009** | [T2-09](T2-09-pure-methodology-tooling.md), [T2-01](T2-01-competitive-landscape.md) | Zero-Dependency Identity, EditorConfig Core/Plugin Architecture Model | **Grade A** (EditorConfig governance, SemVer specification history, npm security audits) |
+| **§3.4 / §5.5 (Adapter Portfolio)** | **D-005** | [T2-11](T2-11-adapter-strategy.md), [T2-03](T2-03-ide-ecosystem-scan.md) | #11 (Auto-Bootstrap across toolchains), AAIF Universal Core, Tiered Maintenance | **Grade A/B** (Anthropic Claude Code memory specs, Cursor .mdc docs, Roo Code EOL) |
+| **§4.3 / §5.3 (Immutable Invariants)** | **D-010** | [T2-13](T2-13-guardrail-confirmation-bundle.md), [T2-04](T2-04-evidentiary-audit.md) | #1 (Grounded Verification), #6 (Hard Scope Check), #7 (State Reconciliation), #8 (Circuit Breaker) | **Grade A/B** (Distributed systems crash recovery, OWASP AI Agent Security guidelines) |
+| **§5.6 (Adopter Migration)** | **D-003** | [T2-04](T2-04-evidentiary-audit.md), [T2-08](T2-08-spec-density-progressive-disclosure.md) | Schema Versioning & Forward Compatibility Policy | **Grade A** (JSON Schema draft 2020-12 specification standards) |
 
 ---
 *End of Blueprint — Certified ready for Phase 1 implementation and Founding Architecture Document (FAD) compilation.*

@@ -4,7 +4,7 @@
 >
 > **Core Mandate:** Autonomous self-recovery. This module is NOT passive documentation—it is a deterministic decision tree that the executor follows mechanically to recover from failures without human intervention.
 >
-> **References:** Universal invariants in [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md) and execution lifecycle in [.kramak/executor/CORE.md](file:///d:/dev/pro/kramak/.kramak/executor/CORE.md).
+> **References:** Universal invariants in [.kramak/ROUTER.md](.kramak/ROUTER.md) and execution lifecycle in [.kramak/executor/CORE.md](.kramak/executor/CORE.md).
 
 ---
 
@@ -322,7 +322,7 @@ Evaluate these deterministic rules after every attempt:
 
 ### 4.1 Schema Definition
 
-When a Work Item fails, its `failure_diagnosis.error_trajectory` must strictly conform to [.kramak/schemas/work-item.schema.json](file:///d:/dev/pro/kramak/.kramak/schemas/work-item.schema.json):
+When a Work Item fails, its `failure_diagnosis.error_trajectory` must strictly conform to [.kramak/schemas/work-item.schema.json](.kramak/schemas/work-item.schema.json):
 
 ```json
 {

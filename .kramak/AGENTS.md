@@ -26,9 +26,9 @@
 ## 2. Quick Entry Point
 
 To initiate or resume autonomous execution:
-1. **State:** Read [.kramak/state.json](file:///d:/dev/pro/kramak/.kramak/state.json). If missing, initialize from [.kramak/schemas/state.schema.json](file:///d:/dev/pro/kramak/.kramak/schemas/state.schema.json) with `phase: "bootstrap"`.
-2. **Inbox Priority:** Check [.kramak/inbox/](file:///d:/dev/pro/kramak/.kramak/inbox/) for urgent items. Time-sensitive INBOX items trigger immediate processing, not waiting for the next planning cycle. The ORIENT step checks INBOX FIRST.
-3. **Router:** Read [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md) and dispatch according to `state.phase`.
+1. **State:** Read [.kramak/state.json](.kramak/state.json). If missing, initialize from [.kramak/schemas/state.schema.json](.kramak/schemas/state.schema.json) with `phase: "bootstrap"`.
+2. **Inbox Priority:** Check [.kramak/inbox/](.kramak/inbox/) for urgent items. Time-sensitive INBOX items trigger immediate processing, not waiting for the next planning cycle. The ORIENT step checks INBOX FIRST.
+3. **Router:** Read [.kramak/ROUTER.md](.kramak/ROUTER.md) and dispatch according to `state.phase`.
 
 ---
 
@@ -55,10 +55,10 @@ The following invariants apply across all execution tiers and are never scaled a
 
 | Component | Path | Description |
 |---|---|---|
-| **Router** | [.kramak/ROUTER.md](file:///d:/dev/pro/kramak/.kramak/ROUTER.md) | Universal entry contract & phase routing table |
-| **Planner Core** | [.kramak/planner/CORE.md](file:///d:/dev/pro/kramak/.kramak/planner/CORE.md) | Strategic planning, DAG formulation, and bootstrap |
-| **Executor Core** | [.kramak/executor/CORE.md](file:///d:/dev/pro/kramak/.kramak/executor/CORE.md) | ReAct execution, technical audit, and merge queue |
-| **State Schema** | [.kramak/schemas/state.schema.json](file:///d:/dev/pro/kramak/.kramak/schemas/state.schema.json) | JSON Schema Draft 2020-12 for `state.json` |
-| **Work Item Schema** | [.kramak/schemas/work-item.schema.json](file:///d:/dev/pro/kramak/.kramak/schemas/work-item.schema.json) | JSON Schema Draft 2020-12 for Work Items |
-| **Audit Ledger** | [.kramak/ledger/FORMAT.md](file:///d:/dev/pro/kramak/.kramak/ledger/FORMAT.md) | Immutable audit trail format for `.kramak/` edits |
-| **Templates** | [.kramak/templates/](file:///d:/dev/pro/kramak/.kramak/templates/) | Standardized templates for Work Items, Tasks, Retros |
+| **Router** | [.kramak/ROUTER.md](.kramak/ROUTER.md) | Universal entry contract & phase routing table |
+| **Planner Core** | [.kramak/planner/CORE.md](.kramak/planner/CORE.md) | Strategic planning, DAG formulation, and bootstrap |
+| **Executor Core** | [.kramak/executor/CORE.md](.kramak/executor/CORE.md) | ReAct execution, technical audit, and merge queue |
+| **State Schema** | [.kramak/schemas/state.schema.json](.kramak/schemas/state.schema.json) | JSON Schema Draft 2020-12 for `state.json` |
+| **Work Item Schema** | [.kramak/schemas/work-item.schema.json](.kramak/schemas/work-item.schema.json) | JSON Schema Draft 2020-12 for Work Items |
+| **Audit Ledger** | [.kramak/ledger/FORMAT.md](.kramak/ledger/FORMAT.md) | Immutable audit trail format for `.kramak/` edits |
+| **Templates** | [.kramak/templates/](.kramak/templates/) | Standardized templates for Work Items, Tasks, Retros |

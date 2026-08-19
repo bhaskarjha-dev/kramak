@@ -1,7 +1,7 @@
 # Kramak (क्रमक) — Research Prompt Library
 
 > **Master Phase 0 Prompt Library**  
-> Sixteen complete, self-contained, copy-paste ready research prompts corresponding to the DAG in [RESEARCH-PIPELINE.md](file:///d:/dev/pro/kramak/research/RESEARCH-PIPELINE.md) and [DECISIONS.md](file:///d:/dev/pro/kramak/research/DECISIONS.md).
+> Sixteen complete, self-contained, copy-paste ready research prompts corresponding to the DAG in [RESEARCH-PIPELINE.md](RESEARCH-PIPELINE.md) and [DECISIONS.md](DECISIONS.md).
 
 ---
 
@@ -10,7 +10,7 @@
 1. **One Chat per Session:** Copy the entire prompt within a session block (from `## BRIEF` to the end of `## FORMAT`) and paste it as the opening turn into a frontier model with live web search / deep research enabled (Gemini 1.5 Pro/2.0, Claude 3.5 Sonnet/Opus, or GPT-4o/o3 Deep Research).
 2. **Upstream Attachments:** Where a session lists required inputs (e.g., T2-06 requires T2-05), attach or paste the referenced markdown file from `sessions/` into the chat context.
 3. **Save Raw Output:** Save the returned output to `sessions/T2-##-[slug].md` exactly as named in the header.
-4. **Update Decision Registry:** Update the matching `D-NNN` entry in [DECISIONS.md](file:///d:/dev/pro/kramak/research/DECISIONS.md) immediately upon session completion.
+4. **Update Decision Registry:** Update the matching `D-NNN` entry in [DECISIONS.md](DECISIONS.md) immediately upon session completion.
 5. **Universal Evidence Standard:** Every session enforces the inline grading taxonomy below.
 
 ```

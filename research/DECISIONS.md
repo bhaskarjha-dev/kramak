@@ -12,7 +12,7 @@ schema_version: "3.0"
 # Kramak (क्रमक) — Architectural Decision Registry
 
 > **Locked Decision Source of Truth**  
-> Companion to [RESEARCH-PIPELINE.md](file:///d:/dev/pro/kramak/research/RESEARCH-PIPELINE.md), [PROMPT-LIBRARY.md](file:///d:/dev/pro/kramak/research/PROMPT-LIBRARY.md), and [FOUNDING-ARCHITECTURE.md](file:///d:/dev/pro/kramak/FOUNDING-ARCHITECTURE.md).  
+> Companion to [RESEARCH-PIPELINE.md](RESEARCH-PIPELINE.md), [PROMPT-LIBRARY.md](PROMPT-LIBRARY.md), and [FOUNDING-ARCHITECTURE.md](FOUNDING-ARCHITECTURE.md).  
 > This registry tracks all 11 architectural decisions governing Kramak's v1.0.0 audit and v1.1+ evolution. All decisions are locked following the successful clearance of the Phase 0 Exit Gate.
 
 ---
