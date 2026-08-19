@@ -135,8 +135,7 @@ if ($wiFile -and $wiFile.Extension -eq ".json") {
   $declared = (Get-Content $wiFile.FullName | ConvertFrom-Json).files_targeted
 } elseif ($wiFile) {
   $raw = Get-Content $wiFile.FullName -Raw
-  $declared = [regex]::Matches($raw, '(?m)^s*-s*["'']?([^"''
-]+)["'']?') | ForEach-Object { $_.Groups[1].Value }
+  $declared = [regex]::Matches($raw, '(?m)^\s*-\s*["'']?([^"'']+)["'']?') | ForEach-Object { $_.Groups[1].Value.Trim() }
 } else {
   $declared = @()
 }
