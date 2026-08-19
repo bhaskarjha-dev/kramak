@@ -1,11 +1,11 @@
 ---
 name: kramak
-description: "Autonomous development pipeline Ã¢â‚¬â€ deterministic PlanÃ¢â€ â€™ExecuteÃ¢â€ â€™Audit lifecycle with Antigravity subagent & task integration"
+description: "Autonomous development pipeline — deterministic Plan→Execute→Audit lifecycle with Antigravity subagent & task integration"
 trigger: "Start"
 ---
 
 <!-- Kramak Adapter: Google Antigravity | Tier 2 (Thin) -->
-# Kramak Ã¢â‚¬â€ Antigravity Adapter
+# Kramak — Antigravity Adapter
 
 This adapter extends the universal [.kramak/SKILL.md](../../../.kramak/SKILL.md) and [.kramak/AGENTS.md](../../../.kramak/AGENTS.md) with Google Antigravity IDE capabilities.
 

@@ -194,8 +194,16 @@ If execution or verification fails irrecoverably:
    ```
 6. **Circuit Breaker Check:** If `metrics.consecutiveFailures >= 3`:
    - Set `metrics.circuitBreakerTripped: true`.
-   - Transition `state.phase: "planning"`.
-   - Set `state.nextAction: "Circuit breaker tripped (3 consecutive failures). Start planner session to rethink design."`. STOP.
+   - Set `state.phase: "escalated"`.
+   - Populate `state.escalation`:
+     ```json
+     "escalation": {
+       "reason": "Consecutive failures >= 3 on work items in this batch.",
+       "failedBatches": 0,
+       "timestamp": "2026-08-20T00:00:00Z"
+     }
+     ```
+   - Set `state.nextAction: "Circuit breaker tripped (3 consecutive failures). Developer diagnostic review required."`. STOP.
 
 ---
 
