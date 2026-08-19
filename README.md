@@ -101,7 +101,7 @@ Copy the pre-configured adapter file for your tool:
 | **Claude Code** | `cp adapters/claude-code/CLAUDE.md ./` | `CLAUDE.md` |
 | **Antigravity** | `cp adapters/antigravity/SKILL.md .agents/skills/kramak/SKILL.md` | `.agents/skills/kramak/SKILL.md` |
 | **Copilot** | `cp adapters/copilot/copilot-instructions.md .github/copilot-instructions.md` | `.github/copilot-instructions.md` |
-| **Devin / Aider / Generic** | `cp .kramak/AGENTS.md ./AGENTS.md` | `AGENTS.md` |
+| **Devin / Aider / Generic** | `cp adapters/devin/AGENTS.md ./AGENTS.md` | `AGENTS.md` |
 
 ---
 

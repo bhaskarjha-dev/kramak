@@ -70,7 +70,7 @@ Before taking action, read [.kramak/ROUTER.md](../.kramak/ROUTER.md) and follow 
 | **Claude Code** | `cp adapters/claude-code/CLAUDE.md ./` | `CLAUDE.md` |
 | **Google Antigravity** | `mkdir -p .agents/skills/kramak && cp adapters/antigravity/SKILL.md .agents/skills/kramak/SKILL.md` | `.agents/skills/kramak/SKILL.md` |
 | **GitHub Copilot** | `mkdir -p .github && cp adapters/copilot/copilot-instructions.md .github/copilot-instructions.md` | `.github/copilot-instructions.md` |
-| **Devin Desktop** | `cp .kramak/AGENTS.md ./AGENTS.md` | `AGENTS.md` |
+| **Devin Desktop** | `cp adapters/devin/AGENTS.md ./AGENTS.md` | `AGENTS.md` |
 | **Cline** | `cp adapters/cline/.clinerules ./` | `.clinerules` |
 | **Aider** | `cp adapters/aider/CONVENTIONS.md ./CONVENTIONS.md` | `CONVENTIONS.md` |
 

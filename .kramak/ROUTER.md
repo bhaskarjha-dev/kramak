@@ -25,7 +25,7 @@ Recovery: rename `.tmp` or replay `.wal`.
 5. **Anti-Bias Guard (for `.kramak/` edits):**
    - **G1/G2:** Diff summary (why changed) & rollback check (reverting better?).
    - **G3/G4:** Cross-family critique (or log 'same-family'); append `.kramak/ledger/self-modifications.jsonl`.
-   - **G5/G6:** Cooldown next cycle. Tier A (state, docs) auto; Tier B (specs, schemas, invariants) human gate (>98% in <30s = rubber-stamp alert).
+   - **G5/G6:** Cooldown next cycle. Tier A (state, docs) auto; Tier B (specs, schemas, invariants) human gate (>98% in <30s = rubber-stamp alert [enforced with @kramak/cli, advisory in pure-spec]).
 
 ## 4. Universal Rules
 - Verify code references against actual files.

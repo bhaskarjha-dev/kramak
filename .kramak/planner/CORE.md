@@ -400,6 +400,20 @@ When batch planning and self-audit are complete, transition to execution based o
 
 ---
 
+
+
+### 5.3 Active Dispatch Re-entry & Recovery
+If invoked with `state.phase === "dispatch"` (e.g. following a session restart or crash):
+1. Read all shards in `.kramak/work-items/*.json` (or `.md`).
+2. **Pending Shards Exist:** If any shard has `status: "queued"` or `"active"`:
+   - Inspect provisioned worktrees in `.kramak/worktrees/`.
+   - Set `state.nextAction: "Resume executing worktree tasks across active subagents."`.
+3. **All Shards Complete:** If all planned batch shards have `status: "done"`:
+   - Transition `state.phase: "auditing"` (or `"merge_queue"` if `concurrency.budget > 1`).
+   - Set `state.nextAction: "All worktree shards completed. Proceed to auditing and merge queue."`.
+
+---
+
 ## SECTION 6: PHASE TRANSITIONS & EDGE CASES
 
 ### 6.1 State Transition Matrix
@@ -481,6 +495,9 @@ Invoked when `state.phase` is `waiting`, `escalated`, or `complete` and the user
 1. **Blocker Inspection:** Read `.kramak/HUMAN-TASKS.md` and check if previously blocking items are marked `[x]` (completed) or if `humanTasksPending` can be cleared (`false`).
 2. **Inbox Inspection:** Scan `.kramak/inbox/` for new user directives, requirements, or credentials.
 3. **Resume Routing:**
+   - **Case 0 (Pending Merge Queue Shards):** If unmerged shards exist in `.kramak/work-items/*.json` (or `.md`) with `merge_status: "queued"` or `"conflict"`:
+     - Set `state.phase: "merge_queue"`, `state.humanTasksPending: false`.
+     - Set `state.nextAction: "Resume serialized merge queue in executor/CORE.md §MERGE."`.
    - **Case A (Unblocked with Active/Queued Work):** If blockers are resolved and items remain in `state.queue` or `state.active`:
      - Run Resume Drift Check (§3.2).
      - Set `state.phase: "executing"`, `state.humanTasksPending: false`.

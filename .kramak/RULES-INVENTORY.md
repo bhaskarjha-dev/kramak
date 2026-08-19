@@ -74,7 +74,7 @@
 
 | # | Rule / Constraint | Destination |
 |---|---|---|
-| 28 | **Mandatory Reading Order:** Read 1. Roadmap -> 2. `HUMAN-TASKS.md` -> 3. `state.json` -> 4. `PROGRESS.md` -> 5. `PRINCIPLES.md` -> 6. `.kramak/inbox/` -> 7. `done/` -> 8. `failed/`. | `PLANNER-CORE` |
+| 28 | **Mandatory Reading Order:** Read 1. Roadmap -> 2. `HUMAN-TASKS.md` -> 3. `state.json` -> 4. `PROGRESS.md` -> 5. `PRINCIPLES.md` -> 6. `.kramak/inbox/` -> 7. `.kramak/work-items/`. | `PLANNER-CORE` |
 | 29 | **Anti-Anchoring Guard:** Roadmap and `HUMAN-TASKS.md` MUST be read before `state.json` so the planner forms an independent evaluation before seeing the previous session's opinion. | `PLANNER-CORE` |
 | 30 | Directional Context: Read product spec and conventions when planning features; read deployment docs when preparing deployment; read roadmap when planning post-deployment. | `PLANNER-CORE` |
 | 31 | On-Demand Context: Read project docs and conventions only when specifically relevant to the current batch. | `PLANNER-CORE` |
@@ -271,7 +271,7 @@
 | 157 | Anti-Inflation: No synthetic PII, no fake API payloads, no unmarked placeholders, no lorem ipsum in user strings. | `EXECUTOR-CORE`, `PLANNER-CORE` |
 | 158 | Progressive Enhancement: Graceful degradation for missing data, helpful empty states, partial API returns. | `EXECUTOR-CORE`, `PLANNER-CORE` |
 | 159 | Anti-Bias Guard: For all `.kramak/` modifications, evaluate G1 (diff summary), G2 (rollback check), G3/G4 (cross-family critique & ledger append), G5/G6 (cooldown & risk-tiered human gating). | `ROUTER`, `PLANNER-CORE` |
-| 160 | Honesty Over Confidence: Acknowledge unknowns, flag `risk: high`, route unresolvable items to `failed/` with explicit diagnostic categories. | `ROUTER`, `PLANNER-CORE`, `EXECUTOR-CORE` |
+| 160 | Honesty Over Confidence: Acknowledge unknowns, flag `risk: high`, route unresolvable items with status: 'failed' and explicit diagnostic categories. | `ROUTER`, `PLANNER-CORE`, `EXECUTOR-CORE` |
 | 161 | Decision Audit Trail: Document design rationale and rejected alternatives in plans and commit messages. | `ROUTER`, `PLANNER-CORE`, `EXECUTOR-CORE` |
 | 162 | Tokens Are Thinking: Never suppress reasoning tokens ("be concise"); communicate via files rather than chat. | `PLANNER-CORE`, `EXECUTOR-CORE` |
 

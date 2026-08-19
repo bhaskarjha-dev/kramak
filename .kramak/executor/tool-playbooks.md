@@ -128,9 +128,18 @@ fi
 ```
 
 ```powershell
-# --- Windows PowerShell Reference ---
+# --- Windows PowerShell Reference (supports .json and .md with YAML frontmatter) ---
 $actual = @(git diff --name-only HEAD; git ls-files --others --exclude-standard) | Sort-Object -Unique
-$declared = (Get-Content .kramak/work-items/WI-XXX.json | ConvertFrom-Json).files_targeted
+$wiFile = Get-ChildItem .kramak/work-items/ -Filter "WI-*.json", "WI-*.md" | Select-Object -First 1
+if ($wiFile -and $wiFile.Extension -eq ".json") {
+  $declared = (Get-Content $wiFile.FullName | ConvertFrom-Json).files_targeted
+} elseif ($wiFile) {
+  $raw = Get-Content $wiFile.FullName -Raw
+  $declared = [regex]::Matches($raw, '(?m)^s*-s*["'']?([^"''
+]+)["'']?') | ForEach-Object { $_.Groups[1].Value }
+} else {
+  $declared = @()
+}
 $unauthorized = $actual | Where-Object { $declared -notcontains $_ }
 
 if ($unauthorized) {
@@ -183,7 +192,7 @@ The executor dynamically detects runtime environments by checking indicator file
 
 1. **Empty Test Suite / Missing Tests:**
    - If the project test command fails because no test directory or test files exist yet (e.g. fresh greenfield project):
-   - **Rule:** This is NOT a failure. Record an informational note in `PROGRESS.md` and bypass test verification.
+   - **Rule:** Run fallback static verification (`toolchain.buildCommand`, syntax verification, or type checks). The Work Item creating initial project files MUST include a basic smoke test to establish the test suite baseline.
 2. **Pre-Existing Baseline Lint Errors:**
    - If the linter reports errors in files *outside* `files_targeted`:
    - **Rule:** Do not fail the current Work Item for pre-existing errors in untouched files. Only fail if new lint errors were introduced in files listed in `files_targeted`.

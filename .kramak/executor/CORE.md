@@ -336,7 +336,7 @@ Master transition rules for states managed by the executor:
 |---|---|---|---|
 | `executing` | Next WI available in `state.queue` | `executing` | Execute next Work Item from queue |
 | `executing` | Queue empty, all batch WIs completed | `auditing` | Run technical audit on completed batch |
-| `executing` | Circuit breaker tripped ($\ge 3$ consecutive failures) | `planning` | Circuit breaker tripped; replan architecture |
+| `executing` | Circuit breaker tripped ($\ge 3$ consecutive failures) | `escalated` | Circuit breaker tripped; hard stop for diagnostic review |
 | `executing` | Blocking human task logged in `HUMAN-TASKS.md` | `waiting` | Pause for human action resolution |
 | `executing` | Scope breach requiring user/planner architectural decision | `waiting` | Pause for scope resolution |
 | `executing` | Deadlock, circular dependency, or 3 failed batches | `escalated` | Pipeline escalation; hard stop |
