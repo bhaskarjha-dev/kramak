@@ -21,44 +21,40 @@ my-app/
 
 ## Step 1: Add Kramak
 
+Copy the `.kramak/` directory from the Kramak repository into your project:
+
 ```bash
-# Copy spec files
-cp -r path/to/kramak/spec/ my-app/.kramak/
-
-# Copy spec and template reference files
-cp -r path/to/kramak/spec/ my-app/.kramak/
-cp -r path/to/kramak/templates/ my-app/.kramak/
-
-# Copy initial runtime files
-mkdir -p my-app/.agents/pipeline
-cp -r path/to/kramak/templates/* my-app/.agents/pipeline/
+# Clone Kramak and copy the governance directory
+git clone https://github.com/bhaskarjha-dev/kramak.git /tmp/kramak
+cp -r /tmp/kramak/.kramak ./
 ```
 
-Add to your `.agents/AGENTS.md` (or `AGENTS.md`):
+That's it. No package install, no build step, no runtime dependency.
+
+## Step 2: Point Your Agent to Kramak
+
+Add this to your project's `AGENTS.md` (or your IDE's instructions file):
+
 ```markdown
-# Project Context
-
-## Autonomous Development (Kramak)
-When you receive the instruction "Start", "begin", "continue", or "go":
-1. Read `.agents/pipeline/state.json`
-   - If missing: read `.kramak/spec/BOOTSTRAP.md` and bootstrap
-   - If present: follow procedure for `state.phase`:
-     - `planning` -> Read `.kramak/spec/PLANNER.md`
-     - `executing` -> Read `.kramak/spec/EXECUTOR.md`
-     - `auditing` -> Read `.kramak/spec/EXECUTOR.md §STEP 8.5`
-     - `waiting` -> Check `HUMAN-TASKS.md` & `INBOX.md`; if resolved or unblocked roadmap work exists, switch `phase` to `planning` and follow `PLANNER.md`; otherwise prompt user.
-2. Before any work, read `.kramak/spec/PRINCIPLES.md` (non-negotiable).
-3. Rules: Every token advances the project. Continuous state update. Grounded verification.
+# Autonomous Development
+Before performing work, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow
+the active state in `.kramak/state.json` (create if missing with `phase: "bootstrap"`).
 ```
 
-## Step 2: Say "Start"
+Or copy the appropriate adapter from `adapters/` if you use a specific IDE:
+- **Claude Code:** Copy `adapters/claude-code/CLAUDE.md` → your project root as `CLAUDE.md`
+- **Cursor:** Copy `adapters/cursor/.cursorrules` → your project root
+- **Antigravity:** Copy `adapters/antigravity/SKILL.md` → `.agents/skills/kramak/SKILL.md`
+- **Copilot:** Copy `adapters/copilot/copilot-instructions.md` → `.github/copilot-instructions.md`
+
+## Step 3: Say "Start"
 
 The agent bootstraps automatically:
-1. Detects your toolchain (Node.js + pnpm + TypeScript)
-2. Creates `state.json` with detected build/check commands
-3. Creates `INBOX.md`, `HUMAN-TASKS.md`, `PLANNING-LOG.md`
-4. Creates `queue/`, `active/`, `done/`, `failed/`, `plans/` directories
-5. Enters the **planning phase**
+1. Reads `.kramak/ROUTER.md` → sees no `state.json` → enters `BOOTSTRAP`
+2. Detects your toolchain (Node.js + pnpm + TypeScript)
+3. Runs the Capability Gate (CT-1 to CT-5 micro-challenges)
+4. Creates `state.json` with detected build/check commands
+5. Enters **PLANNING** phase
 
 ## After Bootstrap
 
@@ -67,50 +63,66 @@ my-app/
 ├── src/
 │   ├── index.ts
 │   └── ...
-├── .kramak/                    ← Kramak spec (read-only reference)
-│   └── spec/
-│       ├── PLANNER.md
-│       ├── EXECUTOR.md
-│       ├── PRINCIPLES.md
-│       └── BOOTSTRAP.md
-├── .agents/
-│   ├── AGENTS.md               ← your project context
-│   └── pipeline/               ← managed by the AI agent
-│       ├── state.json           ← cross-session memory
-│       ├── INBOX.md             ← your notes to the agent
-│       ├── HUMAN-TASKS.md       ← tasks only you can do
-│       ├── PLANNING-LOG.md      ← planning decision history
-│       ├── queue/               ← work items to execute
-│       ├── active/              ← work item in progress
-│       ├── done/                ← completed (audit trail)
-│       ├── failed/              ← failed with diagnosis
-│       └── plans/               ← batch plans
+├── .kramak/                         ← Kramak governance (specs + runtime)
+│   ├── ROUTER.md                    ← Entry point (always loaded first)
+│   ├── AGENTS.md                    ← AAIF context bridge
+│   ├── SKILL.md                     ← AAIF skill definition
+│   ├── state.json                   ← Cross-session persistent state
+│   ├── schemas/                     ← JSON Schema validation contracts
+│   ├── planner/                     ← Planning specs (loaded during PLANNING)
+│   │   ├── CORE.md
+│   │   ├── capability-gate.md
+│   │   ├── output-contract.md
+│   │   ├── edge-cases.md
+│   │   └── domain-conventions.md
+│   ├── executor/                    ← Execution specs (loaded during EXECUTING)
+│   │   ├── CORE.md
+│   │   ├── error-recovery.md
+│   │   ├── tool-playbooks.md
+│   │   └── PROGRESS.md
+│   ├── work-items/                  ← Active and queued Work Items
+│   ├── inbox/                       ← Your notes to the agent
+│   ├── ledger/                      ← Immutable audit trail
+│   └── templates/                   ← WI, human task, retrospective templates
+├── AGENTS.md
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
-## Step 3: The Loop Begins
+## Step 4: The Loop Begins
 
-From here, the agent cycles autonomously:
+From here, the agent cycles autonomously through the 8-state FSM:
 
-1. **PLANNING** — Assesses the project, chooses a perspective, writes work items
-2. **EXECUTING** — Picks work items from `queue/`, codes, verifies, commits
-3. **AUDITING** — Reviews the batch, fixes issues, plans next
+```
+BOOTSTRAP → PLANNING → DISPATCH → EXECUTING → AUDITING → COMPLETE
+                ↑                                  │
+                └──────── (retry on failure) ───────┘
+```
 
-You can contribute at any time by dropping notes in `INBOX.md`:
+1. **PLANNING** — Assesses the project, runs PERCEIVE → REASON → DECIDE, writes Work Items
+2. **DISPATCH** — Routes WIs (sequential or parallel via git worktrees)
+3. **EXECUTING** — Codes, verifies, commits per WI scope (3-Tier Scope Check enforced)
+4. **AUDITING** — Reviews the batch, fixes issues, loops back or completes
+5. **WAITING** — Blocks on human input when needed (reachable from any active state)
+
+### Communicate with the Agent
+
+Drop notes in `.kramak/inbox/` at any time:
 
 ```markdown
-### [2026-08-12] Bug: API returns 500 on empty input
+<!-- .kramak/inbox/bug-api-500.md -->
+### Bug: API returns 500 on empty input
 **Type:** bug
+**Priority:** critical
 The /api/search endpoint crashes when query is empty string.
 ```
 
-The planner picks this up at the next planning session and creates a work item for it.
+The planner picks this up at the next ORIENT step (INBOX is checked first, every session).
 
 ## Tips
 
-- **Use a strong reasoning model for planning** (Claude Opus, Gemini Pro) and a fast model for execution (Claude Sonnet, GPT-4o-mini)
-- **Check `state.json`** to see what the agent plans to do next
-- **Review `done/` files** to see the audit trail of completed work
-- **Don't delete `failed/` files** — they contain diagnosis that helps future sessions
+- **Use a strong reasoning model for planning** and a fast/precise model for execution — Kramak's Capability Gate routes by capability tier, not model name.
+- **Check `state.json`** to see the current phase and what the agent plans to do next.
+- **Don't touch `.kramak/ledger/`** — it's an immutable, append-only audit trail.
+- **The agent self-recovers** — the Circuit Breaker catches loops, the error-recovery decision tree handles failures, and WAITING/ESCALATED states ensure human involvement when needed.

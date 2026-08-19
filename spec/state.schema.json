@@ -1,7 +1,0 @@
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://kramak.dev/schemas/state.schema.json",
-  "title": "KramakStateShim",
-  "description": "DEPRECATED: This schema file has moved to .kramak/schemas/state.schema.json in Kramak v1.1. This shim exists for backward compatibility.",
-  "$ref": "../.kramak/schemas/state.schema.json"
-}

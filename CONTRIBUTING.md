@@ -1,4 +1,4 @@
-# Contributing to Kramak (क्रमक)
+# Contributing to Kramak (à¤•à¥à¤°à¤®à¤•)
 
 Thank you for contributing to Kramak! 
 
@@ -15,23 +15,23 @@ All contributions to the core `kramak` repository must respect the non-negotiabl
 
 ---
 
-## 2. The Anti-Bias Guard (G1–G6 Governance)
+## 2. The Anti-Bias Guard (G1â€“G6 Governance)
 
-Because autonomous agents can propose improvements to Kramak's own specifications during execution audits, all pull requests that modify files under `.kramak/` must clear the **Anti-Bias Guard (G1–G6)** framework:
+Because autonomous agents can propose improvements to Kramak's own specifications during execution audits, all pull requests that modify files under `.kramak/` must clear the **Anti-Bias Guard (G1â€“G6)** framework:
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                       THE ANTI-BIAS GUARD (G1–G6)                           │
-├───────┬───────────────────────────────┬─────────────────────────────────────┤
-│ Step  │ Gate Name                     │ Verification Requirement            │
-├───────┼───────────────────────────────┼─────────────────────────────────────┤
-│ G1    │ History Diff Verification     │ Document the exact failure mode.    │
-│ G2    │ Rollback Cross-Check          │ Confirm reverting isn't cleaner.    │
-│ G3    │ Dual-Model Critique Pass      │ Pass review across model families.  │
-│ G4    │ Immutable Ledger Logging      │ Log entry to self-modifications.    │
-│ G5    │ Cooldown Verification Window  │ Re-verify after reflection cycle.   │
-│ G6    │ Risk-Tiered Human Approval    │ Mandatory human approval for Tier B.│
-└───────┴───────────────────────────────┴─────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                       THE ANTI-BIAS GUARD (G1â€“G6)                           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Step  â”‚ Gate Name                     â”‚ Verification Requirement            â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ G1    â”‚ History Diff Verification     â”‚ Document the exact failure mode.    â”‚
+â”‚ G2    â”‚ Rollback Cross-Check          â”‚ Confirm reverting isn't cleaner.    â”‚
+â”‚ G3    â”‚ Dual-Model Critique Pass      â”‚ Pass review across model families.  â”‚
+â”‚ G4    â”‚ Immutable Ledger Logging      â”‚ Log entry to self-modifications.    â”‚
+â”‚ G5    â”‚ Cooldown Verification Window  â”‚ Re-verify after reflection cycle.   â”‚
+â”‚ G6    â”‚ Risk-Tiered Human Approval    â”‚ Mandatory human approval for Tier B.â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Pull Request Checklist for `.kramak/` Changes
@@ -46,7 +46,7 @@ When opening a PR modifying `.kramak/` specifications or schemas, include the fo
 5. **G5 (Cooldown):** Has the change been re-evaluated in a fresh session?
 6. **G6 (Risk Tier):**
    - [ ] Tier A (Low Risk: Formatting, documentation, typo fix)
-   - [ ] Tier B (High Risk: State machine, schemas, invariants, safety checks) — requires named maintainer sign-off.
+   - [ ] Tier B (High Risk: State machine, schemas, invariants, safety checks) â€” requires named maintainer sign-off.
 ```
 
 ---
@@ -55,11 +55,11 @@ When opening a PR modifying `.kramak/` specifications or schemas, include the fo
 
 ### 3.1 Core Specifications (`.kramak/`)
 - Improvements to `.kramak/planner/`, `.kramak/executor/`, `.kramak/schemas/`, or `.kramak/ROUTER.md`.
-- Must satisfy the Anti-Bias Guard (G1–G6) and adhere to the progressive disclosure token budgets defined in `FOUNDING-ARCHITECTURE.md`.
+- Must satisfy the Anti-Bias Guard (G1â€“G6) and adhere to the progressive disclosure architecture defined in `.kramak/ROUTER.md`.
 
 ### 3.2 Documentation (`docs/`, `README.md`)
 - Improvements to guides, comparative analyses, and architectural documentation.
-- Documentation PRs do not require G1–G6 checklist enforcement, but must maintain the **Evidence Language Discipline** (use "informed by" / "aligned with" when referencing empirical research).
+- Documentation PRs do not require G1â€“G6 checklist enforcement, but must maintain the **Evidence Language Discipline** (use "informed by" / "aligned with" when referencing empirical research).
 
 ### 3.3 IDE Adapters (`adapters/`)
 - Tier 1 (Claude Code, Cursor) and Tier 2/3 (Antigravity, Copilot, Devin, Cline, Aider) adapters are maintained in this repository.

@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate:
-    name: Validate Spec, Schemas & Tooling
+    name: Validate Kramak Specifications & Schemas
     runs-on: ubuntu-latest
 
     steps:
@@ -20,36 +20,79 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Verify Tooling Deprecation Notices
-        run: |
-          node scripts/validate.js
-
-      - name: Validate Kramak JSON Schemas & Templates
+      - name: Validate JSON Schema Syntax
         run: |
           node -e "
             const fs = require('fs');
-            const stateSchema = JSON.parse(fs.readFileSync('.kramak/schemas/state.schema.json', 'utf8'));
-            const wiSchema = JSON.parse(fs.readFileSync('.kramak/schemas/work-item.schema.json', 'utf8'));
-            const wiStateSchema = JSON.parse(fs.readFileSync('.kramak/schemas/work-item-state.schema.json', 'utf8'));
-            const stateShim = JSON.parse(fs.readFileSync('spec/state.schema.json', 'utf8'));
-            const state = JSON.parse(fs.readFileSync('templates/state.json', 'utf8'));
-
-            const allowed = Object.keys(stateSchema.properties || {});
-            for (const k of Object.keys(state)) {
-              if (stateSchema.additionalProperties === false && !allowed.includes(k)) {
-                console.error('❌ Property not allowed in schema:', k);
+            const schemas = [
+              '.kramak/schemas/state.schema.json',
+              '.kramak/schemas/work-item.schema.json',
+              '.kramak/schemas/work-item-state.schema.json'
+            ];
+            for (const path of schemas) {
+              try {
+                const schema = JSON.parse(fs.readFileSync(path, 'utf8'));
+                console.log('OK', path);
+              } catch (e) {
+                console.error('Failed to parse:', path, e.message);
                 process.exit(1);
               }
             }
-            if (!stateSchema.properties.phase.enum.includes(state.phase)) {
-              console.error('❌ Invalid phase in state.json:', state.phase);
-              process.exit(1);
-            }
-            console.log('✅ .kramak/schemas/ and templates/state.json fully validated');
           "
 
-      - name: Verify Shell Scripts & Hook Syntax
+      - name: Validate State Schema Completeness
         run: |
-          sh -n hooks/pre-commit
-          sh -n init.sh
-          echo "✅ Shell script syntax valid"
+          node -e "
+            const fs = require('fs');
+            const schema = JSON.parse(fs.readFileSync('.kramak/schemas/state.schema.json', 'utf8'));
+            const requiredPhases = ['bootstrap','planning','dispatch','executing','auditing','merge_queue','waiting','escalated','complete'];
+            const schemaPhases = schema.properties.phase.enum;
+            for (const phase of requiredPhases) {
+              if (!schemaPhases.includes(phase)) {
+                console.error('Missing phase:', phase);
+                process.exit(1);
+              }
+            }
+            console.log('All 9 FSM phases present');
+            const requiredFields = ['version','phase','nextAction','productPhase','currentBranch','batchNumber','concurrency','wal','capabilityGate','escalation','queue','metrics'];
+            for (const field of requiredFields) {
+              if (!schema.properties[field]) {
+                console.error('Missing field:', field);
+                process.exit(1);
+              }
+            }
+            console.log('All critical state fields present');
+          "
+
+      - name: Validate Core Specification Files Exist
+        run: |
+          for f in \
+            .kramak/ROUTER.md \
+            .kramak/AGENTS.md \
+            .kramak/SKILL.md \
+            .kramak/planner/CORE.md \
+            .kramak/planner/capability-gate.md \
+            .kramak/planner/output-contract.md \
+            .kramak/planner/edge-cases.md \
+            .kramak/planner/domain-conventions.md \
+            .kramak/executor/CORE.md \
+            .kramak/executor/error-recovery.md \
+            .kramak/executor/tool-playbooks.md \
+            .kramak/ledger/FORMAT.md; do
+            test -f "$f" || { echo "Missing: $f"; exit 1; }
+            echo "OK $f"
+          done
+
+      - name: Validate Adapter Files
+        run: |
+          for f in \
+            adapters/claude-code/CLAUDE.md \
+            adapters/cursor/.cursorrules \
+            adapters/antigravity/SKILL.md \
+            adapters/devin/AGENTS.md \
+            adapters/cline/.clinerules \
+            adapters/copilot/copilot-instructions.md \
+            adapters/aider/CONVENTIONS.md; do
+            test -f "$f" || { echo "Missing adapter: $f"; exit 1; }
+            echo "OK $f"
+          done

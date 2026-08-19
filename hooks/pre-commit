@@ -1,8 +1,0 @@
-#!/bin/sh
-# Kramak pre-commit hook (Deprecated)
-# In Kramak v1.1 (D-009), git hooks management has moved to kramak-cli.
-
-echo "Kramak pre-commit hook has moved to kramak-cli."
-echo "Install: npx kramak-cli hooks install"
-
-exit 0

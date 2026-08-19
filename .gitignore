@@ -9,12 +9,12 @@ Desktop.ini
 *.swp
 *.swo
 
-# Node
+# Node (kramak-cli companion only)
 node_modules/
 dist/
 *.tgz
 
-# Kramak pipeline workspace (generated, not committed)
+# Kramak pipeline workspace (generated at runtime, not committed)
 .kramak/work-items/
 .kramak/inbox/
 .kramak/executor/PROGRESS.md
@@ -23,15 +23,3 @@ dist/
 .kramak/state.json
 .kramak/state.json.tmp
 .kramak/state.json.wal
-
-# Legacy pipeline workspace (v1.0 backward compatibility)
-.agents/pipeline/state.json
-.agents/pipeline/queue/
-.agents/pipeline/active/
-.agents/pipeline/done/
-.agents/pipeline/failed/
-.agents/pipeline/plans/
-.agents/pipeline/PLANNING-LOG.md
-
-# temp
-temp/

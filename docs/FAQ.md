@@ -1,7 +1,7 @@
-# Kramak (क्रमक) — Frequently Asked Questions (FAQ)
+# Kramak (à¤•à¥à¤°à¤®à¤•) â€” Frequently Asked Questions (FAQ)
 
 > **Process control for autonomous coding agents**  
-> *Layer 3 — Process, alongside `AGENTS.md` (Context) and `MCP` (Connectivity)*
+> *Layer 3 â€” Process, alongside `AGENTS.md` (Context) and `MCP` (Connectivity)*
 
 ---
 
@@ -12,9 +12,9 @@ Kramak is a zero-dependency, file-based process control framework that enables a
 
 ### How does Kramak fit alongside AGENTS.md and MCP?
 Under the open agentic stack (AAIF):
-- **Layer 1 — Context (`AGENTS.md`):** Answers **WHAT** your project is (tech stack, conventions, structure).
-- **Layer 2 — Protocol (`MCP`):** Provides **CONNECTIVITY** to tools, language servers, and runtime environments.
-- **Layer 3 — Process (`Kramak`):** Governs **HOW** the agent works methodically (FSM state transitions, Grounded Verification, 3-Tier Hard Scope Checks, and audit loopbacks).
+- **Layer 1 â€” Context (`AGENTS.md`):** Answers **WHAT** your project is (tech stack, conventions, structure).
+- **Layer 2 â€” Protocol (`MCP`):** Provides **CONNECTIVITY** to tools, language servers, and runtime environments.
+- **Layer 3 â€” Process (`Kramak`):** Governs **HOW** the agent works methodically (FSM state transitions, Grounded Verification, 3-Tier Hard Scope Checks, and audit loopbacks).
 
 ### What is `.kramak/`?
 `.kramak/` is the pipeline workspace and governance directory located at the root of your project. It contains:
@@ -27,9 +27,7 @@ Under the open agentic stack (AAIF):
 - `ledger/` (immutable self-modification audit trail)
 
 ### What happened to the old `spec/` and `.agents/pipeline/` directories?
-In Kramak v1.1+, all pipeline operations are consolidated under `.kramak/` to eliminate fragmented paths and improve discoverability.
-- The old `spec/` directory in the core repo now contains backward-compatibility shims forwarding to `.kramak/`.
-- Repositories migrating from v1.0.0 can move `.agents/pipeline/` files directly into `.kramak/`.
+In Kramak v1.1, all pipeline operations are consolidated under `.kramak/`. The old `spec/` and `.agents/pipeline/` directories no longer exist. All specifications, schemas, templates, and runtime state live under `.kramak/`.
 
 ---
 
@@ -41,7 +39,7 @@ In Kramak v1.1+, all pipeline operations are consolidated under `.kramak/` to el
 The standalone companion CLI (`@kramak/cli` / `npx @kramak/cli init`) is an optional convenience utility for offline schema validation, diagnostics, and project scaffolding.
 
 ### What happened to `init.sh`, `init.ps1`, and `validate.js`?
-Per Decision D-009 (the EditorConfig model), all executable scripts have been decoupled from the core specification repository into the dedicated companion repository [`kramak-cli`](https://github.com/bhaskarjha-dev/kramak-cli). This ensures the core `kramak` repository remains 100% dependency-free with zero supply-chain risk.
+Per the EditorConfig model (Decision D-009), all executable scripts live in the standalone companion repository [`kramak-cli`](https://github.com/bhaskarjha-dev/kramak-cli). This ensures the core `kramak` repository remains 100% dependency-free with zero supply-chain risk.
 
 ---
 
@@ -67,8 +65,8 @@ Models scoring $\ge 0.80$ qualify for the `PLANNING` role. Models scoring $< 0.6
 
 ## 4. Safety & Governance
 
-### What is the Anti-Bias Guard (G1–G6)?
-Kramak allows agents to propose edits to Kramak's own specifications during audits (self-improvement). To prevent recency bias, prompt degradation, and self-preference, all self-modifications must clear the G1–G6 governance framework:
+### What is the Anti-Bias Guard (G1â€“G6)?
+Kramak allows agents to propose edits to Kramak's own specifications during audits (self-improvement). To prevent recency bias, prompt degradation, and self-preference, all self-modifications must clear the G1â€“G6 governance framework:
 - **G1:** History diff verification (why the change is needed).
 - **G2:** Rollback precedent check (is reverting previous changes better?).
 - **G3:** Dual-model / cross-family critique pass.
