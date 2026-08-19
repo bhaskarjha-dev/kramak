@@ -134,7 +134,7 @@ Before running `git commit`, execute the mandatory safety checklist:
 2. Stage modified files: `git add <files_targeted>`.
 3. Commit with prescribed message from WI, or standard conventional commit:
    - `fix(<scope>): <title>` or `feat(<scope>): <title>`.
-4. Update WI file status to `status: "completed"`, `completed_at: "<ISO-TIMESTAMP>"`.
+4. Update WI file status to `status: "done"`, `completed_at: "<ISO-TIMESTAMP>"`.
 5. Update `state.json` via WAL:
    ```json
    {

@@ -473,7 +473,7 @@ Before completing the planning turn, determine whether to continue in this sessi
 
 ---
 
-## SECTION 8: RESUME & RECOVERY PROTOCOL (?RESUME)
+## SECTION 8: RESUME & RECOVERY PROTOCOL (§RESUME)
 
 Invoked when `state.phase` is `waiting`, `escalated`, or `complete` and the user prompts `"Start"` or triggers execution:
 
@@ -482,7 +482,7 @@ Invoked when `state.phase` is `waiting`, `escalated`, or `complete` and the user
 2. **Inbox Inspection:** Scan `.kramak/inbox/` for new user directives, requirements, or credentials.
 3. **Resume Routing:**
    - **Case A (Unblocked with Active/Queued Work):** If blockers are resolved and items remain in `state.queue` or `state.active`:
-     - Run Resume Drift Check (?3.2).
+     - Run Resume Drift Check (§3.2).
      - Set `state.phase: "executing"`, `state.humanTasksPending: false`.
      - Set `state.nextAction: "Resume execution of active work item with executor/CORE.md."`.
    - **Case B (Unblocked, Ready for Next Batch):** If blockers resolved and queue is empty:

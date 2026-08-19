@@ -43,6 +43,7 @@
         "queued",
         "active",
         "done",
+        "completed",
         "failed",
         "blocked"
       ],

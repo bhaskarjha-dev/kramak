@@ -108,12 +108,17 @@ The agent runs the Canary Capability Gate (CT-1 to CT-5), processes `.kramak/inb
 {
   "id": "WI-001",
   "title": "Implement Token-Bucket Rate Limiter Middleware",
-  "tier": "directed",
+  "batch": 1,
+  "detail_level": "directed",
+  "status": "queued",
   "files_targeted": [
     "src/middleware/rate-limiter.ts",
     "test/middleware/rate-limiter.test.ts",
     "src/server.ts"
   ],
+  "dependencies": [],
+  "retry_budget": 3,
+  "attempts": 0,
   "acceptance_criteria": [
     "Token-bucket rate limiter allows 100 req/min per IP",
     "Returns HTTP 429 with Retry-After header on threshold breach",
@@ -121,7 +126,9 @@ The agent runs the Canary Capability Gate (CT-1 to CT-5), processes `.kramak/inb
   ],
   "verification_commands": [
     "npm test test/middleware/rate-limiter.test.ts"
-  ]
+  ],
+  "created_at": "2026-08-20T00:00:00Z",
+  "completed_at": null
 }
 ```
 
