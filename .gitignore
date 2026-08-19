@@ -23,3 +23,7 @@ dist/
 .agents/pipeline/failed/
 .agents/pipeline/plans/
 .agents/pipeline/PLANNING-LOG.md
+
+
+# temp
+temp/
