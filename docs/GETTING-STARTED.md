@@ -1,166 +1,144 @@
 # Getting Started with Kramak
 
-> **Process control for autonomous coding agents**
-> *Layer 3 — Process, alongside `AGENTS.md` (Context) and `MCP` (Connectivity)*
+> **Process control for autonomous coding agents**  
+> *Layer 3 — Process Control, alongside `AGENTS.md` (Context) and `MCP` (Connectivity)*
 
 ---
 
-## 1. Prerequisites
+## 1. Understanding the Architecture in 30 Seconds
 
-- A git-initialized project repository
-- An AI coding agent (Claude Code, Cursor, Google Antigravity, GitHub Copilot, Devin Desktop, Cline, or Aider)
-- No package installations, runtimes, or build tools required
+Kramak separates your repository into two clean domains: **Your Application** and **The Governance Subsystem (`.kramak/`)**.
+
+```
+your-project/
+├── src/                              ← Your application source code
+├── package.json / Cargo.toml         ← Your toolchain configuration
+├── AGENTS.md                         ← [Layer 1 Context] Tells agents WHAT your app is
+│
+└── .kramak/                          ← [Layer 3 Process] Private governance engine
+    ├── ROUTER.md                     ← Master entry router (always read first)
+    ├── AGENTS.md                     ← Internal AAIF bridge defining Kramak's rules
+    ├── SKILL.md                      ← Universal agent skill definition
+    ├── state.json                    ← Active FSM state (cross-session memory)
+    ├── schemas/                      ← JSON Schemas (Draft 2020-12)
+    ├── planner/                      ← Planning role specs (CORE.md, capability gate)
+    ├── executor/                     ← Execution role specs (CORE.md, error recovery)
+    ├── work-items/                   ← Active & queued Work Items (WI-001.json)
+    ├── inbox/                        ← User requirements and bug reports
+    ├── templates/                    ← Task and retrospective templates
+    └── ledger/                       ← Immutable audit trail
+```
+
+> [!NOTE]
+> **Why is there an `AGENTS.md` inside `.kramak/`?**  
+> - **Your Root `AGENTS.md`:** Describes *your application* (tech stack, business logic, endpoints).  
+> - **The `.kramak/AGENTS.md`:** Describes *Kramak's process engine* to AI agents browsing `.kramak/` and acts as an import target for IDE adapters like Claude Code (`@.kramak/AGENTS.md`).
 
 ---
 
-## 2. 30-Second Quickstart (Pure Copy-Paste — No CLI)
+## 2. 45-Second Quickstart (Pure Copy-Paste)
 
 ### Step 1: Copy `.kramak/` into your project
 
 ```bash
-# Clone Kramak and copy the governance directory
-git clone https://github.com/bhaskarjha-dev/kramak.git /tmp/kramak
-cp -r /tmp/kramak/.kramak ./
+# macOS / Linux (Bash)
+cp -r /path/to/kramak/.kramak ./
+
+# Windows (PowerShell)
+Copy-Item -Recurse -Force "path\to\kramak\.kramak" ".\"
 ```
 
-Your project directory will now contain:
-```
-your-project/
-├── .kramak/
-│   ├── ROUTER.md                     # Master invariant router (always read first)
-│   ├── AGENTS.md                     # Universal AAIF context bridge
-│   ├── SKILL.md                      # Universal Agent Skills standard
-│   ├── schemas/                      # JSON Schemas (state, work-item, work-item-state)
-│   ├── planner/                      # Planning specifications (CORE.md, edge cases, contracts)
-│   ├── executor/                     # Execution specifications (CORE.md, error recovery, playbooks)
-│   ├── templates/                    # Work item, human task, and retro templates
-│   ├── work-items/                   # Active and queued work items
-│   ├── inbox/                        # User requests and bug reports
-│   └── ledger/                       # Immutable self-modification audit ledger
-└── (your project source code)
-```
+---
 
-### Step 2: Configure your agent's entry point
+### Step 2: Connect Your IDE Agent
 
-If your project uses `AGENTS.md` (or your IDE's instructions file like `CLAUDE.md`, `.cursorrules`, or `.gemini/AGENTS.md`), add:
+Choose **Path A** (if your project already has an instructions file) or **Path B** (if setting up for a specific IDE):
+
+#### Path A: You already have an `AGENTS.md`, `CLAUDE.md`, or `.cursorrules`
+Append this 2-line hook to the bottom of your existing file:
 
 ```markdown
-# Autonomous Development
-Before taking any action, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow the active state in [.kramak/state.json](.kramak/state.json).
+## Autonomous Process Control
+Before taking action, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow the active state in [.kramak/state.json](.kramak/state.json).
 ```
 
-Or use a pre-built adapter from the [`adapters/`](../adapters/) directory:
+#### Path B: Setting up for a specific IDE (One-Command Setup)
 
-| IDE | Adapter File | Copy To |
-|-----|-------------|---------|
-| Claude Code | `adapters/claude-code/CLAUDE.md` | Project root as `CLAUDE.md` |
-| Cursor | `adapters/cursor/.cursorrules` | Project root as `.cursorrules` |
-| Antigravity | `adapters/antigravity/SKILL.md` | `.agents/skills/kramak/SKILL.md` |
-| GitHub Copilot | `adapters/copilot/copilot-instructions.md` | `.github/copilot-instructions.md` |
-| Devin Desktop | `adapters/devin/AGENTS.md` | Project root as `AGENTS.md` |
-| Cline | `adapters/cline/.clinerules` | Project root as `.clinerules` |
-| Aider | `adapters/aider/CONVENTIONS.md` | Project root as `CONVENTIONS.md` |
+| IDE | Copy Command (Bash / PowerShell) | Target File Location |
+|---|---|---|
+| **Cursor** | `cp adapters/cursor/.cursorrules ./` | `.cursorrules` |
+| **Claude Code** | `cp adapters/claude-code/CLAUDE.md ./` | `CLAUDE.md` |
+| **Google Antigravity** | `mkdir -p .agents/skills/kramak && cp adapters/antigravity/SKILL.md .agents/skills/kramak/SKILL.md` | `.agents/skills/kramak/SKILL.md` |
+| **GitHub Copilot** | `mkdir -p .github && cp adapters/copilot/copilot-instructions.md .github/copilot-instructions.md` | `.github/copilot-instructions.md` |
+| **Devin Desktop** | `cp .kramak/AGENTS.md ./AGENTS.md` | `AGENTS.md` |
+| **Cline** | `cp adapters/cline/.clinerules ./` | `.clinerules` |
+| **Aider** | `cp adapters/aider/CONVENTIONS.md ./CONVENTIONS.md` | `CONVENTIONS.md` |
+
+---
 
 ### Step 3: Say "Start" to your IDE agent
 
-Your agent will:
-1. Inspect `.kramak/state.json` (or initialize with `phase: "bootstrap"` if missing).
-2. Read `.kramak/ROUTER.md` to load the Non-Negotiable Invariants.
-3. Run the Capability Gate (CT-1 to CT-5 micro-challenges) to calibrate routing.
-4. Route to `.kramak/planner/CORE.md` to analyze requirements and generate Work Items.
+In your AI chat window, simply prompt:
+> **`Start`** *(or "Plan next batch")*
 
 ---
 
-## 3. Optional CLI Quickstart
+## 3. First-Run Telemetry: What You Will See
 
-If you prefer automated scaffolding and offline validation, use the optional companion CLI:
+When you prompt `"Start"`, the agent cycles autonomously through the 4-phase loop:
 
-```bash
-# Initialize Kramak in the current directory
-npx @kramak/cli init
+```
+[Agent Terminal Telemetry]
 
-# Validate state.json and work items against JSON Schemas
-npx @kramak/cli validate
+▶ 1. BOOTSTRAP PHASE
+  - Reading .kramak/ROUTER.md
+  - Auto-detected toolchain: npm (test: "npm test", build: "npm run build")
+  - Initialized .kramak/state.json with phase="planning"
 
-# Diagnose environment and adapter setups
-npx @kramak/cli doctor
+▶ 2. PLANNING PHASE
+  - Executing Canary Capability Gate (CT-1 to CT-5) -> Composite Score: 0.92 (Full Autonomy)
+  - Inspecting .kramak/inbox/ for pending user requirements
+  - PERCEIVE -> REASON -> DECIDE
+  - Generated batch plan: plans/PLAN-batch-01.md
+  - Emitted Work Items: .kramak/work-items/WI-001.json (files_targeted: ["src/auth.js", "test/auth.test.js"])
+  - Transitioning state.json -> phase="executing"
+
+▶ 3. EXECUTING PHASE (Work Item WI-001)
+  - Modifying declared files: src/auth.js
+  - Writing unit tests: test/auth.test.js
+  - Running verification: npm test -> PASS (12 tests passing)
+  - Tier 1 Scope Check: git diff --name-only vs files_targeted -> PASSED (0 unlisted files)
+  - Transitioning state.json -> phase="auditing"
+
+▶ 4. AUDITING PHASE
+  - Fresh-session verification pass
+  - Validating acceptance criteria
+  - Running full test suite -> PASS
+  - Batch 01 sealed. Transitioning state.json -> phase="complete" (or next batch)
 ```
 
-*(The CLI is maintained separately under [`kramak-cli`](https://github.com/bhaskarjha-dev/kramak-cli) and is completely optional.)*
-
 ---
 
-## 4. How the Kramak Loop Operates
+## 4. How to Feed Tasks: The 3 Interaction Modes
 
-Kramak governs development through a 9-state closed-loop Finite State Machine (FSM):
+Kramak supports 3 complementary ways to communicate requirements:
 
-```mermaid
-graph TD
-    BOOTSTRAP["1. BOOTSTRAP<br/>(Stack & Toolchain Init)"] --> PLANNING["2. PLANNING<br/>(PERCEIVE → REASON → DECIDE)"]
-    
-    PLANNING -->|concurrency = 1| EXECUTING["4. EXECUTING<br/>(ReAct + Hard Scope Check)"]
-    PLANNING -->|concurrency > 1| DISPATCH["3. DISPATCH<br/>(Git Worktree Setup)"]
-    DISPATCH --> EXECUTING
-    
-    EXECUTING --> AUDITING["5. AUDITING<br/>(Fresh Context Test Run)"]
-    
-    AUDITING -->|Retry Budget OK| EXECUTING
-    AUDITING -->|Retry Exhausted| PLANNING
-    AUDITING -->|Sequential Pass| COMPLETE["9. COMPLETE<br/>(Batch Sealed)"]
-    AUDITING -->|Parallel Pass| MERGE_QUEUE["6. MERGE_QUEUE<br/>(Serialized FIFO Merge)"]
-    MERGE_QUEUE --> COMPLETE
-    
-    PLANNING -.-> WAITING["7. WAITING<br/>(Human Tasks / Low Canary)"]
-    EXECUTING -.-> WAITING
-    AUDITING -.-> WAITING
-    WAITING -.-> PLANNING
-    WAITING -.-> EXECUTING
-    
-    PLANNING -.-> ESCALATED["8. ESCALATED<br/>(Circuit Breaker Tripped)"]
-    EXECUTING -.-> ESCALATED
-    AUDITING -.-> ESCALATED
-    ESCALATED -.-> WAITING
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          3 WAYS TO FEED WORK TO KRAMAK                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 1. Conversational Chat : "Plan a batch adding JWT auth middleware"         │
+│ 2. Async INBOX         : Drop .kramak/inbox/bug-login.md while running     │
+│ 3. Non-Blocking Tasks  : Resolve dependencies in HUMAN-TASKS.md            │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### State Descriptions
+### Mode 1: Interactive Chat
+Give a high-level goal in your IDE prompt:
+> *"Plan and execute a batch that implements token-bucket rate limiting on the `/api/v1/` routes."*
 
-| State | Role | What Happens |
-|-------|------|-------------|
-| **BOOTSTRAP** | Orchestrator | Auto-detects toolchain, initializes `state.json`, runs state reconciliation |
-| **PLANNING** | Planner (High-Reasoning) | PERCEIVE → REASON → DECIDE cycle; generates Work Items with declared scope |
-| **DISPATCH** | Orchestrator | Provisions git worktrees for parallel execution; verifies zero scope overlap |
-| **EXECUTING** | Executor (High-Precision) | Implements changes within declared `files_targeted`; enforces 3-Tier Scope Check |
-| **AUDITING** | Auditor (Fresh Context) | Runs tests in clean session; manages bounded retries; loops back or completes |
-| **MERGE_QUEUE** | Orchestrator | Serializes parallel worktree branches into integration branch (FIFO) |
-| **WAITING** | Human Coordinator | Blocks on human input; reachable from any active state |
-| **ESCALATED** | Circuit Breaker | Triggered by repeated failures or oscillation detection; requires human review |
-| **COMPLETE** | Summary | Batch sealed; agent produces retrospective |
-
----
-
-## 5. Progressive Disclosure Architecture
-
-Kramak splits specifications into a lean always-loaded core and on-demand modules to prevent instruction-stacking degradation:
-
-| Document | Path | When Loaded |
-|----------|------|------------|
-| **Master Router** | `.kramak/ROUTER.md` | **Always** — every session, every turn |
-| **Planner Core** | `.kramak/planner/CORE.md` | `phase == "planning"` or `"bootstrap"` |
-| **Output Contract** | `.kramak/planner/output-contract.md` | When authoring Work Items |
-| **Edge Cases** | `.kramak/planner/edge-cases.md` | Refactors >10 files, migrations, deprecations |
-| **Domain Conventions** | `.kramak/planner/domain-conventions.md` | Monorepos, polyglot stacks |
-| **Capability Gate** | `.kramak/planner/capability-gate.md` | During BOOTSTRAP (first session) |
-| **Executor Core** | `.kramak/executor/CORE.md` | `phase == "executing"` or `"auditing"` |
-| **Error Recovery** | `.kramak/executor/error-recovery.md` | On test failure or build error |
-| **Tool Playbooks** | `.kramak/executor/tool-playbooks.md` | Git worktrees, complex patch application |
-
----
-
-## 6. User Interaction: INBOX & Human Tasks
-
-### Submitting Mid-Project Guidance
-
-Drop notes or bug reports into `.kramak/inbox/` at any time:
+### Mode 2: Async INBOX (Non-Interrupting)
+You don't need to stop or interrupt the agent while it is executing code. Drop a Markdown note into `.kramak/inbox/`:
 
 ```markdown
 <!-- .kramak/inbox/bug-session-cookie.md -->
@@ -169,13 +147,38 @@ Drop notes or bug reports into `.kramak/inbox/` at any time:
 **Priority:** high
 Chrome rejects authentication cookies on cross-origin redirects.
 ```
+The Planner inspects `.kramak/inbox/` during the `ORIENT` step of every cycle and prioritizes pending items automatically.
 
-The Planner checks `inbox/` during the ORIENT step of every planning cycle and incorporates pending items immediately.
-
-### Non-Blocking Human Tasks
-
-When an agent encounters a step it cannot perform autonomously (e.g., obtaining an OAuth secret), it:
-1. Records the task using `.kramak/templates/HUMAN-TASKS.template.md`.
+### Mode 3: Non-Blocking Human Tasks
+When an agent encounters a step it cannot perform autonomously (e.g., creating a Stripe webhook secret), it:
+1. Records the task in `HUMAN-TASKS.md` using `.kramak/templates/HUMAN-TASKS.template.md`.
 2. Marks `humanTasksPending: true` in `state.json`.
-3. Continues executing any non-blocked Work Items.
-4. Transitions to `WAITING` only when zero unblocked tasks remain.
+3. Continues executing all non-blocked Work Items.
+4. Only transitions to `WAITING` when zero unblocked tasks remain.
+
+---
+
+## 5. Multi-IDE Handoffs (Power-User Workflow)
+
+Because Kramak externalizes state into `.kramak/state.json` (JSON Schema Draft 2020-12), you can switch models and IDEs mid-project without losing context:
+
+```
+[Claude Code]               [Cursor]                    [Google Antigravity]
+High-Reasoning Planning  ──► Fast Code Generation    ──► Fresh-Context Verification Pass
+(Claude Opus 4.6)           (Claude Sonnet / GPT-4o)    (Gemini 3.7 Pro / Subagents)
+```
+
+1. **Plan in Claude Code:** Run `CLAUDE.md` to analyze requirements and generate `.kramak/work-items/`.
+2. **Execute in Cursor:** Open Cursor, say `"Start"`, and let Cursor pick up the active Work Items and write code with fast feedback.
+3. **Audit in Antigravity:** Trigger Antigravity to run a clean audit pass and merge parallel worktrees.
+
+---
+
+## 6. Safety & Failure Recovery
+
+- **What happens if an agent tries to edit unlisted files?**  
+  The executor's **Tier 1 Hard Scope Check** compares `git diff --name-only` against the active Work Item's `files_targeted` and automatically reverts unlisted changes via `git checkout -- <file>`.
+- **What happens if an agent gets stuck in a loop?**  
+  The **Progress-Aware Circuit Breaker** tracks failure counts and error state hashes. After 3 failed attempts (or oscillating hash repeats), it halts safely, transitions to `phase: "escalated"`, and alerts the developer with a structured diagnostic reason.
+- **What happens if my IDE crashes mid-run?**  
+  Kramak uses **Write-Ahead Logging (WAL)** (`state.json.tmp` atomic rename). When you reopen your IDE and say `"Start"`, Kramak reconciles `state.json` with `git status` and seamlessly resumes from the exact active Work Item.

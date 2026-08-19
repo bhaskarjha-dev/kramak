@@ -1,128 +1,183 @@
 # Example: Adopting Kramak in Your Project
 
-This walkthrough shows what happens when you bring Kramak into an existing project.
+This step-by-step walkthrough demonstrates what happens when you adopt Kramak in an existing production project (`task-vault`).
 
 ---
 
-## Before
+## 1. Before Kramak
 
-Your project has code and an `AGENTS.md`, but no development process for AI agents:
+Your project has application code, tests, and an `AGENTS.md`, but no deterministic process engine to keep AI agents on track:
 
 ```
-my-app/
+task-vault/
 ├── src/
 │   ├── index.ts
-│   └── ...
+│   ├── server.ts
+│   └── routes/
+│       └── tasks.ts
+├── test/
+│   └── tasks.test.ts
 ├── package.json
 ├── tsconfig.json
-├── AGENTS.md          ← tells agents WHAT the project is
+├── AGENTS.md                  ← [Context] Tells agents WHAT the project is
 └── README.md
 ```
 
-## Step 1: Add Kramak
+**The Pain Point:** When you ask an AI agent to "add rate limiting", it might edit `server.ts`, modify `package.json`, reformat `tsconfig.json`, delete unrelated tests, and get stuck in a trial-and-error loop.
 
-Copy the `.kramak/` directory from the Kramak repository into your project:
+---
+
+## 2. Step 1: Add the Kramak Governance Engine
+
+Copy the `.kramak/` directory into your project root:
 
 ```bash
-# Clone Kramak and copy the governance directory
-git clone https://github.com/bhaskarjha-dev/kramak.git /tmp/kramak
-cp -r /tmp/kramak/.kramak ./
+# macOS / Linux (Bash)
+cp -r /path/to/kramak/.kramak ./
+
+# Windows (PowerShell)
+Copy-Item -Recurse -Force "path\to\kramak\.kramak" ".\"
 ```
 
-That's it. No package install, no build step, no runtime dependency.
+---
 
-## Step 2: Point Your Agent to Kramak
+## 3. Step 2: Connect Your Agent
 
-Add this to your project's `AGENTS.md` (or your IDE's instructions file):
+Since `task-vault` already has an `AGENTS.md` at root, simply append the 2-line Kramak hook to `AGENTS.md`:
 
 ```markdown
-# Autonomous Development
-Before performing work, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow
-the active state in `.kramak/state.json` (create if missing with `phase: "bootstrap"`).
+## Autonomous Process Control
+Before taking any action, read [.kramak/ROUTER.md](.kramak/ROUTER.md) and follow [.kramak/state.json](.kramak/state.json).
 ```
 
-Or copy the appropriate adapter from `adapters/` if you use a specific IDE:
-- **Claude Code:** Copy `adapters/claude-code/CLAUDE.md` → your project root as `CLAUDE.md`
-- **Cursor:** Copy `adapters/cursor/.cursorrules` → your project root
-- **Antigravity:** Copy `adapters/antigravity/SKILL.md` → `.agents/skills/kramak/SKILL.md`
-- **Copilot:** Copy `adapters/copilot/copilot-instructions.md` → `.github/copilot-instructions.md`
+*(If you use Cursor or Claude Code, you can also drop in `.cursorrules` or `CLAUDE.md` from `adapters/`).*
 
-## Step 3: Say "Start"
+---
 
-The agent bootstraps automatically:
-1. Reads `.kramak/ROUTER.md` → sees no `state.json` → enters `BOOTSTRAP`
-2. Detects your toolchain (Node.js + pnpm + TypeScript)
-3. Runs the Capability Gate (CT-1 to CT-5 micro-challenges)
-4. Creates `state.json` with detected build/check commands
-5. Enters **PLANNING** phase
+## 4. Step 3: Seed a Requirement in INBOX
 
-## After Bootstrap
+Drop your new requirement into `.kramak/inbox/feature-rate-limiter.md`:
+
+```markdown
+<!-- .kramak/inbox/feature-rate-limiter.md -->
+# Feature Request: IP-Based Rate Limiting
+
+**Type:** Feature
+**Priority:** High
+
+## Requirements
+1. Implement a token-bucket rate limiter middleware in `src/middleware/rate-limiter.ts`.
+2. Allow up to 100 requests per minute per client IP address.
+3. Return HTTP status 429 (`Too Many Requests`) with `Retry-After` header when limit exceeded.
+4. Provide unit tests in `test/middleware/rate-limiter.test.ts`.
+```
+
+---
+
+## 5. Step 4: Say "Start"
+
+In your AI chat interface, simply type:
+> **`Start`**
+
+### What Happens Behind the Scenes:
+
+#### A. `BOOTSTRAP` Phase
+The agent inspects the workspace, auto-detects `npm test` and `npm run build`, and creates `.kramak/state.json`:
+
+```json
+{
+  "version": "1.1.0",
+  "phase": "planning",
+  "nextAction": "Run Capability Gate and plan batch.",
+  "productPhase": "BUILD",
+  "currentBranch": "pipeline/batch-01",
+  "batchNumber": 1,
+  "toolchain": {
+    "packageManager": "npm",
+    "buildCommand": "npm run build",
+    "checkCommands": ["npm test"],
+    "detected": true
+  }
+}
+```
+
+#### B. `PLANNING` Phase
+The agent runs the Canary Capability Gate (CT-1 to CT-5), processes `.kramak/inbox/feature-rate-limiter.md`, and structures it into `.kramak/work-items/WI-001.json`:
+
+```json
+{
+  "id": "WI-001",
+  "title": "Implement Token-Bucket Rate Limiter Middleware",
+  "tier": "directed",
+  "files_targeted": [
+    "src/middleware/rate-limiter.ts",
+    "test/middleware/rate-limiter.test.ts",
+    "src/server.ts"
+  ],
+  "acceptance_criteria": [
+    "Token-bucket rate limiter allows 100 req/min per IP",
+    "Returns HTTP 429 with Retry-After header on threshold breach",
+    "All unit tests pass with npm test"
+  ],
+  "verification_commands": [
+    "npm test test/middleware/rate-limiter.test.ts"
+  ]
+}
+```
+
+#### C. `EXECUTING` Phase
+The agent writes `src/middleware/rate-limiter.ts` and `test/middleware/rate-limiter.test.ts`, runs `npm test`, and enforces the **Tier 1 Hard Scope Check**:
 
 ```
-my-app/
+$ git diff --name-only
+src/middleware/rate-limiter.ts
+test/middleware/rate-limiter.test.ts
+src/server.ts
+
+[Scope Verification Check]
+All 3 modified files are explicitly listed in WI-001.files_targeted.
+Scope check: PASSED.
+```
+
+#### D. `AUDITING` Phase
+The agent runs a clean verification pass across the entire test suite, confirms zero regressions, records completion in `state.json`, and outputs the batch summary:
+
+```
+✅ Work Item WI-001 completed and verified.
+- 3 files modified (within declared scope)
+- 8 new unit tests added (all passing)
+- Zero build or lint errors
+- Ready for integration / review.
+```
+
+---
+
+## 6. After the First Run
+
+Your project structure now has full historical auditability and deterministic governance:
+
+```
+task-vault/
 ├── src/
+│   ├── middleware/
+│   │   └── rate-limiter.ts           ← New feature implemented
+│   ├── routes/
 │   ├── index.ts
-│   └── ...
-├── .kramak/                         ← Kramak governance (specs + runtime)
-│   ├── ROUTER.md                    ← Entry point (always loaded first)
-│   ├── AGENTS.md                    ← AAIF context bridge
-│   ├── SKILL.md                     ← AAIF skill definition
-│   ├── state.json                   ← Cross-session persistent state
-│   ├── schemas/                     ← JSON Schema validation contracts
-│   ├── planner/                     ← Planning specs (loaded during PLANNING)
-│   │   ├── CORE.md
-│   │   ├── capability-gate.md
-│   │   ├── output-contract.md
-│   │   ├── edge-cases.md
-│   │   └── domain-conventions.md
-│   ├── executor/                    ← Execution specs (loaded during EXECUTING)
-│   │   ├── CORE.md
-│   │   ├── error-recovery.md
-│   │   ├── tool-playbooks.md
-│   │   └── PROGRESS.md
-│   ├── work-items/                  ← Active and queued Work Items
-│   ├── inbox/                       ← Your notes to the agent
-│   ├── ledger/                      ← Immutable audit trail
-│   └── templates/                   ← WI, human task, retrospective templates
-├── AGENTS.md
+│   └── server.ts
+├── test/
+│   ├── middleware/
+│   │   └── rate-limiter.test.ts      ← New test suite
+│   └── tasks.test.ts
+├── .kramak/                          ← Kramak runtime state
+│   ├── ROUTER.md
+│   ├── state.json                    ← Active state & metrics
+│   ├── work-items/
+│   │   └── WI-001.json               ← Sealed Work Item specification
+│   ├── inbox/                        ← Processed inbox
+│   └── ledger/                       ← Audit trail
+├── AGENTS.md                         ← Project context + Kramak hook
 ├── package.json
-├── tsconfig.json
-└── README.md
+└── tsconfig.json
 ```
 
-## Step 4: The Loop Begins
-
-From here, the agent cycles autonomously through the 8-state FSM:
-
-```
-BOOTSTRAP → PLANNING → DISPATCH → EXECUTING → AUDITING → COMPLETE
-                ↑                                  │
-                └──────── (retry on failure) ───────┘
-```
-
-1. **PLANNING** — Assesses the project, runs PERCEIVE → REASON → DECIDE, writes Work Items
-2. **DISPATCH** — Routes WIs (sequential or parallel via git worktrees)
-3. **EXECUTING** — Codes, verifies, commits per WI scope (3-Tier Scope Check enforced)
-4. **AUDITING** — Reviews the batch, fixes issues, loops back or completes
-5. **WAITING** — Blocks on human input when needed (reachable from any active state)
-
-### Communicate with the Agent
-
-Drop notes in `.kramak/inbox/` at any time:
-
-```markdown
-<!-- .kramak/inbox/bug-api-500.md -->
-### Bug: API returns 500 on empty input
-**Type:** bug
-**Priority:** critical
-The /api/search endpoint crashes when query is empty string.
-```
-
-The planner picks this up at the next ORIENT step (INBOX is checked first, every session).
-
-## Tips
-
-- **Use a strong reasoning model for planning** and a fast/precise model for execution — Kramak's Capability Gate routes by capability tier, not model name.
-- **Check `state.json`** to see the current phase and what the agent plans to do next.
-- **Don't touch `.kramak/ledger/`** — it's an immutable, append-only audit trail.
-- **The agent self-recovers** — the Circuit Breaker catches loops, the error-recovery decision tree handles failures, and WAITING/ESCALATED states ensure human involvement when needed.
+Whenever you want to build the next feature, simply drop a note into `.kramak/inbox/` and say `"Start"`.
