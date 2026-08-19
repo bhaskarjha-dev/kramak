@@ -1,11 +1,18 @@
 {
-  "$schema": "../../.kramak/spec/state.schema.json",
-  "version": "1.0.0",
+  "$schema": "../.kramak/schemas/state.schema.json",
+  "version": "1.1.0",
   "phase": "planning",
   "nextAction": "Start new session with strong reasoning capability and say Start.",
   "productPhase": "",
   "currentBranch": "main",
   "batchNumber": 0,
+  "concurrency": {
+    "budget": 1,
+    "strategy": "sequential"
+  },
+  "wal": null,
+  "capabilityGate": null,
+  "escalation": null,
   "queue": [],
   "active": null,
   "completed": [],

@@ -1,5 +1,46 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "WorkItemStateSchema",
-  "description": "Kramak v1.1 — Work Item State Shard Schema. Content populated in Phase 3."
+  "title": "KramakWorkItemState",
+  "description": "Tracks the lifecycle state of a single work item shard (used for parallel execution)",
+  "type": "object",
+  "required": [
+    "work_item_id",
+    "state_hash"
+  ],
+  "properties": {
+    "work_item_id": {
+      "type": "string",
+      "pattern": "^WI-[0-9]{3}$",
+      "description": "Identifier of the work item shard (e.g. WI-001)"
+    },
+    "worktree_path": {
+      "type": ["string", "null"],
+      "description": "Filesystem path to isolated git worktree if executed in parallel, or null"
+    },
+    "lock": {
+      "type": ["object", "null"],
+      "properties": {
+        "holder": {
+          "type": "string",
+          "description": "Identifier of the worker agent holding the execution lock"
+        },
+        "acquired_at": {
+          "type": "string",
+          "description": "ISO 8601 timestamp when the shard lock was acquired"
+        }
+      },
+      "required": ["holder", "acquired_at"],
+      "description": "Execution lock preventing concurrent double-execution of the shard"
+    },
+    "state_hash": {
+      "type": "string",
+      "description": "State hash for oscillation detection by circuit breaker"
+    },
+    "merge_status": {
+      "type": ["string", "null"],
+      "enum": ["pending", "queued", "merged", "conflict", null],
+      "description": "Status of work item branch in the serialized merge queue"
+    }
+  },
+  "additionalProperties": false
 }

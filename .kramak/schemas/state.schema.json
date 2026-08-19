@@ -1,5 +1,383 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "StateSchema",
-  "description": "Kramak v1.1 — Master State Schema. Content populated in Phase 3."
+  "title": "KramakState",
+  "description": "Schema for Kramak autonomous development pipeline state.json",
+  "type": "object",
+  "required": [
+    "version",
+    "phase",
+    "nextAction",
+    "currentBranch",
+    "batchNumber",
+    "queue",
+    "metrics"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON schema reference URI"
+    },
+    "version": {
+      "type": "string",
+      "description": "Kramak specification version (SemVer format, e.g. 1.1.0)"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "planning",
+        "dispatch",
+        "executing",
+        "auditing",
+        "merge_queue",
+        "waiting",
+        "escalated",
+        "complete"
+      ],
+      "description": "Current operational phase of the pipeline"
+    },
+    "nextAction": {
+      "type": "string",
+      "description": "Single human/agent-readable sentence instructing the next session"
+    },
+    "productPhase": {
+      "type": "string",
+      "enum": ["BUILD", "SHIP", "ITERATE", "GROWTH", ""],
+      "description": "Strategic product lifecycle stage"
+    },
+    "currentBranch": {
+      "type": "string",
+      "description": "Active git branch for pipeline work"
+    },
+    "batchNumber": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current batch iteration index"
+    },
+    "concurrency": {
+      "type": ["object", "null"],
+      "properties": {
+        "budget": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Maximum parallel execution budget (default 1, minimum 1)"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["sequential", "worktree"],
+          "default": "sequential",
+          "description": "Concurrency execution strategy"
+        }
+      },
+      "description": "Concurrency execution configuration"
+    },
+    "wal": {
+      "type": ["object", "null"],
+      "properties": {
+        "pending_mutation": {
+          "type": ["object", "null"],
+          "description": "Pending state mutation object before atomic flush/rename"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO 8601 timestamp of WAL mutation entry"
+        }
+      },
+      "description": "Write-Ahead Log record for crash recovery and state reconciliation"
+    },
+    "capabilityGate": {
+      "type": ["object", "null"],
+      "properties": {
+        "stage1": {
+          "type": ["object", "null"],
+          "properties": {
+            "reasoning": {
+              "type": "string",
+              "enum": ["strong", "moderate", "limited"],
+              "description": "Self-reported reasoning capability level"
+            },
+            "contextWindow": {
+              "type": "string",
+              "enum": ["large", "medium", "small"],
+              "description": "Self-reported context window tier"
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of available tool capabilities"
+            }
+          },
+          "description": "Advisory Stage 1 self-assessment results"
+        },
+        "stage2": {
+          "type": ["object", "null"],
+          "properties": {
+            "ct1": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "CT-1 DAG Scheduling score (0 to 1)"
+            },
+            "ct2": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "CT-2 Plan-Bug Detection score (0 to 1)"
+            },
+            "ct3": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "CT-3 State Tracking score (0 to 1)"
+            },
+            "ct4": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "CT-4 Instruction Hierarchy score (0 to 1)"
+            },
+            "ct5": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "CT-5 Cross-Paraphrase Consistency score (0 to 1)"
+            },
+            "composite": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Weighted composite score (0 to 1)"
+            },
+            "passed": {
+              "type": "boolean",
+              "description": "Whether candidate passed the Canary Battery threshold"
+            }
+          },
+          "description": "Binding Stage 2 procedural Canary Challenge Battery results"
+        }
+      },
+      "description": "Model-agnostic capability gate assessment results"
+    },
+    "escalation": {
+      "type": ["object", "null"],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "description": "Diagnostic reason for pipeline escalation"
+        },
+        "failedBatches": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of consecutive failed batches triggering escalation"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO 8601 timestamp when escalation occurred"
+        }
+      },
+      "description": "Escalation context when pipeline phase is escalated"
+    },
+    "queue": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ordered array of Work Item IDs waiting in queue/"
+    },
+    "active": {
+      "type": ["string", "null"],
+      "description": "Work Item ID currently in progress in active/, or null if idle"
+    },
+    "completed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "completedAt"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "completedAt": {
+            "type": "string"
+          },
+          "verificationPassed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Audit trail of completed work items in this batch"
+    },
+    "failed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "code-drift",
+              "verification-fail",
+              "scope-exceeded",
+              "dependency-missing",
+              "ambiguous-spec",
+              "tool-error"
+            ]
+          },
+          "failedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Record of failed work items in this batch"
+    },
+    "humanTasksPending": {
+      "type": "boolean",
+      "description": "Flag indicating if tasks in HUMAN-TASKS.md block progress"
+    },
+    "deploymentBlocked": {
+      "type": "boolean",
+      "description": "True if deployment is blocked waiting on human actions"
+    },
+    "fallbackPhase": {
+      "type": "string",
+      "enum": ["BUILD", "SHIP", "ITERATE", "GROWTH", ""],
+      "description": "Temporary fallback phase used while primary phase is blocked"
+    },
+    "toolchain": {
+      "type": "object",
+      "properties": {
+        "packageManager": {
+          "type": "string"
+        },
+        "buildCommand": {
+          "type": "string"
+        },
+        "checkCommands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "devCommand": {
+          "type": "string"
+        },
+        "detected": {
+          "type": "boolean"
+        }
+      },
+      "description": "Auto-detected build and verification toolchain"
+    },
+    "projectStructure": {
+      "type": ["object", "null"],
+      "properties": {
+        "roadmap": {
+          "type": ["string", "null"]
+        },
+        "productSpec": {
+          "type": ["string", "null"]
+        },
+        "architecture": {
+          "type": ["string", "null"]
+        },
+        "conventions": {
+          "type": ["string", "null"]
+        },
+        "readme": {
+          "type": ["string", "null"]
+        },
+        "discovered": {
+          "type": "boolean"
+        }
+      },
+      "description": "Discovered paths to key project documentation files"
+    },
+    "lastVisionAssessment": {
+      "type": ["object", "null"],
+      "properties": {
+        "batchNumber": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "findings": {
+          "type": "string"
+        }
+      },
+      "description": "Results from the most recent 5-lens strategic vision assessment"
+    },
+    "lastAudit": {
+      "type": ["object", "null"],
+      "properties": {
+        "batchNumber": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["pass", "pass-with-fixes", "fail"]
+        },
+        "fixesApplied": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "strategicConcerns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Results from the most recent executor technical audit"
+    },
+    "lastSession": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "description": "Summary of the preceding agent session"
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["totalCompleted", "totalFailed"],
+      "properties": {
+        "totalCompleted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "totalFailed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consecutiveFailures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "circuitBreakerTripped": {
+          "type": "boolean"
+        }
+      },
+      "description": "Cumulative pipeline performance metrics"
+    }
+  },
+  "additionalProperties": false
 }
