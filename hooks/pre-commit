@@ -1,77 +1,8 @@
 #!/bin/sh
-# Kramak pre-commit hook
-# Prevents commits that fail build/check commands or have invalid pipeline state.
-# Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Kramak pre-commit hook (Deprecated)
+# In Kramak v1.1 (D-009), git hooks management has moved to kramak-cli.
 
-STATE_FILE=".agents/pipeline/state.json"
-COMMANDS=""
+echo "Kramak pre-commit hook has moved to kramak-cli."
+echo "Install: npx kramak-cli hooks install"
 
-# 1. Validate pipeline state integrity if validator script exists and node is installed
-if [ -f "scripts/validate.js" ] && command -v node > /dev/null 2>&1; then
-  if [ -f "$STATE_FILE" ]; then
-    echo "🔍 Validating Kramak pipeline state..."
-    if ! node scripts/validate.js > /dev/null 2>&1; then
-      echo "❌ Kramak pipeline validation failed. Run 'node scripts/validate.js' for details."
-      exit 1
-    fi
-  fi
-fi
-
-# 2. Read check commands from state.json if it exists
-if [ -f "$STATE_FILE" ]; then
-  # Try to extract check commands (requires jq or python or node)
-  if command -v node > /dev/null 2>&1; then
-    COMMANDS=$(node -e "try { const s = require('./$STATE_FILE'); (s.toolchain?.checkCommands || []).forEach(c => console.log(c)); } catch(e){}" 2>/dev/null)
-  elif command -v jq > /dev/null 2>&1; then
-    COMMANDS=$(jq -r '.toolchain.checkCommands[]' "$STATE_FILE" 2>/dev/null)
-  elif command -v python3 > /dev/null 2>&1; then
-    COMMANDS=$(python3 -c "import json; [print(c) for c in (json.load(open('$STATE_FILE')).get('toolchain') or {}).get('checkCommands',[])]" 2>/dev/null)
-  fi
-fi
-
-# Fallback: try common check commands
-if [ -z "$COMMANDS" ]; then
-  if [ -f "tsconfig.json" ]; then
-    if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
-      COMMANDS="bun x tsc --noEmit"
-    elif [ -f "pnpm-lock.yaml" ]; then
-      COMMANDS="pnpm tsc --noEmit"
-    elif [ -f "package-lock.json" ]; then
-      COMMANDS="npx tsc --noEmit"
-    elif [ -f "yarn.lock" ]; then
-      COMMANDS="yarn tsc --noEmit"
-    fi
-  elif [ -f "Cargo.toml" ]; then
-    COMMANDS="cargo check"
-  elif [ -f "go.mod" ]; then
-    COMMANDS="go vet ./..."
-  elif [ -f "uv.lock" ]; then
-    COMMANDS="uv run ruff check ."
-  fi
-fi
-
-# Run each check command
-# NOTE: We use a temp file instead of piping to avoid the subshell exit bug
-# where `exit 1` inside a pipeline only exits the subshell, not the hook.
-if [ -n "$COMMANDS" ]; then
-  TMPFILE=$(mktemp)
-  echo "$COMMANDS" > "$TMPFILE"
-  CHECK_COUNT=0
-  while IFS= read -r cmd; do
-    if [ -n "$cmd" ]; then
-      CHECK_COUNT=$((CHECK_COUNT + 1))
-      echo "🔍 Running ($CHECK_COUNT): $cmd"
-      if ! eval "$cmd"; then
-        echo "❌ Pre-commit check failed: $cmd"
-        echo "Fix the errors before committing."
-        rm -f "$TMPFILE"
-        exit 1
-      fi
-    fi
-  done < "$TMPFILE"
-  rm -f "$TMPFILE"
-  echo "✅ All pre-commit checks passed ($CHECK_COUNT checks executed)."
-else
-  echo "⚠️  [WARN] No check commands configured in state.json or auto-detected."
-  echo "ℹ️  Tip: Add verification commands to 'toolchain.checkCommands' in $STATE_FILE."
-fi
+exit 0

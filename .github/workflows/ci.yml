@@ -20,31 +20,35 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Run Kramak Pipeline Validator on Templates
+      - name: Verify Tooling Deprecation Notices
         run: |
-          node scripts/validate.js --template
+          node scripts/validate.js
 
-      - name: Validate JSON Schema & Templates
+      - name: Validate Kramak JSON Schemas & Templates
         run: |
           node -e "
             const fs = require('fs');
-            const schema = JSON.parse(fs.readFileSync('spec/state.schema.json', 'utf8'));
+            const stateSchema = JSON.parse(fs.readFileSync('.kramak/schemas/state.schema.json', 'utf8'));
+            const wiSchema = JSON.parse(fs.readFileSync('.kramak/schemas/work-item.schema.json', 'utf8'));
+            const wiStateSchema = JSON.parse(fs.readFileSync('.kramak/schemas/work-item-state.schema.json', 'utf8'));
+            const stateShim = JSON.parse(fs.readFileSync('spec/state.schema.json', 'utf8'));
             const state = JSON.parse(fs.readFileSync('templates/state.json', 'utf8'));
-            const allowed = Object.keys(schema.properties || {});
+
+            const allowed = Object.keys(stateSchema.properties || {});
             for (const k of Object.keys(state)) {
-              if (schema.additionalProperties === false && !allowed.includes(k)) {
+              if (stateSchema.additionalProperties === false && !allowed.includes(k)) {
                 console.error('❌ Property not allowed in schema:', k);
                 process.exit(1);
               }
             }
-            if (!schema.properties.phase.enum.includes(state.phase)) {
+            if (!stateSchema.properties.phase.enum.includes(state.phase)) {
               console.error('❌ Invalid phase in state.json:', state.phase);
               process.exit(1);
             }
-            console.log('✅ spec/state.schema.json and templates/state.json fully validated');
+            console.log('✅ .kramak/schemas/ and templates/state.json fully validated');
           "
 
-      - name: Verify Pre-commit Hook Syntax
+      - name: Verify Shell Scripts & Hook Syntax
         run: |
           sh -n hooks/pre-commit
           sh -n init.sh

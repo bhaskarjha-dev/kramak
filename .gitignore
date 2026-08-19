@@ -9,13 +9,22 @@ Desktop.ini
 *.swp
 *.swo
 
-# Node (if CLI is added later)
+# Node
 node_modules/
 dist/
 *.tgz
 
-# Pipeline workspace files (when Kramak is used as a submodule)
-# These are created in the USER's project, not in this repo
+# Kramak pipeline workspace (generated, not committed)
+.kramak/work-items/
+.kramak/inbox/
+.kramak/executor/PROGRESS.md
+.kramak/ledger/self-modifications.jsonl
+.kramak/worktrees/
+.kramak/state.json
+.kramak/state.json.tmp
+.kramak/state.json.wal
+
+# Legacy pipeline workspace (v1.0 backward compatibility)
 .agents/pipeline/state.json
 .agents/pipeline/queue/
 .agents/pipeline/active/
@@ -23,7 +32,6 @@ dist/
 .agents/pipeline/failed/
 .agents/pipeline/plans/
 .agents/pipeline/PLANNING-LOG.md
-
 
 # temp
 temp/

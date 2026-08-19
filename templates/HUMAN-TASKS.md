@@ -1,24 +1,20 @@
 # Human Tasks
 
-> Tasks that require human action (API key procurement, account signups, business decisions, etc.).
-> The pipeline will NOT block on these — it continues with non-dependent work items.
+> **⚠️ This template has moved.** In Kramak v1.1, the canonical human tasks template is located at:
+>
+> [.kramak/templates/HUMAN-TASKS.template.md](../.kramak/templates/HUMAN-TASKS.template.md)
+>
+> **Protocol:** Tracks human action items requiring developer or operator intervention.  
+> **TTL Policy:** Default TTL for blocking tasks is **48h**; non-blocking tasks is **1 week**.  
+> If TTL expires without resolution: auto-escalate (`phase: "escalated"`) or proceed with best judgment + documentation.
 
 ---
 
-## Pending
+## Blocking (must resolve before pipeline continues)
+- [ ] [TASK-001] Description of blocking task — blocking WI-XXX — TTL: 48h — created: [YYYY-MM-DD]
 
-<!-- Example:
-### HT-001: Obtain database connection string
-- **What:** Sign up at https://neon.tech, create a project, copy the connection string
-- **Why:** Database access needed for all backend features
-- **How:** 1) Go to neon.tech → Sign up → Create project → Copy DATABASE_URL
-- **Urgency:** blocking
-- **Blocked WIs:** WI-101, WI-102
-- **Status:** ⏳ pending
--->
+## Non-Blocking (can proceed, but track for follow-up)
+- [ ] [TASK-002] Description of non-blocking task — affects WI-XXX (low priority) — TTL: 1w — created: [YYYY-MM-DD]
 
----
-
-## Completed
-
-<!-- Move completed tasks here with the date and result -->
+## Resolved
+- [x] [TASK-000] Initial setup task — resolved on [YYYY-MM-DD]
