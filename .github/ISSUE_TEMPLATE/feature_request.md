@@ -16,7 +16,7 @@ assignees: ''
 2. **Is this useful for ALL types of work?**
    (Features, fixes, refactors, tests, security, docs, performance, infrastructure)
 
-3. **Scenario test Ã¢â‚¬â€ would this help in all 3?**
+3. **Scenario test — would this help in all 3?**
    - [ ] A backend data model migration batch
    - [ ] A frontend component feature batch
    - [ ] A security hardening batch

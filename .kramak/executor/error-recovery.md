@@ -192,6 +192,7 @@ Each recovery path is a step-by-step executable procedure. Execute each step in 
        - Set `state.active: null`, update `state.json` via WAL, and resume execution.
      - If the missing dependency requires architectural changes:
        - Mark current WI as `failed` with category `dependency-missing`.
+       - Clear remaining unexecuted items from `state.queue` (`state.queue: []`) to prevent queue-resumption deadlocks.
        - Update `state.json` via WAL and transition `state.phase: "planning"`.
 
 ---

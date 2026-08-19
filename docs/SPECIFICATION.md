@@ -1,4 +1,4 @@
-# Kramak (à¤•à¥à¤°à¤®à¤•) â€” Formal Specification & State Machine
+# Kramak (क्रमक) — Formal Specification & State Machine
 
 > **Spec Version:** `1.1.0`  
 > **Status:** Standard Reference Specification  
@@ -60,6 +60,7 @@ stateDiagram-v2
     AUDITING --> MERGE_QUEUE: Parallel Work Item passes audit
     
     MERGE_QUEUE --> COMPLETE: All queued worktrees merged & verified
+    MERGE_QUEUE --> WAITING: Merge conflict encountered
     MERGE_QUEUE --> PLANNING: Merge conflict requires re-planning
     
     WAITING --> PLANNING: Human task marked done OR INBOX input received
@@ -74,17 +75,19 @@ stateDiagram-v2
 
 | Transition Edge | Guard Condition / Validation Check | Responsible Role | Invariants Enforced |
 |---|---|---|---|
-| `BOOTSTRAP â†’ PLANNING` | `state.json` validates against `state.schema.json`; toolchain detected; crash recovery clean. | Orchestrator | Schema validity, clean working tree |
-| `PLANNING â†’ EXECUTING` | `concurrency.budget == 1`; WIs verified with Grounded Verification; Canary score $\ge 0.80$. | Planner | Grounded line citations via grep, declared file list |
-| `PLANNING â†’ DISPATCH` | `concurrency.budget > 1`; Tier 2 check confirms zero file-scope overlap across concurrent WIs. | Planner | DAG acyclicity, mutual exclusion of file globs |
-| `DISPATCH â†’ EXECUTING` | Git worktree provisioned at `.kramak/worktrees/<id>`; shard at `.kramak/work-items/<id>.json`. | Subagent Executor | Filesystem isolation, single-writer lock |
-| `EXECUTING â†’ AUDITING` | WI test suite passes; Tier 1 Hard Scope Check passes against worktree HEAD; commit recorded. | Executor | Zero uncommitted changes, scope compliance |
-| `AUDITING â†’ EXECUTING` | Build/lint failure; WI retry count $< 3$ (or trajectory reducing errors). | Auditor | Bounded retry loop, error trajectory tracking |
-| `AUDITING â†’ PLANNING` | Fundamental specification bug (`code-drift`, `ambiguous-spec`); retry budget exhausted. | Auditor | Diagnostic recorded, circuit breaker incremented |
-| `AUDITING â†’ MERGE_QUEUE`| Tier 3 Merge Re-verification passes against tip of integration branch. | Auditor | No intervening merge collision, clean diff |
-| `MERGE_QUEUE â†’ COMPLETE`| All queued merges serialized; full test suite passes on integration branch. | Orchestrator | Atomic linear commit history, zero regression |
-| `ANY â†’ WAITING` | `HUMAN-TASKS.md` blocking item logged, or Canary score $< 0.60$, or Anti-Bias G6 gate active. | Any Active Role | Checkpoint written, execution paused |
-| `ANY â†’ ESCALATED` | Consecutive batch failures $\ge 3$, or circular dependency, or state-hash oscillation detected. | Progress Breaker | Hard stop to prevent infinite token burn |
+| `BOOTSTRAP → PLANNING` | `state.json` validates against `state.schema.json`; toolchain detected; crash recovery clean. | Orchestrator | Schema validity, clean working tree |
+| `PLANNING → EXECUTING` | `concurrency.budget == 1`; WIs verified with Grounded Verification; Canary score $\ge 0.80$. | Planner | Grounded line citations via grep, declared file list |
+| `PLANNING → DISPATCH` | `concurrency.budget > 1`; Tier 2 check confirms zero file-scope overlap across concurrent WIs. | Planner | DAG acyclicity, mutual exclusion of file globs |
+| `DISPATCH → EXECUTING` | Git worktree provisioned at `.kramak/worktrees/<id>`; shard at `.kramak/work-items/<id>.json`. | Subagent Executor | Filesystem isolation, single-writer lock |
+| `EXECUTING → AUDITING` | WI test suite passes; Tier 1 Hard Scope Check passes against worktree HEAD; commit recorded. | Executor | Zero uncommitted changes, scope compliance |
+| `AUDITING → EXECUTING` | Build/lint failure; WI retry count $< 3$ (or trajectory reducing errors). | Auditor | Bounded retry loop, error trajectory tracking |
+| `AUDITING → PLANNING` | Fundamental specification bug (`code-drift`, `ambiguous-spec`); retry budget exhausted. | Auditor | Diagnostic recorded, circuit breaker incremented |
+| `AUDITING → MERGE_QUEUE`| Tier 3 Merge Re-verification passes against tip of integration branch. | Auditor | No intervening merge collision, clean diff |
+| `MERGE_QUEUE → COMPLETE`| All queued merges serialized; full test suite passes on integration branch. | Orchestrator | Atomic linear commit history, zero regression |
+| `MERGE_QUEUE → WAITING` | Merge conflict encountered; details recorded in HUMAN-TASKS.md. | Orchestrator | Abort merge, isolate conflicting worktree |
+| `MERGE_QUEUE → PLANNING` | Merge conflict requires architectural re-planning after operator review. | Planner | Clean working tree, drain merge queue |
+| `ANY → WAITING` | `HUMAN-TASKS.md` blocking item logged, or Canary score $< 0.60$, or Anti-Bias G6 gate active. | Any Active Role | Checkpoint written, execution paused |
+| `ANY → ESCALATED` | Consecutive batch failures $\ge 3$, or circular dependency, or state-hash oscillation detected. | Progress Breaker | Hard stop to prevent infinite token burn |
 
 ---
 
@@ -94,36 +97,36 @@ Every compliant Kramak workspace MUST adhere to the following directory topology
 
 ```
 .kramak/
-â”œâ”€â”€ ROUTER.md                     # Master invariant router (â‰¤ 1.8 KB Â· always loaded)
-â”œâ”€â”€ AGENTS.md                     # Universal AAIF context bridge
-â”œâ”€â”€ SKILL.md                      # Universal Agent Skills standard
-â”œâ”€â”€ state.json                    # Master execution state (WAL atomic write)
-â”œâ”€â”€ schemas/                      # JSON Schema Draft 2020-12 definitions
-â”‚   â”œâ”€â”€ state.schema.json         # Schema for state.json
-â”‚   â”œâ”€â”€ work-item.schema.json     # Schema for Work Items
-â”‚   â””â”€â”€ work-item-state.schema.json # Schema for single-writer shards
-â”œâ”€â”€ planner/                      # Planning specifications & modules
-â”‚   â”œâ”€â”€ CORE.md                   # Canonical PERCEIVE âž” REASON âž” DECIDE workflow
-â”‚   â”œâ”€â”€ edge-cases.md             # On-demand edge case rules (>10 files, migrations)
-â”‚   â”œâ”€â”€ domain-conventions.md     # On-demand polyglot and monorepo conventions
-â”‚   â””â”€â”€ output-contract.md        # On-demand Work Item authoring contract
-â”œâ”€â”€ executor/                     # Execution specifications & modules
-â”‚   â”œâ”€â”€ CORE.md                   # Canonical execution loop & verification checklists
-â”‚   â”œâ”€â”€ error-recovery.md         # On-demand diagnostic & rollback playbooks
-â”‚   â”œâ”€â”€ tool-playbooks.md         # On-demand git, patch, and build tool patterns
-â”‚   â””â”€â”€ PROGRESS.md               # Dynamic session scratchpad
-â”œâ”€â”€ work-items/                   # Active and queued Work Item specifications
-â”‚   â”œâ”€â”€ WI-001.json               # (or WI-001.md with frontmatter)
-â”‚   â””â”€â”€ .gitkeep
-â”œâ”€â”€ inbox/                        # Mid-project user inputs and bug reports
-â”‚   â””â”€â”€ .gitkeep
-â”œâ”€â”€ ledger/                       # Immutable self-modification audit trail
-â”‚   â”œâ”€â”€ FORMAT.md                 # Ledger record format definition
-â”‚   â””â”€â”€ self-modifications.jsonl  # Append-only audit log
-â””â”€â”€ templates/                    # Reference templates
-    â”œâ”€â”€ WORK-ITEM.template.md
-    â”œâ”€â”€ HUMAN-TASKS.template.md
-    â””â”€â”€ RETROSPECTIVE.template.md
+├── ROUTER.md                     # Master invariant router (≤ 1.8 KB · always loaded)
+├── AGENTS.md                     # Universal AAIF context bridge
+├── SKILL.md                      # Universal Agent Skills standard
+├── state.json                    # Master execution state (WAL atomic write)
+├── schemas/                      # JSON Schema Draft 2020-12 definitions
+│   ├── state.schema.json         # Schema for state.json
+│   ├── work-item.schema.json     # Schema for Work Items
+│   └── work-item-state.schema.json # Schema for single-writer shards
+├── planner/                      # Planning specifications & modules
+│   ├── CORE.md                   # Canonical PERCEIVE ➔ REASON ➔ DECIDE workflow
+│   ├── edge-cases.md             # On-demand edge case rules (>10 files, migrations)
+│   ├── domain-conventions.md     # On-demand polyglot and monorepo conventions
+│   └── output-contract.md        # On-demand Work Item authoring contract
+├── executor/                     # Execution specifications & modules
+│   ├── CORE.md                   # Canonical execution loop & verification checklists
+│   ├── error-recovery.md         # On-demand diagnostic & rollback playbooks
+│   ├── tool-playbooks.md         # On-demand git, patch, and build tool patterns
+│   └── PROGRESS.md               # Dynamic session scratchpad
+├── work-items/                   # Active and queued Work Item specifications
+│   ├── WI-001.json               # (or WI-001.md with frontmatter)
+│   └── .gitkeep
+├── inbox/                        # Mid-project user inputs and bug reports
+│   └── .gitkeep
+├── ledger/                       # Immutable self-modification audit trail
+│   ├── FORMAT.md                 # Ledger record format definition
+│   └── self-modifications.jsonl  # Append-only audit log
+└── templates/                    # Reference templates
+    ├── WORK-ITEM.template.md
+    ├── HUMAN-TASKS.template.md
+    └── RETROSPECTIVE.template.md
 ```
 
 ### 3.1 Filesystem Invariants
@@ -138,14 +141,14 @@ Every compliant Kramak workspace MUST adhere to the following directory topology
 
 The following five invariants are globally binding across all states and detail tiers. They CANNOT be bypassed or scaled away:
 
-1. **Invariant #1 â€” Grounded Verification:** The agent MUST NOT propose modifications to existing code without first verifying line references and symbol definitions using `grep` or file read tools against the active working tree.
-2. **Invariant #2 â€” 3-Tier Hard Scope Check:**
+1. **Invariant #1 — Grounded Verification:** The agent MUST NOT propose modifications to existing code without first verifying line references and symbol definitions using `grep` or file read tools against the active working tree.
+2. **Invariant #2 — 3-Tier Hard Scope Check:**
    - *Tier 1 (Worktree Diff):* `git diff --name-only` MUST match declared `files_targeted`.
    - *Tier 2 (Pre-Flight Concurrency):* Static verification of zero file glob overlap across concurrent Work Items.
    - *Tier 3 (Merge-Time Re-Verification):* Post-merge re-validation against integration branch HEAD.
-3. **Invariant #3 â€” Deterministic State Reconciliation:** The ground truth of execution state is `.kramak/state.json`. On session start or recovery, the agent MUST reconcile `state.json` against `git status` before performing any actions.
-4. **Invariant #4 â€” Progress-Aware Circuit Breaker:** If an audit-fix-audit loop repeats 3 times without progress or produces identical error state hashes on successive tries, the agent MUST trip the breaker and transition to `ESCALATED`.
-5. **Invariant #5 â€” Anti-Bias Guard (G1â€“G6):** Self-modifications to `.kramak/` specifications MUST clear the 6-step governance framework (history diff, rollback cross-check, dual-model critique, immutable ledger, cooldown, human gate).
+3. **Invariant #3 — Deterministic State Reconciliation:** The ground truth of execution state is `.kramak/state.json`. On session start or recovery, the agent MUST reconcile `state.json` against `git status` before performing any actions.
+4. **Invariant #4 — Progress-Aware Circuit Breaker:** If an audit-fix-audit loop repeats 3 times without progress or produces identical error state hashes on successive tries, the agent MUST trip the breaker and transition to `ESCALATED`.
+5. **Invariant #5 — Anti-Bias Guard (G1–G6):** Self-modifications to `.kramak/` specifications MUST clear the 6-step governance framework (history diff, rollback cross-check, dual-model critique, immutable ledger, cooldown, human gate).
 
 ---
 
@@ -156,16 +159,16 @@ Work Items declare a detail tier determining the depth of planning documentation
 ```mermaid
 graph TD
     WI[Work Item Sizing] --> Risk{Risk & Scope Classification}
-    Risk -->|ðŸ”´ High Risk / Architectural| Guided[ðŸ”´ Guided Tier]
-    Risk -->|ðŸŸ¡ Standard Feature / Refactor| Directed[ðŸŸ¡ Directed Tier]
-    Risk -->|ðŸŸ¢ Low Risk / Routine Fix / Canary| Outcome[ðŸŸ¢ Outcome Tier]
+    Risk -->|🔴 High Risk / Architectural| Guided[🔴 Guided Tier]
+    Risk -->|🟡 Standard Feature / Refactor| Directed[🟡 Directed Tier]
+    Risk -->|🟢 Low Risk / Routine Fix / Canary| Outcome[🟢 Outcome Tier]
     
-    Guided --> G1[Full PERCEIVE âž” REASON âž” DECIDE<br/>Exact BEFORE/AFTER grep quotes<br/>Exhaustive edge-case design]
+    Guided --> G1[Full PERCEIVE ➔ REASON ➔ DECIDE<br/>Exact BEFORE/AFTER grep quotes<br/>Exhaustive edge-case design]
     Directed --> D1[Target file declarations<br/>Functional acceptance criteria<br/>Specific verification command]
     Outcome --> O1[Concise goal specification<br/>Acceptance criteria<br/>Full implementation autonomy]
 ```
 
-*Note: In ðŸŸ¡ Directed and ðŸŸ¢ Outcome tiers, procedural elaboration is reduced, but all Section 4 Non-Negotiable Invariants remain 100% active.*
+*Note: In 🟡 Directed and 🟢 Outcome tiers, procedural elaboration is reduced, but all Section 4 Non-Negotiable Invariants remain 100% active.*
 
 ---
 
@@ -198,5 +201,5 @@ When an audit fails, the issue is classified into one of 6 standardized categori
 | `verification-fail` | Algorithm / Logic | Task Verification | Execute ReAct loop; retry up to 3 times; track error trajectory. |
 | `scope-exceeded` | Checking | Alignment | Revert unlisted file modifications; create follow-up Work Item. |
 | `dependency-missing`| Relationship | Alignment | Topological re-sort; re-queue after prerequisite reaches `COMPLETE`. |
-| `ambiguous-spec` | Documentation | Specification | Route to `PLANNING` for spec detail elevation (upgrade ðŸŸ¢/ðŸŸ¡ to ðŸ”´). |
+| `ambiguous-spec` | Documentation | Specification | Route to `PLANNING` for spec detail elevation (upgrade 🟢/🟡 to 🔴). |
 | `tool-error` | Environment | System Design | Apply exponential backoff; retry tool call; verify environment. |

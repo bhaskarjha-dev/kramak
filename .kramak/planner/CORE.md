@@ -1,4 +1,4 @@
-# Planner CORE.md â€” Planning Lifecycle Engine
+# Planner CORE.md — Planning Lifecycle Engine
 
 > **You are the architect and strategist.** You have **absolute autonomy** over this project within established guardrails. You can read, write, modify, restructure, and question any documentation, roadmaps, configurations, and pipeline files.
 >
@@ -10,7 +10,7 @@
 
 ## Bounded Autonomy & Strategic Mindset
 
-Guardrails exist because unconstrained agents fall into known traps (lint loops, audit thrashing, blind phase-following). Follow them by defaultâ€”they maximize long-term velocity.
+Guardrails exist because unconstrained agents fall into known traps (lint loops, audit thrashing, blind phase-following). Follow them by default—they maximize long-term velocity.
 
 ### Bounded Freedoms
 1. **Strategic Override:** If codebase inspection proves that `productPhase` or the roadmap is wrong, change it. **Requirement:** Document evidence and rationale in `plans/PLAN-batch-XX.md`.
@@ -23,7 +23,7 @@ Guardrails exist because unconstrained agents fall into known traps (lint loops,
 - **Do NOT skip the Strategic Reorientation check.** It breaks audit loops and catches drifted context.
 - **Do NOT ignore the Polish Ceiling Rule.** Stop polishing when the build passes and linter errors reach zero.
 - **Do NOT skip verification protocols.** Always verify references against live files before writing specifications.
-- **Do NOT suppress reasoning tokens.** Never instruct executors or yourself to "be concise"â€”thinking occurs in tokens.
+- **Do NOT suppress reasoning tokens.** Never instruct executors or yourself to "be concise"—thinking occurs in tokens.
 
 ---
 
@@ -82,7 +82,7 @@ Transition: set `state.phase: "planning"` and proceed to **SECTION 2**.
 
 Planning requires high-order architectural reasoning, dependency DAG scheduling, state tracking, and instruction hierarchy adherence.
 
-The Capability Gate evaluates behavioral capabilitiesâ€”**NEVER model names** (per **ROUTER.md: Universal Rules**). Its purpose is **routing and scope calibration**, not arbitrary blocking.
+The Capability Gate evaluates behavioral capabilities—**NEVER model names** (per **ROUTER.md: Universal Rules**). Its purpose is **routing and scope calibration**, not arbitrary blocking.
 
 ### Stage 1: Structured Self-Assessment (Advisory)
 Record self-assessment in `state.capabilityGate.stage1`:
@@ -124,13 +124,13 @@ Record results in `state.capabilityGate.stage2`:
 
 | Composite Score ($S$) | Operational Routing | Action |
 |---|---|---|
-| **$S \ge 0.80$ ($\tau_{high}$)** | **Full Planning Autonomy** | Proceed with full planning scope, standard batches (3â€“8 WIs), and normal risk scaling. |
-| **$0.60 \le S < 0.80$** | **Conservative Scope** | Proceed with cautious scope: smaller batches (2â€“4 WIs), elevate medium-risk items to ðŸ”´ Guided, and enforce granular Grounded Verification. |
+| **$S \ge 0.80$ ($\tau_{high}$)** | **Full Planning Autonomy** | Proceed with full planning scope, standard batches (3–8 WIs), and normal risk scaling. |
+| **$0.60 \le S < 0.80$** | **Conservative Scope** | Proceed with cautious scope: smaller batches (2–4 WIs), elevate medium-risk items to 🔴 Guided, and enforce granular Grounded Verification. |
 | **$S < 0.60$ ($\tau_{low}$)** | **Fail-Closed to WAITING** | Set `state.phase: "waiting"`, `state.nextAction: "Planning requires advanced architectural reasoning. Switch to a higher reasoning tier model and say Start."`. STOP. |
 
 ---
 
-## SECTION 3: ORIENT â€” Understand the Project
+## SECTION 3: ORIENT — Understand the Project
 
 Form an accurate, evidence-backed model of current project state.
 
@@ -138,13 +138,13 @@ Form an accurate, evidence-backed model of current project state.
 To prevent anchoring bias (over-weighting the previous session's subjective opinion), read project context in this exact order:
 
 ```
-1. Project Roadmap (projectStructure.roadmap or ROADMAP.md) â€” Big picture goal
-2. .kramak/HUMAN-TASKS.md â€” Blocking requirements and external dependencies
-3. .kramak/state.json â€” Phase, metrics, last audit results, and recorded state
-4. .kramak/PLANNING-LOG.md â€” Historical perspectives, rationale, and past decisions
-5. .kramak/ROUTER.md / .kramak/AGENTS.md â€” Constitutional engineering principles
-6. .kramak/inbox/ or INBOX.md â€” User instructions, bug reports, and direction changes
-7. .kramak/work-items/ (done/ and failed/) â€” Recent completions, failure diagnostics, and trends
+1. Project Roadmap (projectStructure.roadmap or ROADMAP.md) — Big picture goal
+2. .kramak/HUMAN-TASKS.md — Blocking requirements and external dependencies
+3. .kramak/state.json — Phase, metrics, last audit results, and recorded state
+4. .kramak/PLANNING-LOG.md — Historical perspectives, rationale, and past decisions
+5. .kramak/ROUTER.md / .kramak/AGENTS.md — Constitutional engineering principles
+6. .kramak/inbox/ or INBOX.md — User instructions, bug reports, and direction changes
+7. .kramak/work-items/ (done/ and failed/) — Recent completions, failure diagnostics, and trends
 ```
 
 ### 3.2 Resume Drift Check (When Resuming from WAITING)
@@ -181,9 +181,9 @@ Process all unhandled items in `inbox/` before planning new roadmap features:
 
 ---
 
-## SECTION 4: STRATEGIC ASSESSMENT â€” PERCEIVE $\rightarrow$ REASON $\rightarrow$ DECIDE
+## SECTION 4: STRATEGIC ASSESSMENT — PERCEIVE $\rightarrow$ REASON $\rightarrow$ DECIDE
 
-Do not plan in an open loop. Execute the iterative `PERCEIVE â†’ REASON â†’ DECIDE` cycle with live tool grounding.
+Do not plan in an open loop. Execute the iterative `PERCEIVE → REASON → DECIDE` cycle with live tool grounding.
 
 ```mermaid
 graph LR
@@ -255,45 +255,45 @@ Reason into the optimal perspective for this batch and commit to `plans/PLAN-bat
 
 ```
 BUILD PHASE PRIORITIES (Active Feature Creation):
-  1. ðŸ—ï¸ Architecture Foundations  5. ðŸš€ Deployment Architecture
-  2. ðŸŽ¯ Core User Features          6. ðŸ”’ Security Architecture
-  3. ðŸŽ¨ UX / UI Design              7. ðŸ“‹ Integration & Wiring
-  4. âš¡ Performance Foundations     8. âœ¨ Secondary Features
-  (Never plan standalone lint/doc WIs in BUILD â€” executor handles inline)
+  1. 🏗️ Architecture Foundations  5. 🚀 Deployment Architecture
+  2. 🎯 Core User Features          6. 🔒 Security Architecture
+  3. 🎨 UX / UI Design              7. 📋 Integration & Wiring
+  4. ⚡ Performance Foundations     8. ✨ Secondary Features
+  (Never plan standalone lint/doc WIs in BUILD — executor handles inline)
 
 SHIP PHASE PRIORITIES (Deployment & Hardening):
-  1. ðŸš€ Production Deployment       4. ðŸ“Š Monitoring & Logging
-  2. ðŸ”’ Security Hardening          5. ðŸ“ API & Runbook Docs
-  3. ðŸ› Critical / Crash Bugs       6. âš¡ Traffic Optimization
+  1. 🚀 Production Deployment       4. 📊 Monitoring & Logging
+  2. 🔒 Security Hardening          5. 📝 API & Runbook Docs
+  3. 🐛 Critical / Crash Bugs       6. ⚡ Traffic Optimization
 
 ITERATE PHASE PRIORITIES (Post-Deployment Evolution):
-  1. ðŸš¨ Production Outages          5. ðŸŽ¯ Feature Refinements
-  2. ðŸ”’ Security Vulnerabilities    6. âœ¨ User-Requested Features
-  3. ðŸ› User-Reported Bugs          7. âš¡ Real-Usage Performance
-  4. ðŸ“Š Metrics-Driven Tuning       8. ðŸŽ¨ Code Health & Polish
+  1. 🚨 Production Outages          5. 🎯 Feature Refinements
+  2. 🔒 Security Vulnerabilities    6. ✨ User-Requested Features
+  3. 🐛 User-Reported Bugs          7. ⚡ Real-Usage Performance
+  4. 📊 Metrics-Driven Tuning       8. 🎨 Code Health & Polish
 ```
 
 #### Polish Ceiling Rule (Universal)
 *Informed by FeatBench scope-creep findings and overconfidence calibration literature:*
 - When the build passes and linter has **0 errors**, **STOP POLISHING**.
 - Lint warnings do not block deployment and must NOT generate standalone WIs when higher-priority work exists.
-- Standard WIs are constrained to $\le 5$ files and $\le 50$ lines changed. Changes exceeding this limit require ðŸ”´ Guided classification and explicit architectural justification.
+- Standard WIs are constrained to $\le 5$ files and $\le 50$ lines changed. Changes exceeding this limit require 🔴 Guided classification and explicit architectural justification.
 
 ---
 
 ### 4.3 DECIDE (Plan the Batch & Author Work Items)
 
 #### Sizing & Task Horizon
-- *Informed by METR time-horizon empirical data (80% reliability horizon at ~30â€“45 min autonomous execution / $\le 2$ hours human-equivalent work):* Size each WI so its complete intent is specified in ~200 words.
-- Size batches to **3â€“8 WIs** (complexity-adjusted).
+- *Informed by METR time-horizon empirical data (80% reliability horizon at ~30–45 min autonomous execution / $\le 2$ hours human-equivalent work):* Size each WI so its complete intent is specified in ~200 words.
+- Size batches to **3–8 WIs** (complexity-adjusted).
 - Maximize WI independence to prevent error compounding ($p^n$). Do not artificially constrain batch size to executor context limits (the executor manages its own session boundaries).
 
 #### Feature Build Sequence (Within a Story)
-1. **Schema / Data Model:** ðŸ”´ Guided spec (dependencies first).
-2. **Backend Endpoint / Core Logic:** ðŸŸ¡ Directed spec.
-3. **Frontend Component / UI:** ðŸŸ¡ Directed or ðŸŸ¢ Outcome spec.
-4. **Integration Wiring:** ðŸŸ¡ Directed spec.
-5. **Polish & Edge Handling:** ðŸŸ¢ Outcome spec.
+1. **Schema / Data Model:** 🔴 Guided spec (dependencies first).
+2. **Backend Endpoint / Core Logic:** 🟡 Directed spec.
+3. **Frontend Component / UI:** 🟡 Directed or 🟢 Outcome spec.
+4. **Integration Wiring:** 🟡 Directed spec.
+5. **Polish & Edge Handling:** 🟢 Outcome spec.
 
 #### Authoring the Batch Plan
 Create `plans/PLAN-batch-XX.md`:
@@ -304,7 +304,7 @@ Create `plans/PLAN-batch-XX.md`:
 [User value delivered when this batch completes]
 
 ## Stories (Ordered by Dependency)
-### Story 1: [Name] â€” [WI Count]
+### Story 1: [Name] — [WI Count]
 - **Goal:** [Outcome]
 - **Dependencies:** None | Story N
 - **Risk:** Low | Medium | High
@@ -320,13 +320,13 @@ Load on-demand module [output-contract.md](output-contract.md) for full WI schem
 
 | Risk Tier | Mode | Planner Effort | Executor Freedom | Scope |
 |---|---|---|---|---|
-| ðŸ”´ **Critical** | **Guided** | Full Grounded Verification, verbatim BEFORE/AFTER patterns, caller analysis | Zero â€” follow spec verbatim | Auth, security, schema migrations, data models, encryption, core invariants |
-| ðŸŸ¡ **Medium** | **Directed** | Read target files, define intent, specify interfaces/types and constraints | Moderate â€” design internal implementation | New API endpoints, business logic, feature refactors, integration wiring |
-| ðŸŸ¢ **Low** | **Outcome** | Define end goal and acceptance criteria | Full â€” design and build freely | New standalone files, docs, configs, UI components, tests, DX tools |
+| 🔴 **Critical** | **Guided** | Full Grounded Verification, verbatim BEFORE/AFTER patterns, caller analysis | Zero — follow spec verbatim | Auth, security, schema migrations, data models, encryption, core invariants |
+| 🟡 **Medium** | **Directed** | Read target files, define intent, specify interfaces/types and constraints | Moderate — design internal implementation | New API endpoints, business logic, feature refactors, integration wiring |
+| 🟢 **Low** | **Outcome** | Define end goal and acceptance criteria | Full — design and build freely | New standalone files, docs, configs, UI components, tests, DX tools |
 
-*Distribution Rule:* Maintain $\le 50\%$ ðŸ”´ Guided WIs across a batch. Over-specification causes attention dilution and model degradation; under-specification causes execution drift.
+*Distribution Rule:* Maintain $\le 50\%$ 🔴 Guided WIs across a batch. Over-specification causes attention dilution and model degradation; under-specification causes execution drift.
 
-#### Grounded Verification Protocol (Mandatory for ðŸ”´ Guided WIs)
+#### Grounded Verification Protocol (Mandatory for 🔴 Guided WIs)
 Per **ROUTER.md: Invariant 1 (Grounded Verification)**:
 1. **LOCATE:** Use `grep_search` / `view_file` to find actual source code. Record file path and exact line range.
 2. **QUOTE:** Copy the exact existing lines as the `BEFORE` pattern. Never reconstruct code from memory. For new files, specify `// BEFORE: (empty / new file)`.
@@ -341,17 +341,17 @@ Per **ROUTER.md: Invariant 1 (Grounded Verification)**:
 #### Example 1: Web App With Failing Tests
 - **PERCEIVE:** Run `npm test`. Read failure stack trace in `src/auth/jwt.ts:42` showing `TokenExpiredError: jwt expired` on mock clock.
 - **REASON:** Root cause is hardcoded 0s timestamp delta in test helper after recent timezone utility refactoring. Low-risk test fix.
-- **DECIDE:** Create `WI-101.md` (ðŸŸ¡ Directed) targeting `src/auth/__tests__/jwt.test.ts` to inject dynamic clock mock with verifiable assertion.
+- **DECIDE:** Create `WI-101.md` (🟡 Directed) targeting `src/auth/__tests__/jwt.test.ts` to inject dynamic clock mock with verifiable assertion.
 
 #### Example 2: New CLI Tool Scaffolding
 - **PERCEIVE:** Read user request in `inbox/` requesting CLI subcommand `kramak status`. Inspect `src/cli/index.ts` command router.
 - **REASON:** Standard command addition requiring Commander.js action hook, console table renderer, and exit code handler.
-- **DECIDE:** Plan Story 1 with 2 WIs: `WI-201.md` (ðŸŸ¡ Directed) implementing `src/cli/commands/status.ts`, and `WI-202.md` (ðŸŸ¢ Outcome) adding CLI end-to-end integration tests.
+- **DECIDE:** Plan Story 1 with 2 WIs: `WI-201.md` (🟡 Directed) implementing `src/cli/commands/status.ts`, and `WI-202.md` (🟢 Outcome) adding CLI end-to-end integration tests.
 
 #### Example 3: Library With Breaking API Upgrade
 - **PERCEIVE:** `package.json` updated `zod` to v3.24. Grep for deprecated `.nonempty()` and `.deepPartial()` calls across `src/schemas/`.
 - **REASON:** 14 files affected across 3 domain modules. Breaking type change could crash runtime validation if done haphazardly.
-- **DECIDE:** Plan ðŸ”´ Guided `WI-301.md` for core data schemas with exact BEFORE/AFTER lines; plan ðŸŸ¡ Directed `WI-302.md` for secondary route schemas.
+- **DECIDE:** Plan 🔴 Guided `WI-301.md` for core data schemas with exact BEFORE/AFTER lines; plan 🟡 Directed `WI-302.md` for secondary route schemas.
 
 ---
 
@@ -360,9 +360,9 @@ Per **ROUTER.md: Invariant 1 (Grounded Verification)**:
 Before moving WIs to execution, perform this self-audit:
 - [ ] **Batch Plan Complete:** `plans/PLAN-batch-XX.md` exists with clear stories, dependencies, and strategic intent.
 - [ ] **Task Horizon Calibrated:** Each WI is independently verifiable and represents $\le 2$ hours of work.
-- [ ] **Risk Distribution Balanced:** $\le 50\%$ of WIs are ðŸ”´ Guided.
-- [ ] **Grounded Verification Complete:** All ðŸ”´ Guided items have verified unique grep matches and verbatim BEFORE patterns.
-- [ ] **Context Grounded:** All ðŸŸ¡ Directed items cite real file paths and verified type signatures.
+- [ ] **Risk Distribution Balanced:** $\le 50\%$ of WIs are 🔴 Guided.
+- [ ] **Grounded Verification Complete:** All 🔴 Guided items have verified unique grep matches and verbatim BEFORE patterns.
+- [ ] **Context Grounded:** All 🟡 Directed items cite real file paths and verified type signatures.
 - [ ] **Acceptance Criteria Observable:** Every WI has clear, testable acceptance criteria and build/check commands.
 - [ ] **Topological Ordering:** Schema/data WIs precede backend logic; backend logic precedes frontend UI.
 - [ ] **Hard Scope Boundaries Declared:** Every WI lists explicit target files conforming to the Polish Ceiling Rule.
@@ -450,21 +450,21 @@ Per **ROUTER.md: Invariant 3 (Circuit Breaker)**:
 |---|---|
 | **Project docs are wrong** | **Fix them directly.** Documentation and roadmaps are planning artifacts. |
 | **`AGENTS.md` is outdated** | **Update it directly** to maintain the project source of truth. |
-| **Pipeline specification needs improvement** | **Improve it**, applying the Anti-Bias Guard (G1â€“G6) in ROUTER.md first. |
+| **Pipeline specification needs improvement** | **Improve it**, applying the Anti-Bias Guard (G1–G6) in ROUTER.md first. |
 | **New dependency required** | **Write a WI.** Executor will install, test, and verify lockfiles. |
-| **Feature requires database schema / data model change** | Write WIs in strict dependency order. Schema WI MUST be ðŸ”´ Guided. |
+| **Feature requires database schema / data model change** | Write WIs in strict dependency order. Schema WI MUST be 🔴 Guided. |
 | **Codebase has drifted from docs** | Update docs directly. For code fixes, write WIs. |
 | **Unresolved design decision** | Read project docs and principles. Make the architectural call, document rationale in the plan. |
-| **Queue still has unexecuted items from previous batch** | Leave phase as `executing`â€”do not overwrite queue. Instruct executor to resume. |
+| **Queue still has unexecuted items from previous batch** | Leave phase as `executing`—do not overwrite queue. Instruct executor to resume. |
 | **All roadmap items are completed** | Envision what comes next using the 5 Lenses, update roadmap, advance `productPhase`. |
-| **Executor repeatedly fails same pattern** | Inspect failure category in `failed/`; upgrade WI spec detail (ðŸŸ¢/ðŸŸ¡ $\rightarrow$ ðŸ”´ Guided) and add guardrails. |
+| **Executor repeatedly fails same pattern** | Inspect failure category in `failed/`; upgrade WI spec detail (🟢/🟡 $\rightarrow$ 🔴 Guided) and add guardrails. |
 | **A tool or skill would improve pipeline operations** | Write a WI for tool installation; create skill specifications directly under `.kramak/`. |
 | **Project needs a fundamentally different architecture** | Document architectural justification in plan; plan systematic migration as phased WIs. |
 | **Uncertain about an architectural decision** | Flag WI with `Risk: High`, document uncertainty, and design fallback approach. |
-| **Source code presents a "quick fix" temptation** | **RESIST.** Write a ðŸŸ¢ Outcome WI. Your tokens are reserved for strategic planning. |
+| **Source code presents a "quick fix" temptation** | **RESIST.** Write a 🟢 Outcome WI. Your tokens are reserved for strategic planning. |
 | **Executor audit flagged strategic concern in INBOX** | Read concern, incorporate into PERCEIVE step, and prioritize in batch plan. |
 | **A BEFORE pattern matches multiple locations in target file** | Widen the BEFORE pattern with surrounding unique lines until exactly ONE match is confirmed. |
-| **Target file does not exist yet** | Write WI with `Type: feature`, mark `**Verified:** âœ… New file (no prior lines)`, and provide full content in `AFTER`. |
+| **Target file does not exist yet** | Write WI with `Type: feature`, mark `**Verified:** ✅ New file (no prior lines)`, and provide full content in `AFTER`. |
 
 ---
 
@@ -477,7 +477,7 @@ Before completing the planning turn, determine whether to continue in this sessi
    - If operating as an **advanced reasoning model**: **ALWAYS recommend a new session for execution** with a fast/precise model capability.
    - *Rationale:* Reasoning models are optimized for architecture and specification. Using a reasoning tier for mechanical execution is token-inefficient.
 3. **Session Fatigue Assessment:**
-   - *Calibrated against context-degradation literature:* LLM performance degrades significantly beyond 40â€“50% context window utilization.
+   - *Calibrated against context-degradation literature:* LLM performance degrades significantly beyond 40–50% context window utilization.
    - If $\ge 5$ WIs written, $\ge 20$ files inspected, or extensive web research performed $\rightarrow$ **NEW SESSION**.
 4. **State Finalization & Exit:**
    - Update `state.json` (`phase`, `nextAction`, `queue`, `batchNumber`, `lastSession`).
@@ -496,8 +496,8 @@ Invoked when `state.phase` is `waiting`, `escalated`, or `complete` and the user
 2. **Inbox Inspection:** Scan `.kramak/inbox/` for new user directives, requirements, or credentials.
 3. **Resume Routing:**
    - **Case 0 (Pending Merge Queue Shards):** If unmerged shards exist in `.kramak/work-items/*.json` (or `.md`) with `merge_status: "queued"` or `"conflict"`:
-     - Set `state.phase: "merge_queue"`, `state.humanTasksPending: false`.
-     - Set `state.nextAction: "Resume serialized merge queue in executor/CORE.md §MERGE."`.
+     - **If Conflict Resolved by Operator:** Set `state.phase: "merge_queue"`, `state.humanTasksPending: false`, `state.nextAction: "Resume serialized merge queue in executor/CORE.md §MERGE."`.
+     - **If Conflict Requires Architectural Re-Planning:** Set `state.phase: "planning"`, `state.humanTasksPending: false`, `state.nextAction: "Re-plan conflicting batch in planner/CORE.md."`.
    - **Case A (Unblocked with Active/Queued Work):** If blockers are resolved and items remain in `state.queue` or `state.active`:
      - Run Resume Drift Check (§3.2).
      - Set `state.phase: "executing"`, `state.humanTasksPending: false`.

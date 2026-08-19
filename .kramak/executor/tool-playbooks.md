@@ -130,7 +130,7 @@ fi
 ```powershell
 # --- Windows PowerShell Reference (supports .json and .md with YAML frontmatter) ---
 $actual = @(git diff --name-only HEAD; git ls-files --others --exclude-standard) | Sort-Object -Unique
-$wiFile = Get-ChildItem .kramak/work-items/ -Filter "WI-*.json", "WI-*.md" | Select-Object -First 1
+$wiFile = Get-ChildItem .kramak/work-items/ | Where-Object { $_.Name -like "WI-*.json" -or $_.Name -like "WI-*.md" } | Select-Object -First 1
 if ($wiFile -and $wiFile.Extension -eq ".json") {
   $declared = (Get-Content $wiFile.FullName | ConvertFrom-Json).files_targeted
 } elseif ($wiFile) {

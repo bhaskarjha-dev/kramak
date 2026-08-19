@@ -41,13 +41,15 @@
       "description": "Single human/agent-readable sentence instructing the next session"
     },
     "productPhase": {
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "enum": [
         "BUILD",
         "SHIP",
         "ITERATE",
-        "GROWTH",
-        ""
+        "GROWTH"
       ],
       "description": "Strategic product lifecycle stage"
     },
@@ -83,26 +85,6 @@
         }
       },
       "description": "Concurrency execution configuration"
-    },
-    "wal": {
-      "type": [
-        "object",
-        "null"
-      ],
-      "properties": {
-        "pending_mutation": {
-          "type": [
-            "object",
-            "null"
-          ],
-          "description": "Pending state mutation object before atomic flush/rename"
-        },
-        "timestamp": {
-          "type": "string",
-          "description": "ISO 8601 timestamp of WAL mutation entry"
-        }
-      },
-      "description": "Write-Ahead Log record for semantic state introspection and pending crash recovery"
     },
     "capabilityGate": {
       "type": [
@@ -223,14 +205,14 @@
       "items": {
         "type": "string"
       },
-      "description": "Ordered array of Work Item IDs waiting in queue/"
+      "description": "Ordered array of Work Item IDs waiting in .kramak/work-items/"
     },
     "active": {
       "type": [
         "string",
         "null"
       ],
-      "description": "Work Item ID currently in progress in active/, or null if idle"
+      "description": "Work Item ID currently in progress, or null if idle"
     },
     "completed": {
       "type": "array",
@@ -293,13 +275,15 @@
       "description": "True if deployment is blocked waiting on human actions"
     },
     "fallbackPhase": {
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "enum": [
         "BUILD",
         "SHIP",
         "ITERATE",
-        "GROWTH",
-        ""
+        "GROWTH"
       ],
       "description": "Temporary fallback phase used while primary phase is blocked"
     },
