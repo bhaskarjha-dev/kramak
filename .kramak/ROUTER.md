@@ -2,7 +2,7 @@
 
 ## 1. State
 Read `.kramak/state.json` (missing → set `phase: "bootstrap"`).
-Recovery: rename `.tmp` or replay `.wal`.
+Recovery: validate & rename `.tmp` or replay `.wal`.
 
 ## 2. Route by `state.phase`
 | Phase | Spec | Action |

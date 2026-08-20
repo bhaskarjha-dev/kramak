@@ -84,7 +84,8 @@
           "description": "Concurrency execution strategy"
         }
       },
-      "description": "Concurrency execution configuration"
+      "description": "Concurrency execution configuration",
+      "additionalProperties": false
     },
     "capabilityGate": {
       "type": [
@@ -124,7 +125,8 @@
               "description": "List of available tool capabilities"
             }
           },
-          "description": "Advisory Stage 1 self-assessment results"
+          "description": "Advisory Stage 1 self-assessment results",
+          "additionalProperties": false
         },
         "stage2": {
           "type": [
@@ -173,10 +175,12 @@
               "description": "Whether candidate passed the Canary Battery threshold"
             }
           },
-          "description": "Binding Stage 2 procedural Canary Challenge Battery results"
+          "description": "Binding Stage 2 procedural Canary Challenge Battery results",
+          "additionalProperties": false
         }
       },
-      "description": "Model-agnostic capability gate assessment results"
+      "description": "Model-agnostic capability gate assessment results",
+      "additionalProperties": false
     },
     "escalation": {
       "type": [
@@ -198,7 +202,8 @@
           "description": "ISO 8601 timestamp when escalation occurred"
         }
       },
-      "description": "Escalation context when pipeline phase is escalated"
+      "description": "Escalation context when pipeline phase is escalated",
+      "additionalProperties": false
     },
     "queue": {
       "type": "array",
@@ -232,7 +237,8 @@
           "verificationPassed": {
             "type": "boolean"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "description": "Audit trail of completed work items in this batch"
     },
@@ -262,7 +268,8 @@
           "failedAt": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "description": "Record of failed work items in this batch"
     },
@@ -329,11 +336,13 @@
               "devCommand": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           }
         }
       },
-      "description": "Auto-detected build and verification toolchain"
+      "description": "Auto-detected build and verification toolchain",
+      "additionalProperties": false
     },
     "projectStructure": {
       "type": [
@@ -382,7 +391,8 @@
           "description": "Discovered subproject and package paths in monorepo workspaces"
         }
       },
-      "description": "Discovered paths to key project documentation files"
+      "description": "Discovered paths to key project documentation files",
+      "additionalProperties": false
     },
     "lastVisionAssessment": {
       "type": [
@@ -400,7 +410,8 @@
           "type": "string"
         }
       },
-      "description": "Results from the most recent 5-lens strategic vision assessment"
+      "description": "Results from the most recent 5-lens strategic vision assessment",
+      "additionalProperties": false
     },
     "lastAudit": {
       "type": [
@@ -435,7 +446,8 @@
           }
         }
       },
-      "description": "Results from the most recent executor technical audit"
+      "description": "Results from the most recent executor technical audit",
+      "additionalProperties": false
     },
     "lastSession": {
       "type": "object",
@@ -450,7 +462,8 @@
           "type": "string"
         }
       },
-      "description": "Summary of the preceding agent session"
+      "description": "Summary of the preceding agent session",
+      "additionalProperties": false
     },
     "metrics": {
       "type": "object",
@@ -481,7 +494,8 @@
           "description": "Count of consecutive batch audit failures triggering pipeline escalation"
         }
       },
-      "description": "Cumulative pipeline performance metrics"
+      "description": "Cumulative pipeline performance metrics",
+      "additionalProperties": false
     },
     "wal": {
       "type": [
@@ -501,7 +515,8 @@
           "description": "ISO 8601 timestamp when the WAL entry was created"
         }
       },
-      "description": "Write-Ahead Logging (WAL) state for crash recovery reconciliation"
+      "description": "Write-Ahead Logging (WAL) state for crash recovery reconciliation",
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

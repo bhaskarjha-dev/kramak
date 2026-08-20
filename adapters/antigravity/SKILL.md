@@ -1,11 +1,11 @@
 ---
 name: kramak
-description: "Autonomous development pipeline — deterministic Plan→Execute→Audit lifecycle with Antigravity subagent & task integration"
+description: "Autonomous development pipeline — deterministic Plan→Execute→Audit lifecycle with Antigravity subagent & task integration"
 trigger: "Start"
 ---
 
 <!-- Kramak Adapter: Google Antigravity | Tier 2 (Thin) -->
-# Kramak — Antigravity Adapter
+# Kramak — Antigravity Adapter
 
 This adapter extends the universal [.kramak/SKILL.md](../../.kramak/SKILL.md) and [.kramak/AGENTS.md](../../.kramak/AGENTS.md) with Google Antigravity IDE capabilities.
 
@@ -23,4 +23,4 @@ When the user says **"Start"** (or "begin", "continue", "go", "kramak"):
 ## Phase Dispatch
 - `bootstrap` / `planning` / `dispatch` $\rightarrow$ Follow [.kramak/planner/CORE.md](../../.kramak/planner/CORE.md)
 - `executing` / `auditing` / `merge_queue` $\rightarrow$ Follow [.kramak/executor/CORE.md](../../.kramak/executor/CORE.md)
-- `waiting` / `escalated` $\rightarrow$ Enforce invariants, log checkpoint, and request human input.
+- `waiting` / `escalated` / `complete` $\rightarrow$ Follow [.kramak/planner/CORE.md](../../.kramak/planner/CORE.md) (§RESUME)

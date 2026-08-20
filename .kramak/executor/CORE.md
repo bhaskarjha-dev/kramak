@@ -153,7 +153,7 @@ Before running `git commit`, execute the mandatory safety checklist:
      }
    }
    ```
-6. In parallel mode (`concurrency.budget > 1`), update shard `.kramak/work-items/WI-XXX.json` setting `merge_status: "queued"`.
+6. In parallel mode (`concurrency.budget > 1`), update state shard `.kramak/work-items/WI-XXX.state.json` setting `merge_status: "queued"`.
 
 ### 1.7 Work Item Failure (`STEP: FAIL`)
 If execution or verification fails irrecoverably:
@@ -274,7 +274,7 @@ graph TD
 ```
 
 ### 3.2 Merge Execution Steps
-For each completed WI shard in `.kramak/work-items/*.json` with `merge_status: "queued"`:
+For each completed WI state shard in `.kramak/work-items/*.state.json` with `merge_status: "queued"`:
 1. Identify worktree path `.kramak/worktrees/<id>` and branch `pipeline/<id>`.
 2. Fetch integration branch HEAD (`state.currentBranch`).
 3. Rebase/merge the worktree branch onto integration HEAD. *(Refer to [tool-playbooks.md](tool-playbooks.md) for precise git merge commands).*

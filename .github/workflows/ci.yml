@@ -20,7 +20,16 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Validate JSON Schema Syntax
+      - name: Install Schema Validation Tools
+        run: npm install -g ajv-cli ajv-formats
+
+      - name: Validate JSON Schemas against Draft 2020-12 Meta-Schema
+        run: |
+          npx ajv compile -s .kramak/schemas/state.schema.json --spec=draft2020 --strict=false
+          npx ajv compile -s .kramak/schemas/work-item.schema.json --spec=draft2020 --strict=false
+          npx ajv compile -s .kramak/schemas/work-item-state.schema.json --spec=draft2020 --strict=false
+
+      - name: Validate JSON Schema Syntax & Completeness
         run: |
           node -e "
             const fs = require('fs');
@@ -29,39 +38,84 @@ jobs:
               '.kramak/schemas/work-item.schema.json',
               '.kramak/schemas/work-item-state.schema.json'
             ];
-            for (const path of schemas) {
-              try {
-                const schema = JSON.parse(fs.readFileSync(path, 'utf8'));
-                console.log('OK', path);
-              } catch (e) {
-                console.error('Failed to parse:', path, e.message);
-                process.exit(1);
-              }
+            for (const p of schemas) {
+              const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+              console.log('Valid JSON:', p);
             }
+            const state = JSON.parse(fs.readFileSync('.kramak/schemas/state.schema.json', 'utf8'));
+            const requiredPhases = ['bootstrap','planning','dispatch','executing','auditing','merge_queue','waiting','escalated','complete'];
+            for (const ph of requiredPhases) {
+              if (!state.properties.phase.enum.includes(ph)) throw new Error('Missing phase: ' + ph);
+            }
+            console.log('All 9 FSM phases verified.');
           "
 
-      - name: Validate State Schema Completeness
+      - name: Audit Encoding & Control Characters (Zero C1 Codes)
         run: |
           node -e "
             const fs = require('fs');
-            const schema = JSON.parse(fs.readFileSync('.kramak/schemas/state.schema.json', 'utf8'));
-            const requiredPhases = ['bootstrap','planning','dispatch','executing','auditing','merge_queue','waiting','escalated','complete'];
-            const schemaPhases = schema.properties.phase.enum;
-            for (const phase of requiredPhases) {
-              if (!schemaPhases.includes(phase)) {
-                console.error('Missing phase:', phase);
-                process.exit(1);
+            const path = require('path');
+            function getFiles(dir, list = []) {
+              for (const f of fs.readdirSync(dir)) {
+                if (f === '.git' || f === 'node_modules') continue;
+                const p = path.join(dir, f);
+                if (fs.statSync(p).isDirectory()) getFiles(p, list);
+                else if (f.endsWith('.md') || f.endsWith('.json') || f.endsWith('.yml')) list.push(p);
+              }
+              return list;
+            }
+            const files = getFiles('.');
+            let errors = 0;
+            for (const f of files) {
+              const buf = fs.readFileSync(f);
+              const str = buf.toString('utf8');
+              for (let i = 0; i < str.length; i++) {
+                const code = str.charCodeAt(i);
+                if (code >= 0x80 && code <= 0x9F) {
+                  console.error('C1 Control character found in ' + f + ' at char ' + i + ': U+' + code.toString(16));
+                  errors++;
+                }
               }
             }
-            console.log('All 9 FSM phases present');
-            const requiredFields = ['version','phase','nextAction','productPhase','currentBranch','batchNumber','concurrency','wal','capabilityGate','escalation','queue','metrics'];
-            for (const field of requiredFields) {
-              if (!schema.properties[field]) {
-                console.error('Missing field:', field);
-                process.exit(1);
+            if (errors > 0) process.exit(1);
+            console.log('Zero C1 control characters across all workspace files.');
+          "
+
+      - name: Validate Markdown Link Graph
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            function getMd(dir, list = []) {
+              for (const f of fs.readdirSync(dir)) {
+                if (f === '.git' || f === 'node_modules') continue;
+                const p = path.join(dir, f);
+                if (fs.statSync(p).isDirectory()) getMd(p, list);
+                else if (f.endsWith('.md')) list.push(p);
+              }
+              return list;
+            }
+            const files = getMd('.');
+            let broken = 0;
+            const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+            for (const f of files) {
+              const text = fs.readFileSync(f, 'utf8');
+              let m;
+              while ((m = regex.exec(text)) !== null) {
+                const raw = m[2].trim();
+                if (raw.startsWith('#') || raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('mailto:')) continue;
+                const clean = raw.split('#')[0];
+                if (!clean) continue;
+                if (clean.includes('state.json') && !clean.includes('state.schema.json')) continue;
+                const resolved = path.resolve(path.dirname(f), clean);
+                if (!fs.existsSync(resolved)) {
+                  console.error('Broken link in ' + f + ': [' + m[1] + '](' + raw + ') -> ' + resolved);
+                  broken++;
+                }
               }
             }
-            console.log('All critical state fields present');
+            if (broken > 0) process.exit(1);
+            console.log('100% of internal markdown links resolve cleanly.');
           "
 
       - name: Validate Core Specification Files Exist

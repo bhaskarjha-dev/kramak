@@ -46,7 +46,7 @@ The following invariants apply across all execution tiers and are never scaled a
 1. **Grounded Verification:** Verify all claims, file paths, and code references via live `grep` or file reads before proposing edits. Never cite from memory.
 2. **3-Tier Hard Scope Check:** Compare `git diff --name-only` against the Work Item's `files_targeted`. Automatically revert unlisted file modifications.
 3. **Progress-Aware Circuit Breaker:** Repeated state hash on non-adjacent tries or 3 consecutive failures on the same Work Item trips escalation (`phase: "escalated"`); stop immediately.
-4. **WAL Atomic Writes:** Mutations write to `.kramak/state.json.tmp` first, flush, and atomically rename. Recovery renames `.tmp` or replays `.wal`.
+4. **WAL Atomic Writes:** Mutations write to `.kramak/state.json.tmp` first, flush, and atomically rename. Recovery validates `.tmp` JSON integrity before rename or replays `.wal`.
 5. **Anti-Bias Guard (G1–G6):** Self-modifications to `.kramak/` require G1 history diff, G2 rollback check, G3 dual-model critique, G4 ledger logging, G5 cooldown, and G6 risk-tiered human gate.
 
 ---

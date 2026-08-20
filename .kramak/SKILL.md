@@ -47,9 +47,9 @@ Use when the user says **"Start"** (or "begin", "continue", "go", "kramak") to r
 | `executing` | [executor/CORE.md](executor/CORE.md) | Implement active Work Item | Precision Tier |
 | `auditing` | [executor/CORE.md](executor/CORE.md) §AUDIT | Verify code against test suite | Verification Tier |
 | `merge_queue` | [executor/CORE.md](executor/CORE.md) §MERGE | Serialized FIFO integration | Precision Tier |
-| `waiting` | — | Resolve human tasks / INBOX | User / External Action |
-| `escalated` | — | Inspect circuit breaker reason | Human Developer Review |
-| `complete` | — | Review milestone summary | Pipeline Terminated |
+| `waiting` | [planner/CORE.md](planner/CORE.md) §RESUME | Resolve human tasks & resume | User / External Action |
+| `escalated` | [planner/CORE.md](planner/CORE.md) §RESUME | Review diagnostic & clear breaker | Human Developer Review |
+| `complete` | [planner/CORE.md](planner/CORE.md) §RESUME | Review release & check inbox | Orchestrator |
 
 ---
 

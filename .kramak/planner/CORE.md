@@ -404,7 +404,7 @@ When batch planning and self-audit are complete, transition to execution based o
 
 ### 5.3 Active Dispatch Re-entry & Recovery
 If invoked with `state.phase === "dispatch"` (e.g. following a session restart or crash):
-1. Read all shards in `.kramak/work-items/*.json` (or `.md`).
+1. Read all active state shards in `.kramak/work-items/*.state.json` (and task specifications in `.kramak/work-items/WI-*.json` / `WI-*.md`).
 2. **Pending Shards Exist:** If any shard has `status: "queued"` or `"active"`:
    - Inspect provisioned worktrees in `.kramak/worktrees/`.
    - Set `state.nextAction: "Resume executing worktree tasks across active subagents."`.
@@ -499,7 +499,7 @@ Invoked when `state.phase` is `waiting`, `escalated`, or `complete` and the user
 1. **Blocker Inspection:** Read `.kramak/HUMAN-TASKS.md` and check if previously blocking items are marked `[x]` (completed) or if `humanTasksPending` can be cleared (`false`).
 2. **Inbox Inspection:** Scan `.kramak/inbox/` for new user directives, requirements, or credentials.
 3. **Resume Routing:**
-   - **Case 0 (Pending Merge Queue Shards):** If unmerged shards exist in `.kramak/work-items/*.json` (or `.md`) with `merge_status: "queued"` or `"conflict"`:
+   - **Case 0 (Pending Merge Queue Shards):** If unmerged shards exist in `.kramak/work-items/*.state.json` with `merge_status: "queued"` or `"conflict"`:
      - **If Conflict Resolved by Operator:** Set `state.phase: "merge_queue"`, `state.humanTasksPending: false`, `state.nextAction: "Resume serialized merge queue in executor/CORE.md §MERGE."`.
      - **If Conflict Requires Architectural Re-Planning:** Set `state.phase: "planning"`, `state.humanTasksPending: false`, `state.nextAction: "Re-plan conflicting batch in planner/CORE.md."`.
    - **Case Auditing (Paused Prior to / During Audit):** If all batch items in `state.queue` are completed and un-audited work exists (e.g. `state.lastAudit == null` or `lastAudit.batchNumber < state.batchNumber`, and `state.completed` has items):

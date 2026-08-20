@@ -12,7 +12,7 @@ When instructed to "Start", "begin", "continue", or "go":
 2. **Phase Routing:**
    - `bootstrap` / `planning` / `dispatch` $\rightarrow$ Follow [.kramak/planner/CORE.md](../../.kramak/planner/CORE.md)
    - `executing` / `auditing` / `merge_queue` $\rightarrow$ Follow [.kramak/executor/CORE.md](../../.kramak/executor/CORE.md)
-   - `waiting` / `escalated` $\rightarrow$ Check human tasks and inbox; halt if blocked.
+   - `waiting` / `escalated` / `complete` $\rightarrow$ Follow [.kramak/planner/CORE.md](../../.kramak/planner/CORE.md) (§RESUME)
 
 3. **Core Invariants:**
    - Grounded Verification: read actual codebase files before proposing changes.

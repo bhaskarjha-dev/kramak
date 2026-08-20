@@ -19,7 +19,7 @@ Brief description of what this PR does.
 2. **IS this useful for ALL types of work?**
    ↓
 
-3. **SCENARIO TEST — Would this help in all 3?**
+3. **SCENARIO TEST — Would this help in all 3?**
    - [ ] A backend data model migration batch
    - [ ] A frontend component feature batch
    - [ ] A security hardening batch
@@ -27,7 +27,7 @@ Brief description of what this PR does.
 4. **COULD this change HURT a different type of work?**
    ↓
 
-5. **COOLDOWN — Have you slept on it?**
+5. **COOLDOWN — Have you slept on it?**
    ↓
 
 ## Checklist

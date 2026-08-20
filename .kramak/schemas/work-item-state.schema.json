@@ -39,7 +39,8 @@
         "holder",
         "acquired_at"
       ],
-      "description": "Execution lock preventing concurrent double-execution of the shard"
+      "description": "Execution lock preventing concurrent double-execution of the shard",
+      "additionalProperties": false
     },
     "state_hash": {
       "type": "string",
@@ -58,6 +59,18 @@
         null
       ],
       "description": "Status of work item branch in the serialized merge queue"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "active",
+        "done",
+        "completed",
+        "failed",
+        "blocked"
+      ],
+      "description": "Lifecycle execution status of the work item shard"
     }
   },
   "additionalProperties": false

@@ -121,7 +121,8 @@
         "category",
         "description"
       ],
-      "description": "Diagnostic record if the work item has failed"
+      "description": "Diagnostic record if the work item has failed",
+      "additionalProperties": false
     },
     "created_at": {
       "type": "string",
