@@ -31,7 +31,7 @@ graph TD
     end
     CT1 & CT2 & CT3 & CT4 & CT5 --> Score["Composite Score Calculation<br/>Score = (1.5*(CT1+CT2) + 1.0*(CT3+CT4+CT5)) / 6.0"]
     Score --> Routing{Score Range}
-    Routing -->|Score >= 0.80| Full[Full Planning Autonomy<br/>Batch: 5-8 WIs | Mix of 🔴/🟡/🟢]
+    Routing -->|Score >= 0.80| Full[Full Planning Autonomy<br/>Batch: 3-8 WIs | Mix of 🔴/🟡/🟢]
     Routing -->|0.60 <= Score < 0.80| Cons[Conservative Calibration<br/>Batch: 2–4 WIs | Default 🔴 Guided]
     Routing -->|Score < 0.60| Wait[Fail-Closed to WAITING<br/>Recommend Higher Reasoning Model]
 ```
