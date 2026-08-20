@@ -6,8 +6,8 @@
 ## Context Bridge & Native Glob Rules
 - **Entry Point:** Read `.kramak/ROUTER.md` on every interaction ("Start", "begin", "continue", "go").
 - **Phase Context Loading:**
-  - `state.phase == "bootstrap" | "planning"`: Load `@.kramak/planner/CORE.md` (and `@.kramak/planner/output-contract.md` when generating work items).
-  - `state.phase == "dispatch" | "executing"`: Load `@.kramak/executor/CORE.md` (and `@.kramak/executor/error-recovery.md` on failure).
+  - `state.phase == "bootstrap" | "planning" | "dispatch"`: Load `@.kramak/planner/CORE.md` (and `@.kramak/planner/output-contract.md` when generating work items).
+  - `state.phase == "executing"`: Load `@.kramak/executor/CORE.md` (and `@.kramak/executor/error-recovery.md` on failure).
   - `state.phase == "auditing"`: Load `@.kramak/executor/CORE.md` (§AUDIT).
   - `state.phase == "merge_queue"`: Load `@.kramak/executor/CORE.md` (§MERGE).
   - `state.phase == "waiting" | "escalated" | "complete"`: Load `@.kramak/planner/CORE.md` (§RESUME).
