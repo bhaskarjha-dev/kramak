@@ -135,7 +135,7 @@ $$\text{Composite Score} = \frac{1.5 \cdot (\text{CT}_1 + \text{CT}_2) + 1.0 \cd
 
 | Composite Score ($S$) | Operational Routing | Batch Sizing | Default WI Detail Tier | Execution & Dispatch Mode |
 |---|---|---|---|---|
-| **$S \ge 0.80$ ($\tau_{high}$)** | **Full Planning Autonomy** | 5–8 Work Items | Balanced mix ($\le 50\%$ 🔴 Guided, rest 🟡/🟢) | Sequential or Parallel (if `concurrency.budget > 1`) |
+| **$S \ge 0.80$ ($\tau_{high}$)** | **Full Planning Autonomy** | 3–8 Work Items | Balanced mix ($\le 50\%$ 🔴 Guided, rest 🟡/🟢) | Sequential or Parallel (if `concurrency.budget > 1`) |
 | **$0.60 \le S < 0.80$** | **Conservative Routing** | 2–4 Work Items | Default to 🔴 **Guided** | Sequential only (`concurrency.budget = 1`) |
 | **$S < 0.60$ ($\tau_{low}$)** | **Fail-Closed to WAITING** | 0 Work Items | — | Hard stop: Set `phase: "waiting"`, recommend higher reasoning model |
 

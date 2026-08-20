@@ -1,5 +1,5 @@
 ---
-id: WI-XXX
+id: "WI-001" # Format: ^WI-[0-9]{3,}$ (e.g. WI-001, WI-101)
 title: "[Concise title of the work item]"
 batch: 0
 detail_level: directed  # guided | directed | outcome

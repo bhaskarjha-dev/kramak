@@ -143,7 +143,7 @@ Each recovery path is a step-by-step executable procedure. Execute each step in 
      - Revert uncommitted changes: `git checkout -- . && git clean -fd`.
      - Update WI file status to `status: "failed"`.
      - Update `state.json` via WAL (increment `totalFailed` and `consecutiveFailures`).
-     - If `consecutiveFailures >= 3`, trip circuit breaker and route to `planning`.
+     - If `consecutiveFailures >= 3`, trip circuit breaker, populate `state.escalation`, and set `state.phase: "escalated"`.
 
 ---
 
@@ -292,19 +292,19 @@ Evaluate these deterministic rules after every attempt:
                                      ▼
                         ┌────────────────────────┐
                         │ TRIP CIRCUIT BREAKER:  │
-                        │ FAIL WI Immediately   │
-                        │ Route -> "planning"    │
+                        │ Set phase: "escalated" │
+                        │ Hard Stop for Operator │
                         └────────────────────────┘
 ```
 
 1. **Rule 1 — Oscillation Detection (State Flip-Flop):**
    - If $\text{hash}(\text{attempt } N) === \text{hash}(\text{attempt } N-2)$:
    - **Verdict:** Oscillation detected. The agent is caught in an alternating loop (e.g. flipping a type or modifying a condition back and forth).
-   - **Action:** STOP immediately. Trip circuit breaker. Fail the WI, record diagnostic, and route `state.phase: "planning"`.
+   - **Action:** STOP immediately. Trip circuit breaker. Fail the WI, populate `state.escalation`, and set `state.phase: "escalated"`.
 2. **Rule 2 — Stagnation (Zero Error Reduction):**
    - If 3 consecutive attempts yield the exact same error hash ($\text{hash}(N) === \text{hash}(N-1) === \text{hash}(N-2)$):
    - **Verdict:** No progress. Fixes are having zero effect on compiler/test output.
-   - **Action:** STOP immediately. Trip circuit breaker. Fail the WI and route `state.phase: "planning"`.
+   - **Action:** STOP immediately. Trip circuit breaker. Fail the WI, populate `state.escalation`, and set `state.phase: "escalated"`.
 3. **Rule 3 — Monotonic Error Reduction (Progress Extension):**
    - If $\text{error\_count}(N) < \text{error\_count}(N-1)$ AND $\text{hash}(N) \neq \text{hash}(N-1)$:
    - **Verdict:** Measurable progress verified.
@@ -312,7 +312,7 @@ Evaluate these deterministic rules after every attempt:
 4. **Rule 4 — Consecutive Failure Tripwire:**
    - If `metrics.consecutiveFailures >= 3` across distinct Work Items:
    - **Verdict:** Architectural failure or broken global state.
-   - **Action:** Set `metrics.circuitBreakerTripped: true`, set `state.phase: "planning"`, `state.nextAction: "Circuit breaker tripped (3 consecutive failures). Start planner session to rethink architecture."`; STOP.
+   - **Action:** Set `metrics.circuitBreakerTripped: true`, set `state.phase: "escalated"`, `state.nextAction: "Circuit breaker tripped (3 consecutive failures). Developer diagnostic review required."`; STOP.
 5. **Rule 5 — Deadlock Escalation:**
    - If consecutive batch failures $\ge 3$ or circular dependency deadlock is detected:
    - **Action:** Set `state.phase: "escalated"`, `state.nextAction: "Pipeline escalated due to recurring batch failure deadlock. Developer intervention required."`; STOP.

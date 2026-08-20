@@ -393,7 +393,7 @@ When batch planning and self-audit are complete, transition to execution based o
      git worktree add .kramak/worktrees/WI-XXX -b pipeline/WI-XXX
      ```
 3. **State Sharding:**
-   - Initialize per-WI isolated state shards at `.kramak/work-items/WI-XXX.json`.
+   - Initialize per-WI isolated state shards at `.kramak/work-items/WI-XXX.state.json` (or inside dedicated `.kramak/worktrees/WI-XXX/shard.json`).
 4. **Transition:**
    - Set `state.phase: "dispatch"`.
    - Set `state.nextAction: "Spawn subagent executors across active worktrees."`.
@@ -502,6 +502,9 @@ Invoked when `state.phase` is `waiting`, `escalated`, or `complete` and the user
    - **Case 0 (Pending Merge Queue Shards):** If unmerged shards exist in `.kramak/work-items/*.json` (or `.md`) with `merge_status: "queued"` or `"conflict"`:
      - **If Conflict Resolved by Operator:** Set `state.phase: "merge_queue"`, `state.humanTasksPending: false`, `state.nextAction: "Resume serialized merge queue in executor/CORE.md §MERGE."`.
      - **If Conflict Requires Architectural Re-Planning:** Set `state.phase: "planning"`, `state.humanTasksPending: false`, `state.nextAction: "Re-plan conflicting batch in planner/CORE.md."`.
+   - **Case Auditing (Paused Prior to / During Audit):** If all batch items in `state.queue` are completed and un-audited work exists (e.g. `state.lastAudit == null` or `lastAudit.batchNumber < state.batchNumber`, and `state.completed` has items):
+     - Set `state.phase: "auditing"`, `state.humanTasksPending: false`.
+     - Set `state.nextAction: "Resume technical audit for Batch " + state.batchNumber + " using executor/CORE.md §AUDIT."`.
    - **Case A (Unblocked with Active/Queued Work):** If blockers are resolved and items remain in `state.queue` or `state.active`:
      - Run Resume Drift Check (§3.2).
      - Set `state.phase: "executing"`, `state.humanTasksPending: false`.

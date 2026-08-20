@@ -129,17 +129,23 @@ fi
 
 ```powershell
 # --- Windows PowerShell Reference (supports .json and .md with YAML frontmatter) ---
-$actual = @(git diff --name-only HEAD; git ls-files --others --exclude-standard) | Sort-Object -Unique
-$wiFile = Get-ChildItem .kramak/work-items/ | Where-Object { $_.Name -like "WI-*.json" -or $_.Name -like "WI-*.md" } | Select-Object -First 1
+$actual = @(git diff --name-only HEAD; git ls-files --others --exclude-standard) | ForEach-Object { $_.Replace('\', '/') } | Sort-Object -Unique
+$state = Get-Content .kramak/state.json | ConvertFrom-Json
+$activeId = $state.active
+if (-not $activeId) {
+  $wiFile = Get-ChildItem .kramak/work-items/ | Where-Object { $_.Name -like "WI-*.json" -or $_.Name -like "WI-*.md" } | Select-Object -First 1
+} else {
+  $wiFile = Get-ChildItem .kramak/work-items/ | Where-Object { $_.BaseName -eq $activeId -or $_.Name -like "$activeId.*" } | Select-Object -First 1
+}
 if ($wiFile -and $wiFile.Extension -eq ".json") {
-  $declared = (Get-Content $wiFile.FullName | ConvertFrom-Json).files_targeted
+  $declared = @((Get-Content $wiFile.FullName | ConvertFrom-Json).files_targeted) | ForEach-Object { $_.Replace('\', '/') }
 } elseif ($wiFile) {
   $raw = Get-Content $wiFile.FullName -Raw
   $fmMatch = [regex]::Match($raw, '(?s)^---\r?\n(.*?)\r?\n---')
   if ($fmMatch.Success) {
     $targetBlock = [regex]::Match($fmMatch.Groups[1].Value, '(?s)files_targeted:\r?\n((?:\s*-\s*[^\r\n]+\r?\n?)+)')
     if ($targetBlock.Success) {
-      $declared = [regex]::Matches($targetBlock.Groups[1].Value, '(?m)^\s*-\s*["'']?([^"'']+)["'']?') | ForEach-Object { $_.Groups[1].Value.Trim() }
+      $declared = [regex]::Matches($targetBlock.Groups[1].Value, '(?m)^\s*-\s*["'']?([^"'']+)["'']?') | ForEach-Object { $_.Groups[1].Value.Trim().Replace('\', '/') }
     } else { $declared = @() }
   } else { $declared = @() }
 } else {
@@ -262,11 +268,18 @@ Executed automatically during `BOOTSTRAP` or session initialization:
 ```
 Crash Recovery Decision Logic:
  │
- ├── IF .kramak/state.json.tmp EXISTS:
+ ├── IF .kramak/state.json.tmp EXISTS AND is_valid_json(.kramak/state.json.tmp):
  │    │
- │    └──► The write was completed, but atomic rename was interrupted.
+ │    └──► The temporary write completed validly, but atomic rename was interrupted.
  │         ACTION: Rename .kramak/state.json.tmp ──► .kramak/state.json
  │         ACTION: Delete .kramak/state.json.wal if present.
+ │
+ ├── ELSE IF .kramak/state.json.tmp EXISTS AND NOT is_valid_json(.kramak/state.json.tmp):
+ │    │
+ │    └──► The temporary write was truncated mid-stream by a crash.
+ │         ACTION: Delete corrupted .kramak/state.json.tmp.
+ │         ACTION: Read intended_state from .kramak/state.json.wal (if present) ──► write to state.json.
+ │         ACTION: Delete .kramak/state.json.wal.
  │
  ├── ELSE IF .kramak/state.json.wal EXISTS (and NO .tmp):
  │    │
