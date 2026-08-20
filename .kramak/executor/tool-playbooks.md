@@ -110,15 +110,18 @@ Enforce absolute boundary control across all execution tiers:
 > **Cross-Platform Verification Note:** AI coding agents perform set comparison natively by comparing the list of modified/untracked files from `git diff --name-only HEAD` and `git ls-files --others --exclude-standard` against the Work Item's declared `files_targeted` array. Below are reference snippets for POSIX Bash and Windows PowerShell:
 
 ```bash
-# --- POSIX / Bash Reference ---
+# --- POSIX / /bin/sh Compatible Reference ---
 # 1. Capture all modified tracked files PLUS untracked new files (sorted uniquely)
 ACTUAL=$( (git diff --name-only HEAD; git ls-files --others --exclude-standard) | sort -u )
 
 # 2. Extract declared files from active Work Item specification
 DECLARED=$(awk '/files_targeted:/{flag=1; next} /^[a-zA-Z0-9_-]+:/{flag=0} flag && /^  - /{gsub(/^[ \t]*- [ \t]*|["\'\r]/, ""); print}' .kramak/work-items/WI-XXX.md | sort -u)
 
-# 3. Compare ACTUAL against DECLARED (detect unauthorized files)
-UNAUTHORIZED=$(comm -23 <(echo "$ACTUAL") <(echo "$DECLARED"))
+# 3. Compare ACTUAL against DECLARED (detect unauthorized files without bashisms)
+TMP_DECL=$(mktemp 2>/dev/null || echo "/tmp/declared.$$")
+printf "%s\n" "$DECLARED" > "$TMP_DECL"
+UNAUTHORIZED=$(printf "%s\n" "$ACTUAL" | grep -F -v -x -f "$TMP_DECL")
+rm -f "$TMP_DECL"
 
 if [ -n "$UNAUTHORIZED" ]; then
   echo "SCOPE VIOLATION DETECTED! Unauthorized files modified:"
