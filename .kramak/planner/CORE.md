@@ -141,10 +141,10 @@ To prevent anchoring bias (over-weighting the previous session's subjective opin
 1. Project Roadmap (projectStructure.roadmap or ROADMAP.md) — Big picture goal
 2. .kramak/HUMAN-TASKS.md — Blocking requirements and external dependencies
 3. .kramak/state.json — Phase, metrics, last audit results, and recorded state
-4. .kramak/PLANNING-LOG.md — Historical perspectives, rationale, and past decisions
+4. plans/ or .kramak/ledger/ — Historical perspectives, rationale, and past decisions
 5. .kramak/ROUTER.md / .kramak/AGENTS.md — Constitutional engineering principles
-6. .kramak/inbox/ or INBOX.md — User instructions, bug reports, and direction changes
-7. .kramak/work-items/ (done/ and failed/) — Recent completions, failure diagnostics, and trends
+6. .kramak/inbox/ — User instructions, bug reports, and direction changes
+7. .kramak/work-items/ — Recent completions, failure diagnostics in state.failed, and trends
 ```
 
 ### 3.2 Resume Drift Check (When Resuming from WAITING)
@@ -461,12 +461,12 @@ Per **ROUTER.md: Invariant 3 (Circuit Breaker)**:
 | **Unresolved design decision** | Read project docs and principles. Make the architectural call, document rationale in the plan. |
 | **Queue still has unexecuted items from previous batch** | Leave phase as `executing`—do not overwrite queue. Instruct executor to resume. |
 | **All roadmap items are completed** | Envision what comes next using the 5 Lenses, update roadmap, advance `productPhase`. |
-| **Executor repeatedly fails same pattern** | Inspect failure category in `failed/`; upgrade WI spec detail (🟢/🟡 $\rightarrow$ 🔴 Guided) and add guardrails. |
+| **Executor repeatedly fails same pattern** | Inspect failure category in `state.failed` or `.kramak/work-items/`; upgrade WI spec detail (🟢/🟡 $\rightarrow$ 🔴 Guided) and add guardrails. |
 | **A tool or skill would improve pipeline operations** | Write a WI for tool installation; create skill specifications directly under `.kramak/`. |
 | **Project needs a fundamentally different architecture** | Document architectural justification in plan; plan systematic migration as phased WIs. |
 | **Uncertain about an architectural decision** | Flag WI with `Risk: High`, document uncertainty, and design fallback approach. |
 | **Source code presents a "quick fix" temptation** | **RESIST.** Write a 🟢 Outcome WI. Your tokens are reserved for strategic planning. |
-| **Executor audit flagged strategic concern in INBOX** | Read concern, incorporate into PERCEIVE step, and prioritize in batch plan. |
+| **Executor audit flagged strategic concern in .kramak/inbox/** | Read concern, incorporate into PERCEIVE step, and prioritize in batch plan. |
 | **A BEFORE pattern matches multiple locations in target file** | Widen the BEFORE pattern with surrounding unique lines until exactly ONE match is confirmed. |
 | **Target file does not exist yet** | Write WI with `Type: feature`, mark `**Verified:** ✅ New file (no prior lines)`, and provide full content in `AFTER`. |
 

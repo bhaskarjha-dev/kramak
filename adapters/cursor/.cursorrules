@@ -8,9 +8,10 @@ When triggered ("Start", "begin", "continue", "go"):
 
 ## .mdc Progressive Loading Rules
 - **Rule 1 (Always Active):** Load `.kramak/ROUTER.md` on all interactions. Enforce Grounded Verification, 3-Tier Scope Check, and Circuit Breaker invariants.
-- **Rule 2 (Planning Mode):** When `state.phase == "planning"` or editing `.kramak/work-items/**`, load `.kramak/planner/CORE.md`.
-- **Rule 3 (Execution Mode):** When `state.phase == "executing"` or editing source files targeted by active Work Item, load `.kramak/executor/CORE.md`.
+- **Rule 2 (Planning / Bootstrap / Dispatch Mode):** When `state.phase == "bootstrap" | "planning" | "dispatch"` or editing `.kramak/work-items/**`, load `.kramak/planner/CORE.md`.
+- **Rule 3 (Execution / Merge Queue Mode):** When `state.phase == "executing" | "merge_queue"` or editing source files targeted by active Work Item, load `.kramak/executor/CORE.md`.
 - **Rule 4 (Auditing Mode):** When `state.phase == "auditing"`, load `.kramak/executor/CORE.md` (§AUDIT).
+- **Rule 5 (Resume / Recovery Mode):** When `state.phase == "waiting" | "escalated" | "complete"`, load `.kramak/planner/CORE.md` (§RESUME).
 
 ## Execution Constraints
 - Verify all code references against live files before making changes.

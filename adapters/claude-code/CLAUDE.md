@@ -10,6 +10,7 @@
   - `state.phase == "dispatch" | "executing"`: Load `@.kramak/executor/CORE.md` (and `@.kramak/executor/error-recovery.md` on failure).
   - `state.phase == "auditing"`: Load `@.kramak/executor/CORE.md` (§AUDIT).
   - `state.phase == "merge_queue"`: Load `@.kramak/executor/CORE.md` (§MERGE).
+  - `state.phase == "waiting" | "escalated" | "complete"`: Load `@.kramak/planner/CORE.md` (§RESUME).
 
 ## Operational Invariants
 - Grounded Verification: Live grep/read target files before editing.

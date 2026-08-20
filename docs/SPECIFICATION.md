@@ -56,17 +56,22 @@ stateDiagram-v2
     
     AUDITING --> EXECUTING: Retry budget available (<3 attempts) & tests failing
     AUDITING --> PLANNING: Retry budget exhausted OR fundamental spec bug
-    AUDITING --> COMPLETE: All sequential Work Items pass audit
+    AUDITING --> COMPLETE: All sequential Work Items pass audit (roadmap complete)
+    AUDITING --> PLANNING: All sequential Work Items pass audit (batches remain)
     AUDITING --> MERGE_QUEUE: Parallel Work Item passes audit
     
-    MERGE_QUEUE --> COMPLETE: All queued worktrees merged & verified
+    MERGE_QUEUE --> COMPLETE: All queued worktrees merged & verified (roadmap complete)
+    MERGE_QUEUE --> PLANNING: All queued worktrees merged & verified (batches remain)
     MERGE_QUEUE --> WAITING: Merge conflict encountered
     MERGE_QUEUE --> PLANNING: Merge conflict requires re-planning
     
     WAITING --> PLANNING: Human task marked done OR INBOX input received
     WAITING --> EXECUTING: Unblocked Work Item available
+    WAITING --> MERGE_QUEUE: Operator resolved merge conflict
+    WAITING --> AUDITING: Un-audited completed work resumed
     
-    ESCALATED --> WAITING: Human diagnostic review completed
+    ESCALATED --> PLANNING: Human diagnostic review completed & breaker cleared
+    COMPLETE --> PLANNING: New requirements detected in inbox/
     
     COMPLETE --> [*]: Pipeline Released
 ```
@@ -146,8 +151,8 @@ The following five invariants are globally binding across all states and detail 
    - *Tier 1 (Worktree Diff):* `git diff --name-only` MUST match declared `files_targeted`.
    - *Tier 2 (Pre-Flight Concurrency):* Static verification of zero file glob overlap across concurrent Work Items.
    - *Tier 3 (Merge-Time Re-Verification):* Post-merge re-validation against integration branch HEAD.
-3. **Invariant #3 — Deterministic State Reconciliation:** The ground truth of execution state is `.kramak/state.json`. On session start or recovery, the agent MUST reconcile `state.json` against `git status` before performing any actions.
-4. **Invariant #4 — Progress-Aware Circuit Breaker:** If an audit-fix-audit loop repeats 3 times without progress or produces identical error state hashes on successive tries, the agent MUST trip the breaker and transition to `ESCALATED`.
+3. **Invariant #3 — Progress-Aware Circuit Breaker:** If an audit-fix-audit loop repeats 3 times without progress or produces identical error state hashes on successive tries, the agent MUST trip the breaker and transition to `ESCALATED`.
+4. **Invariant #4 — WAL Atomic Writes & State Reconciliation:** All mutations write to `.kramak/state.json.tmp` first before atomic rename. On session start or recovery, the agent MUST validate JSON integrity and reconcile `state.json` against `git status`.
 5. **Invariant #5 — Anti-Bias Guard (G1–G6):** Self-modifications to `.kramak/` specifications MUST clear the 6-step governance framework (history diff, rollback cross-check, dual-model critique, immutable ledger, cooldown, human gate).
 
 ---

@@ -113,7 +113,7 @@ When editing a file within `files_targeted`:
      - **In Scope:** Execute fix. Attempt count increases. Standard retry budget: **3 attempts**.
      - **Trajectory-Aware Extension:** If each retry demonstrates measurable error reduction (e.g. 12 errors $\rightarrow$ 4 $\rightarrow$ 1), extend retry budget up to **5 attempts** total.
      - **Oscillation / Stagnation:** If error count increases or the same error hash repeats on non-adjacent tries, trigger **ROUTER.md Invariant 3 (Circuit Breaker)** and fail the item immediately.
-     - **Out of Scope / Pre-existing:** If error resides in an unrelated module not touched by this WI, document in `INBOX.md` and continue if not breaking current WI criteria.
+     - **Out of Scope / Pre-existing:** If error resides in an unrelated module not touched by this WI, document in `.kramak/inbox/` and continue if not breaking current WI criteria.
    - If attempts exceed `retry_budget`: Proceed to **Step 1.7 (Fail)**.
 
 ### 1.6 Commit Protocol & RIPER-5 Safety Checklist

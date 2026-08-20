@@ -15,7 +15,7 @@ Evaluate workspace files. If the project root has **0 files matching any of the 
 
 ### 1.2 Deterministic Actions
 1. Set `state.phase: "waiting"`.
-2. Set `state.nextAction: "Empty workspace detected. Describe what to build in INBOX.md, then say Start."`.
+2. Set `state.nextAction: "Empty workspace detected. Describe what to build in .kramak/inbox/, then say Start."`.
 3. Inform the user in **one clear sentence** requesting project requirements.
 4. **STOP immediately.** Do NOT hallucinate architectures, directories, or roadmaps without initial user intent.
 

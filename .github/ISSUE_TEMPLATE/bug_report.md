@@ -13,7 +13,7 @@ A clear and concise description of what went wrong.
 - **IDE/Agent:** (e.g., Cursor, Claude Code, Antigravity, other)
 - **Model:** (e.g., Claude Opus, GPT-4o, Gemini Pro)
 - **Spec version:** (check `VERSION` file)
-- **Phase:** (planning / executing / auditing)
+- **Phase:** (bootstrap / planning / dispatch / executing / auditing / merge_queue / waiting / escalated / complete)
 
 ## What happened
 1. The agent was in `[phase]`...
@@ -26,7 +26,7 @@ What should have happened instead.
 ## Relevant files
 If possible, paste the relevant section of:
 - `state.json`
-- The failing work item (from `queue/`, `active/`, or `failed/`)
+- The failing work item (from `.kramak/work-items/` or `state.failed`)
 - Any error output
 
 ## Additional context
