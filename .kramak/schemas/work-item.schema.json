@@ -15,8 +15,8 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^WI-[0-9]{3}$",
-      "description": "Unique work item identifier formatted as WI-XXX (e.g. WI-001)"
+      "pattern": "^WI-[0-9]{3,}$",
+      "description": "Unique work item identifier formatted as WI-XXX (e.g. WI-001, WI-1001)"
     },
     "title": {
       "type": "string",

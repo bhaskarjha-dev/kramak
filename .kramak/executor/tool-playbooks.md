@@ -115,7 +115,7 @@ Enforce absolute boundary control across all execution tiers:
 ACTUAL=$( (git diff --name-only HEAD; git ls-files --others --exclude-standard) | sort -u )
 
 # 2. Extract declared files from active Work Item specification
-DECLARED=$(grep -A 50 "files_targeted:" .kramak/work-items/WI-XXX.md | grep "^  - " | sed 's/^  - //' | tr -d '\r' | sort -u)
+DECLARED=$(awk '/files_targeted:/{flag=1; next} /^[a-zA-Z0-9_-]+:/{flag=0} flag && /^  - /{gsub(/^[ \t]*- [ \t]*|["\'\r]/, ""); print}' .kramak/work-items/WI-XXX.md | sort -u)
 
 # 3. Compare ACTUAL against DECLARED (detect unauthorized files)
 UNAUTHORIZED=$(comm -23 <(echo "$ACTUAL") <(echo "$DECLARED"))
@@ -135,7 +135,13 @@ if ($wiFile -and $wiFile.Extension -eq ".json") {
   $declared = (Get-Content $wiFile.FullName | ConvertFrom-Json).files_targeted
 } elseif ($wiFile) {
   $raw = Get-Content $wiFile.FullName -Raw
-  $declared = [regex]::Matches($raw, '(?m)^\s*-\s*["'']?([^"'']+)["'']?') | ForEach-Object { $_.Groups[1].Value.Trim() }
+  $fmMatch = [regex]::Match($raw, '(?s)^---\r?\n(.*?)\r?\n---')
+  if ($fmMatch.Success) {
+    $targetBlock = [regex]::Match($fmMatch.Groups[1].Value, '(?s)files_targeted:\r?\n((?:\s*-\s*[^\r\n]+\r?\n?)+)')
+    if ($targetBlock.Success) {
+      $declared = [regex]::Matches($targetBlock.Groups[1].Value, '(?m)^\s*-\s*["'']?([^"'']+)["'']?') | ForEach-Object { $_.Groups[1].Value.Trim() }
+    } else { $declared = @() }
+  } else { $declared = @() }
 } else {
   $declared = @()
 }

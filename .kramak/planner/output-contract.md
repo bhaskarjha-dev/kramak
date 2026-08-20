@@ -346,7 +346,7 @@ Before authoring individual Work Items, the Planner creates a holistic Batch Pla
 | Canary Capability Score | Batch Sizing | Tier Allocation | Dispatch Mode |
 |---|---|---|---|
 | **$S \ge 0.80$** (High) | **5–8 WIs** | Balanced ($\le 50\%$ 🔴 Guided, rest 🟡/🟢) | Sequential or Parallel (if budget > 1) |
-| **$0.60 \le S < 0.80$** (Medium) | **3–5 WIs** | Conservative (mostly 🔴 Guided) | Sequential only (`budget = 1`) |
+| **$0.60 \le S < 0.80$** (Medium) | **2–4 WIs** | Conservative (mostly 🔴 Guided) | Sequential only (`budget = 1`) |
 | **$S < 0.60$** (Low) | **0 WIs** | Fail-closed $\rightarrow$ Route to `WAITING` | N/A |
 
 ### 5.2 Canonical Batch Plan Format

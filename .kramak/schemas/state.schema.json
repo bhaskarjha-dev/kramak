@@ -373,6 +373,13 @@
         },
         "discovered": {
           "type": "boolean"
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Discovered subproject and package paths in monorepo workspaces"
         }
       },
       "description": "Discovered paths to key project documentation files"
@@ -475,6 +482,26 @@
         }
       },
       "description": "Cumulative pipeline performance metrics"
+    },
+    "wal": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "pending_mutation": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Uncommitted state mutation payload awaiting atomic rename or recovery"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO 8601 timestamp when the WAL entry was created"
+        }
+      },
+      "description": "Write-Ahead Logging (WAL) state for crash recovery reconciliation"
     }
   },
   "additionalProperties": false

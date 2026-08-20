@@ -32,7 +32,7 @@ graph TD
     CT1 & CT2 & CT3 & CT4 & CT5 --> Score["Composite Score Calculation<br/>Score = (1.5*(CT1+CT2) + 1.0*(CT3+CT4+CT5)) / 6.0"]
     Score --> Routing{Score Range}
     Routing -->|Score >= 0.80| Full[Full Planning Autonomy<br/>Batch: 5-8 WIs | Mix of 🔴/🟡/🟢]
-    Routing -->|0.60 <= Score < 0.80| Cons[Conservative Calibration<br/>Batch: 3-5 WIs | Default 🔴 Guided]
+    Routing -->|0.60 <= Score < 0.80| Cons[Conservative Calibration<br/>Batch: 2–4 WIs | Default 🔴 Guided]
     Routing -->|Score < 0.60| Wait[Fail-Closed to WAITING<br/>Recommend Higher Reasoning Model]
 ```
 
@@ -136,7 +136,7 @@ $$\text{Composite Score} = \frac{1.5 \cdot (\text{CT}_1 + \text{CT}_2) + 1.0 \cd
 | Composite Score ($S$) | Operational Routing | Batch Sizing | Default WI Detail Tier | Execution & Dispatch Mode |
 |---|---|---|---|---|
 | **$S \ge 0.80$ ($\tau_{high}$)** | **Full Planning Autonomy** | 5–8 Work Items | Balanced mix ($\le 50\%$ 🔴 Guided, rest 🟡/🟢) | Sequential or Parallel (if `concurrency.budget > 1`) |
-| **$0.60 \le S < 0.80$** | **Conservative Routing** | 3–5 Work Items | Default to 🔴 **Guided** | Sequential only (`concurrency.budget = 1`) |
+| **$0.60 \le S < 0.80$** | **Conservative Routing** | 2–4 Work Items | Default to 🔴 **Guided** | Sequential only (`concurrency.budget = 1`) |
 | **$S < 0.60$ ($\tau_{low}$)** | **Fail-Closed to WAITING** | 0 Work Items | — | Hard stop: Set `phase: "waiting"`, recommend higher reasoning model |
 
 ---

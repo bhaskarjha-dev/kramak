@@ -411,6 +411,10 @@ If invoked with `state.phase === "dispatch"` (e.g. following a session restart o
 3. **All Shards Complete:** If all planned batch shards have `status: "done"`:
    - Transition `state.phase: "auditing"` (or `"merge_queue"` if `concurrency.budget > 1`).
    - Set `state.nextAction: "All worktree shards completed. Proceed to auditing and merge queue."`.
+4. **Failed Shards Exist:** If any shard has `status: "failed"` and no active/queued shards remain:
+   - Clean orphaned worktrees for completed shards: `git worktree prune`.
+   - Transition `state.phase: "planning"`.
+   - Set `state.nextAction: "Worktree shard execution failed on [WI-ID]. Re-orient in planner to adjust specification or dependencies."`.
 
 ---
 
