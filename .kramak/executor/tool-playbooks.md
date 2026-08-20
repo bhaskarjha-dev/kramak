@@ -118,7 +118,7 @@ ACTUAL=$( (git diff --name-only HEAD; git ls-files --others --exclude-standard) 
 DECLARED=$(awk '/files_targeted:/{flag=1; next} /^[a-zA-Z0-9_-]+:/{flag=0} flag && /^  - /{gsub(/^[ \t]*- [ \t]*|["\'\r]/, ""); print}' .kramak/work-items/WI-XXX.md | sort -u)
 
 # 3. Compare ACTUAL against DECLARED (detect unauthorized files without bashisms)
-TMP_DECL=$(mktemp 2>/dev/null || echo "${TMPDIR:-/tmp}/declared.$")
+TMP_DECL=$(mktemp 2>/dev/null || echo "${TMPDIR:-/tmp}/declared.$$")
 printf "%s\n" "$DECLARED" > "$TMP_DECL"
 UNAUTHORIZED=$(printf "%s\n" "$ACTUAL" | grep -F -v -x -f "$TMP_DECL")
 rm -f "$TMP_DECL"
