@@ -23,3 +23,5 @@ dist/
 .kramak/state.json
 .kramak/state.json.tmp
 .kramak/state.json.wal
+
+temp/
