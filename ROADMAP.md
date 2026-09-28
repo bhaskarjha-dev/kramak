@@ -1,20 +1,20 @@
 # Kramak (क्रमक) — Strategic Roadmap
 
-> **Last Updated:** 2026-08-20  
+> **Last Updated:** September 2026  
 > **Current Version:** 1.1.0  
 > **Status:** Post-v1.1 Vision & Implementation Backlog  
-> **Source:** Derived from deep project analysis and multi-dimensional effectiveness assessment (see [`research/EFFECTIVENESS-ASSESSMENT.md`](research/EFFECTIVENESS-ASSESSMENT.md))
+> **Source:** Derived from research pipeline, empirical effectiveness assessments, and the September 2026 Strategic Review
 
 ---
 
-## Vision Statement
+## Vision & Architectural Tenets
 
-Kramak aims to become the **universal open standard for autonomous coding agent process control** — the EditorConfig of the agentic SDLC. The framework should be:
+Kramak aims to become the **universal open standard for autonomous coding agent process control** — the EditorConfig of the agentic SDLC:
 
-1. **Adopted** by teams who want deterministic, auditable AI-assisted development
-2. **Enforced** programmatically (not just aspirationally) via the companion CLI
-3. **Validated** with published benchmark results proving measurable improvement
-4. **Simple enough** for a 5-minute onboarding, yet deep enough for enterprise-grade governance
+1. **Protocol-First (No Forking, No Vendor Lock-In):** Reaffirm ADR D-009. We do not fork agent harnesses. Kramak remains an open, portable Layer 3 process standard that composes with any agent harness, model, and IDE without vendor lock-in.
+2. **Exploratory Mechanical Enforcement (Candidate Backstops):** Evaluate optional, host-agnostic mechanical backstops — such as portable git pre-commit hooks, open agent plugin events, and CI scope verification (GitHub Actions validating PR diffs against `files_targeted`) — to prevent prompt-drift while keeping the core specification 100% zero-dependency.
+3. **Validated with Scope-Centric Benchmarks:** Test against OverEager-Gen and SNARE to prove quantitative reductions in unauthorized modifications and scope creep.
+4. **Two Tiers, One Standard:** Full Kramak provides the deep 9-state enterprise specification with Canary qualification; Kramak Lite provides the 45KB single-file front door.
 
 ---
 
@@ -24,9 +24,9 @@ Kramak aims to become the **universal open standard for autonomous coding agent 
 Phase 1: VALIDATE        Phase 2: HARDEN          Phase 3: GROW           Phase 4: STANDARDIZE
 (Prove it works)         (Close the gaps)         (Build community)       (Industry adoption)
 ─────────────────        ─────────────────        ─────────────────       ─────────────────
-Benchmarks               CLI enforcement          Ecosystem plugins       AAIF formal standard
-Demo recordings          Kramak Lite mode         Visual dashboard        Cross-org governance
-Dogfooding log           Context optimization     Template gallery        Certification program
+OverEager Benchmarks     Native Hook Enforcers    Ecosystem plugins       AAIF formal standard
+Demo recordings          CI Scope Backstop        Visual dashboard        Cross-org governance
+Dogfooding log           Kramak Lite (Shipped)    Template gallery        Certification program
 ```
 
 ---
@@ -36,9 +36,9 @@ Dogfooding log           Context optimization     Template gallery        Certif
 > **Goal:** Generate quantitative evidence and compelling demonstrations that Kramak delivers measurable improvement over unstructured agent usage.
 
 ### P1-01: Benchmark Suite & Published Results
-- **What:** Run Kramak-governed agents against established benchmarks (SWE-Bench, FeatBench, or METR task suites). Measure scope violation rate, fix-loop frequency, task completion rate, and token efficiency with/without Kramak.
-- **Why:** Nothing sells a process framework like measurable outcomes. The assessment identified "no community = no validation = no community" as a critical adoption risk.
-- **Output:** `research/benchmarks/` directory with methodology, raw results, and summary report. Add headline metrics to README.md.
+- **What:** Run Kramak-governed agents against targeted scope-violation suites: **OverEager-Gen** (Qu et al. 2026) and **SNARE** (2026). Measure unauthorized file modification rate, regressive implementation rate, fix-loop frequency, and token efficiency with/without Kramak.
+- **Why:** Generic SWE-bench scores whether an agent fixed a bug, but ignores whether it also modified out-of-scope files or deleted config. OverEager-Gen directly scores the exact failure mode Kramak's `files_targeted` prevents.
+- **Output:** `research/benchmarks/` directory with methodology, raw transcripts, and summary report. Add headline metrics to README.md.
 - **Assessment Reference:** Risk #3 (Adoption Chicken-and-Egg), Recommendation #2
 
 ### P1-02: Compelling Demo Recording
@@ -59,22 +59,19 @@ Dogfooding log           Context optimization     Template gallery        Certif
 
 > **Goal:** Address the top-rated risks from the effectiveness assessment, particularly the Compliance Paradox and context budget concerns.
 
-### P2-01: Kramak CLI as Primary Enforcement Layer
-- **What:** Evolve `kramak-cli` from optional companion to recommended enforcement layer. Key commands:
-  - `kramak check scope` — programmatic Tier 1 scope check (replaces agent self-checking)
-  - `kramak validate state` — validate `state.json` against `state.schema.json`
-  - `kramak gate` — run Canary CT-1→CT-5 with deterministic grading
-  - `kramak breaker` — check circuit breaker status and trip if conditions met
-  - `kramak audit ledger` — validate ledger append-only invariant
-- **Why:** The assessment's #1 critical risk: "agents that need governance are the worst at following governance specs." Programmatic enforcement doesn't depend on agent self-discipline.
-- **Output:** Feature additions to [`kramak-cli`](https://github.com/bhaskarjha-dev/kramak-cli)
+### P2-01: Candidate Mechanical Enforcement (Hooks + CI Backstop)
+- **What:** Evaluate evolving enforcement from self-administered prompt compliance to programmatic interception via optional satellite tools:
+  - **Local Interception Hooks (Candidate):** Portable shell scripts, open agent plugin hooks, and git pre-commit hooks to intercept file writes and abort out-of-scope edits before commit.
+  - **CI Scope Backstop (Candidate):** Optional GitHub Actions status check that verifies PR diffs strictly adhere to declared `files_targeted`, ensuring out-of-scope changes cannot merge even if local hooks are bypassed.
+  - **Shared Verification Engine:** Expose scope checks and state validation as reusable logic without forcing a monolithic runtime.
+- **Why:** The assessment's #1 critical risk: "agents that need governance are the worst at following governance specs." Programmatic interception removes reliance on voluntary model compliance, but must remain strictly opt-in and host-agnostic.
+- **Output:** `scripts/hooks/`, `.github/workflows/verify-scope.yml`, and additions to [`kramak-cli`](https://github.com/bhaskarjha-dev/kramak-cli)
 - **Assessment Reference:** Risk #1 (Compliance Paradox), Recommendation #1
 
-### P2-02: Kramak Lite Mode (3-State Subset)
-- **What:** Define a minimal profile that uses only 3 states (`PLANNING → EXECUTING → AUDITING`) without the Canary Gate, parallel worktrees, Anti-Bias Guard, or MERGE_QUEUE. Include a single `KRAMAK-LITE.md` that replaces ROUTER.md + both CORE.md files in ≤3KB.
-- **Why:** 80% of the value with 20% of the complexity. Lowers the adoption barrier for teams intimidated by a 9-state FSM and 176 rules.
-- **Output:** `.kramak/profiles/lite/` with self-contained minimal spec. Document in `docs/GETTING-STARTED.md`.
-- **Assessment Reference:** Risk #2 (Context Budget Exhaustion), Recommendation #3
+### P2-02: Kramak Lite Standalone Specification (Status: ✅ Shipped v2.3.0)
+- **What:** A standalone, single-file ~45KB specification with 100% enforceable rule coverage, 6-state FSM, and zero runtime dependencies.
+- **Status:** Shipped as an independent repository at [`bhaskarjha-dev/kramak-lite`](https://github.com/bhaskarjha-dev/kramak-lite). Serves as the primary onboarding front door.
+- **Output:** Complete v2.3.0 engine with 11 production templates, WAL atomic state writes, and 5-lens strategic vision.
 
 ### P2-03: Context Budget Optimization Audit
 - **What:** Measure the actual token cost of loading Kramak specs in each phase. Map: ROUTER.md tokens + CORE.md tokens + on-demand module tokens. Identify opportunities to reduce without losing invariant coverage.
@@ -158,6 +155,7 @@ Issues discovered during comprehensive project analysis, tracked here for future
 | AC-02 | Medium | WAL protocol assumes fine-grained filesystem control (write .tmp → atomic rename → delete .wal) that many AI agents lack. Consider fallback for environments without atomic rename. | Assessment Dimension 1 |
 | AC-03 | Medium | Canary Gate CT-1→CT-5 requires abstract reasoning capabilities that may penalize models good at code but weak at constraint puzzles. Consider whether CT scores should weight differently for executor-only sessions. | Assessment Dimension 5 |
 | AC-04 | Low | The HUMAN-TASKS.md protocol requires developers to manually edit Markdown to unblock the pipeline — consider whether the CLI or dashboard should provide a simpler UX for this. | Assessment Dimension 4 |
+| AC-05 | Medium | License Harmonization: Evaluate unifying root Kramak (MIT) and Kramak Lite (Apache 2.0) on a single license terms to avoid ecosystem friction. | Strategic Review Section 8 |
 
 ### Competitive & Positioning
 
@@ -184,8 +182,8 @@ Issues discovered during comprehensive project analysis, tracked here for future
 
 ## Guiding Principles for Roadmap Execution
 
-1. **Validate before building.** Don't build Kramak Lite until benchmarks prove the full version works. Don't build the dashboard until dogfooding reveals it's needed.
-2. **Maintain zero-dependency core.** All new tooling goes in `kramak-cli` or separate repos. The core `kramak` repository stays pure Markdown + JSON Schema.
+1. **Ship lightweight before heavy.** Keep Kramak Lite as the zero-dependency front door. Add mechanical enforcement via Layer 1 hooks and Layer 2 CI backstops before investing in a monolithic binary CLI.
+2. **Maintain zero-dependency core.** All new tooling goes in `kramak-cli`, satellite hooks, or separate repos. The core `kramak` repository stays pure Markdown + JSON Schema.
 3. **Evidence over opinion.** Every roadmap item traces to a specific finding, risk, or recommendation from the effectiveness assessment.
 4. **Ship the smallest useful thing.** Each item should deliver standalone value, not depend on the entire roadmap completing.
-5. **Measure what matters.** Track the 5 failure modes Kramak claims to solve. If scope violations don't decrease measurably, the framework isn't working regardless of how elegant the spec is.
+5. **Measure what matters.** Track the 5 failure modes Kramak claims to solve using targeted scope-violation benchmarks (OverEager-Gen/SNARE). If scope violations don't decrease measurably, the framework isn't working regardless of how elegant the spec is.
